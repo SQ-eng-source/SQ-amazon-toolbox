@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="IleOoq1J28lCKOyAEZtAIO">
+<head data-page-node-id="ObZrgGrRGSE6ljaN1lq61P">
+<meta charset="UTF-8" data-page-node-id="0SZ9zbvTPzEzRLdSlHDHBt">
+<title>FBA 利润计算器 · 四站点</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--soft:#e0f2fe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:28px;display:flex;justify-content:center}
+.wrap{width:1000px;max-width:100%}
+h1{font-size:21px;margin-bottom:4px}
+.desc{color:var(--sub);font-size:13px;margin-bottom:16px;line-height:1.6}
+/* 站点选择条：可横向滑动 */
+.sites{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;scrollbar-width:thin}
+.sites::-webkit-scrollbar{height:6px}
+.sites::-webkit-scrollbar-thumb{background:#a5dfeb;border-radius:3px}
+.site-btn{flex:0 0 168px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;text-align:left;transition:.15s}
+.site-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+.site-btn.active{background:linear-gradient(140deg,#e0f7fb,#ffffff);border-color:var(--accent);box-shadow:0 3px 10px rgba(8,145,178,.15)}
+.site-btn b{font-size:14.5px;color:var(--deep);display:block}
+.site-btn small{display:block;font-size:11px;color:var(--sub);margin-top:3px;line-height:1.5}
+.site-btn.active small{color:var(--accent)}
+.fxline{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--sub);margin:0 0 16px;padding:8px 12px;background:#f6fcfe;border:1px solid var(--line);border-radius:9px}
+.fxline .fresh{color:var(--ok);font-weight:600}
+.fxline .stale{color:#b7791f;font-weight:600}
+.fxline a{color:var(--accent);cursor:pointer;text-decoration:none;font-weight:600}
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.card h2{font-size:14px;margin-bottom:8px;color:var(--deep)}
+label{display:block;font-size:12.5px;color:var(--sub);margin:10px 0 4px}
+input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;font-size:14px}
+input:focus{outline:none;border-color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big{font-size:32px;font-weight:800;margin:4px 0 2px}
+.unit{font-size:12px;color:var(--sub)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.row b{font-size:13.5px;text-align:right}
+.sec{margin-top:14px;padding-top:6px;border-top:1px solid var(--line)}
+.verdict{margin-top:12px;padding:11px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}
+.verdict.ok{background:#e6f6ef;color:var(--ok)}
+.verdict.bad{background:#fdecea;color:var(--bad)}
+.verdict.mid{background:var(--soft);color:var(--deep)}
+.formula{font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.8;background:#f6fcfe;border-radius:8px;padding:10px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.hint{font-size:11px;color:var(--sub);line-height:1.6;margin-top:5px;background:#f6fcfe;border-left:2px solid #a5dfeb;border-radius:0 4px 4px 0;padding:5px 8px}
+.saverow{display:flex;gap:10px;margin:2px 0 6px}
+.saverow input{flex:1}
+button.btn{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+button.btn:hover{filter:brightness(1.06)}
+button.btn.ghost{background:#fff;color:var(--deep);border:1px solid var(--line)}
+.savetip{font-size:12px;min-height:16px;color:var(--ok);margin-bottom:4px}
+.savetip.err{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--sub);font-size:11.5px;font-weight:600;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.act{background:none;border:none;cursor:pointer;font-size:12px;color:var(--accent);font-weight:600;padding:2px 4px}
+.act.del{color:var(--bad)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.empty{font-size:12.5px;color:var(--sub);padding:14px 0;text-align:center}
+.tblwrap{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:10px}
+.tblwrap table{margin:0;min-width:1180px}
+.tblwrap th,.tblwrap td{padding:7px 9px;font-size:11.5px;white-space:nowrap}
+.tblwrap th{background:#f0fafd;position:sticky;top:0}
+.tblwrap tr:last-child td{border-bottom:none}
+.tblwrap td.nm{font-weight:600;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grp{font-size:11px;color:var(--sub);font-weight:400}
+.chip{display:inline-block;padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700}
+.chip.g{background:#e6f6ef;color:var(--ok)}
+.chip.m{background:#fff4e0;color:#b7791f}
+.chip.b{background:#fdecea;color:var(--bad)}
+.mini{font-size:11.5px;color:var(--sub);cursor:pointer;text-decoration:none;border-bottom:1px dashed #b8dde8;margin-left:2px}
+.mini:hover{color:var(--accent);border-color:var(--accent)}
+.btnrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dtl{font-size:12px;width:100%;border-collapse:collapse}
+.dtl td{padding:5px 0;border-bottom:1px dashed var(--line)}
+.dtl td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.dtl tr.sum td{font-weight:800;color:var(--bad);border-bottom:none;padding-top:8px}
+.badge-site{display:inline-block;background:var(--soft);color:var(--deep);border-radius:4px;padding:1px 6px;font-size:11px;margin-right:4px}
+.mask{position:fixed;inset:0;background:rgba(18,51,63,.38);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
+.modal{width:620px;max-width:100%;max-height:86vh;display:flex;flex-direction:column;background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 18px 50px rgba(6,50,66,.28)}
+.modal h3{font-size:15px;color:var(--deep);margin-bottom:8px}
+.bkmsg{font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:10px}
+.bkmsg b{color:var(--ink)}
+.modal textarea{flex:1;min-height:220px;width:100%;border:1px solid var(--line);border-radius:8px;background:#f6fcfe;color:var(--ink);font-family:Consolas,Monaco,monospace;font-size:11.5px;line-height:1.5;padding:10px;resize:vertical}
+.modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+</style>
+</head>
+<body data-page-node-id="QUP5dskH31AuB7DkFsdp5G">
+<div class="wrap" data-page-node-id="wKmtzjP8QWFQxAf37lL2VD">
+  <h1 data-page-node-id="LMSNxk880ahRjHtgOj91P1">FBA 利润计算器 · 英国 / 德国 / 美国 / 加拿大</h1>
+  <p class="desc" data-page-node-id="WOTn7QkhGDJD2RdAa1B1ny">按你的成本利润表口径：售价用本币，采购用人民币，统一折算。左右滑动选择站点，选中即用该站点<b data-page-node-id="uwa3h876RFfL8cYDn9tpf9">实时汇率</b>；每次刷新页面都会重新拉取。</p>
+
+  <div class="sites" id="sites" data-page-node-id="ldzvWtMLh61BYbvr01qWlV"></div>
+  <div class="fxline" data-page-node-id="5fOJJnPHlQ2Yn4YyDwUpCd">
+    <span id="fxStatus" data-page-node-id="39Q7X6ulEjOsF9oRBGHLxT">汇率加载中…</span>
+    <a onclick="fetchRates(true)" data-page-node-id="qEd1nzSkIw8I2Eah0T08Zk">↻ 重新拉取</a>
+  </div>
+
+  <div class="grid" data-page-node-id="MdVBHCPZh2yhC05vgKfVG9">
+    <div class="card" data-page-node-id="N4oYbqEfCjavzbAnW0JA0Z">
+      <h2 data-page-node-id="s6nmGur7NFHOsLNV8bWBZz">① 输入</h2>
+      <div class="saverow">
+        <input id="prodName" placeholder="产品名称，如：B0DK13MV1R 泳镜 白+粉">
+        <button class="btn" onclick="saveRecord()">💾 保存到<span id="siteNameTip">英国站</span></button>
+      </div>
+      <div id="saveTip" class="savetip"></div>
+      <div class="two" data-page-node-id="V4mgwUZluIni6TuzvPfWFc">
+        <div data-page-node-id="rYqzs0385oK07vSmX01TzW"><label data-page-node-id="R1zdTSmOBRQJrSfZBGuQ36">售价（<span class="cur" data-page-node-id="haCHXRMAgdO29AvP76pV01">£</span>）</label><input type="number" id="price" value="16.99" step="0.01" data-page-node-id="ub05eXzJK46UQC4tyoSBIY"></div>
+        <div data-page-node-id="rdYHEpGXx11m2fADhRaqm2"><label data-page-node-id="JDlcRbUzxMgo2s3EDLw47i">产品采购成本（¥/件）</label><input type="number" id="cogs" value="16" step="0.5" data-page-node-id="pC0TGhXmy75IIE3uvZY8M9"></div>
+        <div data-page-node-id="HWz3bwmYDBLEqYSC0znnVW"><label data-page-node-id="VuMNY3yxSGZWLGRMQtA2Nx">头程运费单价（¥/kg）</label><input type="number" id="shipRate" value="15" step="0.5" data-page-node-id="Zogm6xksxxzh3CN69D8D3m"></div>
+        <div data-page-node-id="XXuCWC2Y39h5F4CNx9DfAa"><label data-page-node-id="9SeEfPYUBEVPaA0mBFOOQB">产品重量（kg）</label><input type="number" id="weight" value="0.22" step="0.01" data-page-node-id="evvuYztxO3Wyq9rzHiZbd4"></div>
+        <div data-page-node-id="l6srNCuSLPBgcH5Cc8wr3o"><label data-page-node-id="bqcS3OylYHhmbhsoX8lzrN">FBA 配送费（<span class="cur" data-page-node-id="uzcFqDbilFk3tQnPhmsBkG">£</span>）</label><input type="number" id="fbaFee" value="2.85" step="0.01" data-page-node-id="SaJupaqSCbfu1ow7IbeBOG"></div>
+        <div data-page-node-id="cqwqUARX4pXROB0bh5KCvs"><label data-page-node-id="AahxGAnzoreVFmlwa92KHP">仓储+入库配置费（<span class="cur" data-page-node-id="6SJShQP5hTQA5HNDmUlxdf">£</span>）</label><input type="number" id="storage" value="0.44" step="0.01" data-page-node-id="n4RtZDRgwquKEbzlzU0WiK"></div>
+        <div data-page-node-id="8Yj06Socbh6cnLvWN8mB0F"><label data-page-node-id="SuMnslSTzrB5ozwkcIb5i1">佣金比例（%）</label><input type="number" id="ref" value="15" step="0.5" data-page-node-id="pxlKKEG04Za8EmCFS9iEO2"></div>
+        <div data-page-node-id="AktH5aClnNBfGoeIru9n3y"><label data-page-node-id="G9jlNpccBnvhaTmVmFZcuQ">销售税率 VAT/GST（%）</label><input type="number" id="tax" value="20" step="1" data-page-node-id="P2M5HoXUEpn9VG8PWtHMjx"></div>
+        <div data-page-node-id="gjja94tMXQthLhPkRBYE7D"><label data-page-node-id="8mJ3UAqJEiJD48tUH6HPBH">汇率（1 <span class="curName" data-page-node-id="KUReYhw98hWmo1XSZfDkPp">英镑</span> = ? ¥）</label><input type="number" id="fx" value="9.1" step="0.0001" data-page-node-id="Q3xEVgsdnbasZTGBywyMht"></div>
+        <div data-page-node-id="xNKzGDAGzqePyYZClVXxs5"><label data-page-node-id="zL44KG1R2RpPFCB35MeQV4">平均退货率（%）</label><input type="number" id="ret" value="3" step="0.5" data-page-node-id="Bm1oAtezPJMBH7LYXV9BsN"></div>
+        <div><label>退货佣金计提（% of 佣金）</label><input type="number" id="refundComm" value="20" step="5">
+          <div class="hint">默认 <b>20%</b>。意思是：退货退款时，亚马逊<b>不退</b>的那部分佣金——平台按原佣金的 20% 收作退货处理费（也叫“退款管理费”）。填 0 = 假设佣金全额退回；填 20 = 佣金只退回 80%。</div>
+        </div>
+        <div><label>弃置费（<span class="cur">£</span>/件）</label><input type="number" id="dispose" value="0" step="0.1">
+          <div class="hint">退货商品不可售时销毁/弃置的每件费用，英国站一般 £0.20–0.50，按你后台实际填；不确定先填 0，利润会略偏乐观。</div>
+        </div>
+        <div data-page-node-id="37Ktem03PYKgEGFAziLMaj"><label data-page-node-id="dWX9MFuB2PKQHVqXPtIoWL">其它成本（% of 售价）</label><input type="number" id="other" value="3" step="0.5" data-page-node-id="q53l9Rd2IFdiak0wqAaNTW"></div>
+        <div data-page-node-id="6pFQFF6AQoKT7fE7T2eo1F"><label data-page-node-id="dUt3YayPykysHvWXAXUTmQ">广告占比（% of 净售价）</label><input type="number" id="ads" value="20" step="1" data-page-node-id="z99hfVd9oJ3LDOnLrbodjZ"></div>
+      </div>
+    </div>
+
+    <div class="card" data-page-node-id="IZjshsIQdU1vA3w3gl01Mp">
+      <h2 data-page-node-id="J2JajR18Of8w1OVyURH6o4">② 单件利润（<span class="cur" data-page-node-id="dSiG6yA9QO5ift4vSKoiG7">£</span> 口径）</h2>
+      <label data-page-node-id="cRihxAGJV33y6Yyjmt0qTs">利润 / 件</label>
+      <div class="big" id="profit" data-page-node-id="7GAObm5M5bkqv0U5bfxRPE">--</div>
+      <div class="unit" data-page-node-id="AdVoUnSd5jUSkSyA0RPAJP">折合人民币 <b id="profitCny" data-page-node-id="YT5j0864Wix7ce44ChQ29Y">--</b> ｜ 利润率（÷净售价）<b id="margin" data-page-node-id="ZXrYrmGbdeKZCbK70IoBPc">--</b></div>
+
+      <div class="sec" data-page-node-id="hj8jDYF5QYu1M4moDN12R7">
+        <h2 style="margin-bottom:4px" data-page-node-id="qOzyCQNcTAd9k7paDAlEJL">成本明细</h2>
+        <div class="row" data-page-node-id="NkzVpuAqlNLdBOAoM2lcur"><span data-page-node-id="pnYg5ddflAGJxnGGIv3PJt">产品采购成本</span><b id="d1" data-page-node-id="NGboIFQcr9uK3vytZfVRyb">--</b></div>
+        <div class="row" data-page-node-id="RMOGdnGsDgwmQW3UMuZrkM"><span data-page-node-id="Gphs2cgSSPVU0czQRk3s9f">平台佣金（售价×比例）</span><b id="d2" data-page-node-id="Ot11exrl9p19LtWgRneRW7">--</b></div>
+        <div class="row" data-page-node-id="tytaMbD9UUGcTcn6pmMIhn"><span data-page-node-id="ozR15OiZcAoFOS0epfZCEF">税费（售价−税后净售价）</span><b id="d3" data-page-node-id="Mitl8U8EJsavQuFHuCQhhB">--</b></div>
+        <div class="row" data-page-node-id="P8M1xPpZl3YBi5v8UZtVyz"><span data-page-node-id="EdCpoB93LKIZRDsz7sVCGs">税后净售价</span><b id="d4" data-page-node-id="UOFZZOF7fupOGzysEy9gdp">--</b></div>
+        <div class="row" data-page-node-id="YGGQEBdnnG3U9eroGyMyIs"><span data-page-node-id="Cf3IvQ3MHHVawfEdEgxGvE">FBA 配送费</span><b id="d5" data-page-node-id="k5J9D263p85U3xy6boCIaW">--</b></div>
+        <div class="row" data-page-node-id="PhBaIBCGdrPKEYZzJRJW1L"><span data-page-node-id="LfFYqlPJHevNSrGoVcBNK2">头程运费（重量×单价÷汇率）</span><b id="d6" data-page-node-id="7FypGH2sfvF6R8eBODoH53">--</b></div>
+        <div class="row" data-page-node-id="mdxzfDDHMTGygPeel1LDPd"><span data-page-node-id="nuO1Lwn6jYqw15sln9h3c3">仓储+入库配置费</span><b id="d7" data-page-node-id="6WGfydIC9FHl3ciAVSJtqJ">--</b></div>
+        <div class="row" data-page-node-id="EvKLERJHuGLGUbkljPHeyN"><span data-page-node-id="4rmTyOukATBB0SBFgBL6rN">每单均摊退货成本（退货率×单次退货成本）</span><b id="d8" data-page-node-id="nqrpNyheeX9afrVAJFzEhd">--</b></div>
+        <div class="row" data-page-node-id="GBmO41G457intDo1NXgyn4"><span data-page-node-id="DYCC5z7RGItqkgXvg06WIx">其它成本（售价×%）</span><b id="d9" data-page-node-id="2t20czHulQunV7tx31gCOu">--</b></div>
+        <div class="row" data-page-node-id="ryvCKmABDlmBii7PRC7HoB"><span data-page-node-id="HDZptV8H1MtqIV9IeGej14"><b data-page-node-id="8VsHtoqNpvJhL3aA7ag2H9">总成本（含税）</b></span><b id="d10" style="color:var(--bad)" data-page-node-id="yJy2VewakXGmpfXSSEhWnE">--</b></div>
+      </div>
+
+      <div class="sec" data-page-node-id="PNSNrysm1b6FkNsVDVxI90">
+        <div class="row" data-page-node-id="gra67klBBmHIQ9CzE9fQjQ"><span data-page-node-id="ATOxTCVNtb6yqhSsC4Oeyw">扣除广告后的利润</span><b id="p2" data-page-node-id="vebnAcF75gbjv2yaeLubAq">--</b></div>
+        <div class="row" data-page-node-id="DFHnPKl500BGYOoDBg1ZSA"><span data-page-node-id="lbT8KHq7S0E2ceV8gG7UCt">扣除广告后的利润率（÷净售价）</span><b id="m2" data-page-node-id="xiVZ5ybIINb6NkHrsKhdYf">--</b></div>
+      </div>
+      <div class="verdict mid" id="v" data-page-node-id="cT7uxjf0hnd0BxVpqlr7m8">--</div>
+      <div class="formula" data-page-node-id="OhiJ5cGUdAveYxgPglonQq">
+        口径说明（与你表格公式一致）：<br data-page-node-id="IiZM1q2pEq4AKX1uHetfa7">
+        · 税后净售价 = 售价 ÷ (1 + 税率)；税费 = 售价 − 净售价<br data-page-node-id="JZkfNnaIvskWsZQHgRpfmJ">
+        · 单次退货成本 = 采购成本 + 头程 + FBA配送费 + 佣金×20% + 弃置费（按你表内备注口径，比例可改）<br data-page-node-id="OgChu3L14JvrXySGInTIGo">
+        · 总成本 = 采购 + 佣金 + 税费 + FBA + 头程 + 仓储 + 均摊退货 + 其它<br data-page-node-id="y8iMRvlDFPkjD6aPcL9hDR">
+        · 利润 = 销售额 − 总成本；扣广告利润 = 利润 − 净售价×广告%<br>
+        · <b>利润率 = 利润 ÷ 税后净售价</b>（VAT 不属于你的收入，不参与分母；扣广告利润率同口径）
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="toolbar">
+      <h2 style="margin:0">③ 已保存的产品 <span class="grp">（成本项已全部展开，可左右滑动）</span></h2>
+      <div class="btnrow">
+        <select id="filterSite" onchange="renderRecords()" style="padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12.5px;color:var(--ink)">
+          <option value="cur">只看当前站点</option>
+          <option value="all">全部站点</option>
+        </select>
+        <button class="btn" onclick="exportExcel()">⬇ 导出 Excel</button>
+        <button class="btn ghost" onclick="document.getElementById('impFile').click()">⬆ 导入表格</button>
+        <button class="btn ghost" onclick="downloadTemplate()">下载导入模板</button>
+        <a class="mini" onclick="exportRecords()">JSON 备份</a>
+        <input type="file" id="impFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importSheet(this)">
+      </div>
+    </div>
+    <div id="recTable"></div>
+    <p class="hint" style="margin-top:10px">数据保存在本浏览器本地（localStorage），关掉网页不会丢；换电脑或清缓存会丢。<b>建议定期点「导出 Excel」存一份</b>（就是一张跟你原表口径一致的明细表）；反过来，在外部 Excel 里按「导入模板」填好，也能直接导入这里。</p>
+  </div>
+</div>
+
+<script>
+const SITES={
+ UK:{name:'🇬🇧 英国站',cur:'£',code:'GBP',cname:'英镑',fx:9.1,tax:20,fba:2.85,store:0.44,price:16.99,weight:0.22},
+ DE:{name:'🇩🇪 德国站',cur:'€',code:'EUR',cname:'欧元',fx:7.8,tax:19,fba:3.20,store:0.44,price:19.99,weight:0.22},
+ US:{name:'🇺🇸 美国站',cur:'$',code:'USD',cname:'美元',fx:7.1,tax:0,fba:5.60,store:0.40,price:19.99,weight:0.22},
+ CA:{name:'🇨🇦 加拿大站',cur:'C$',code:'CAD',cname:'加元',fx:5.2,tax:5,fba:6.50,store:0.35,price:24.99,weight:0.22},
+};
+let cur='UK';
+const FIELDS=['price','cogs','shipRate','weight','fbaFee','storage','ref','tax','fx','ret','refundComm','dispose','other','ads'];
+const FRESH={};      // 实时汇率：code -> 1 单位本币 = ? 人民币
+let fxTouched=false; // 用户是否手动改过汇率输入
+function $i(id){return document.getElementById(id)}
+
+function buildSites(){
+  const el=$i('sites');
+  el.innerHTML=Object.entries(SITES).map(([k,s])=>{
+    const live=FRESH[s.code];
+    const rate=live||s.fx;
+    return '<div class="site-btn'+(k===cur?' active':'')+'" data-k="'+k+'">'+
+      '<b>'+s.name+'</b><small>1 '+s.cur+' ≈ ¥'+Number(rate).toFixed(3)+' · '+(live?'<span style="color:var(--ok)">实时</span>':'预置')+
+      '<br>VAT/GST '+s.tax+'%</small></div>';
+  }).join('');
+  el.querySelectorAll('.site-btn').forEach(b=>b.onclick=()=>{cur=b.dataset.k;applySite();});
+}
+
+function applySite(){
+  const s=SITES[cur];
+  $i('tax').value=s.tax;$i('fbaFee').value=s.fba;$i('storage').value=s.store;
+  $i('price').value=s.price;$i('weight').value=s.weight;
+  const r=FRESH[s.code]||s.fx;
+  $i('fx').value=Number(r).toFixed(FRESH[s.code]?4:2);
+  document.querySelectorAll('.cur').forEach(e=>e.textContent=s.cur);
+  document.querySelectorAll('.curName').forEach(e=>e.textContent=s.cname);
+  if($i('siteNameTip'))$i('siteNameTip').textContent=s.name.replace(/^\S+\s/,'');
+  document.querySelectorAll('.site-btn').forEach(b=>b.classList.toggle('active',b.dataset.k===cur));
+  fxTouched=false;
+  calc();
+  if(typeof renderRecords==='function'&&$i('recTable'))renderRecords();
+}
+
+async function fetchRates(manual){
+  const st=$i('fxStatus');
+  st.textContent='汇率加载中…';
+  let ok=false,src='',date='';
+  try{
+    const r=await fetch('https://open.er-api.com/v6/latest/CNY',{cache:'no-store'});
+    const d=await r.json();
+    if(d&&d.rates){
+      Object.keys(SITES).forEach(k=>{const c=SITES[k].code;if(d.rates[c])FRESH[c]=1/d.rates[c];});
+      ok=true;src='open.er-api.com';date=(d.time_last_update_utc||'').slice(5,16);
+    }
+  }catch(e){}
+  if(!ok){
+    try{
+      const r2=await fetch('https://api.frankfurter.dev/v1/latest?from=CNY&to=GBP,EUR,USD,CAD',{cache:'no-store'});
+      const j=await r2.json();
+      if(j&&j.rates){Object.entries(j.rates).forEach(([c,v])=>{FRESH[c]=1/v;});ok=true;src='frankfurter.app';date=j.date;}
+    }catch(e){}
+  }
+  buildSites();
+  if(ok){
+    st.innerHTML='<span class="fresh">✓ 实时汇率已生效 · '+date+'（'+src+'）</span>';
+    if(!fxTouched){const c=SITES[cur].code;if(FRESH[c]){$i('fx').value=FRESH[c].toFixed(4);calc();}}
+  }else{
+    st.innerHTML='<span class="stale">⚠ 联网获取失败，用预置汇率（可手动填写）</span>';
+  }
+}
+
+function v(id){return +$i(id).value||0}
+/* 统一计算：页面渲染、保存、导出 Excel 都走这里，保证口径一致 */
+function compute(vals,siteKey){
+  const s=SITES[siteKey]||SITES.UK;
+  const fx=vals.fx||s.fx||1;
+  const price=vals.price||0;
+  const ref=(vals.ref||0)/100, tax=(vals.tax||0)/100;
+  const cogsCur=(vals.cogs||0)/fx;
+  const shipCur=((vals.shipRate||0)*(vals.weight||0))/fx;
+  const commission=price*ref;
+  const netPrice=price/(1+tax), taxAmt=price-netPrice;
+  const refundOnce=cogsCur+shipCur+(vals.fbaFee||0)+commission*((vals.refundComm||0)/100)+(vals.dispose||0);
+  const refund=refundOnce*((vals.ret||0)/100);
+  const otherC=price*((vals.other||0)/100);
+  const total=cogsCur+commission+taxAmt+(vals.fbaFee||0)+shipCur+(vals.storage||0)+refund+otherC;
+  const profit=price-total;
+  const adsAmt=netPrice*((vals.ads||0)/100);
+  const profitAds=profit-adsAmt;
+  return {cur:s.cur,fx,price,netPrice,taxAmt,commission,cogsCur,shipCur,refundOnce,refund,
+    otherC,total,profit,profitCny:profit*fx,
+    margin:netPrice>0?profit/netPrice*100:0,
+    adsAmt,profitAds,profitAdsCny:profitAds*fx,
+    marginAds:netPrice>0?profitAds/netPrice*100:0};
+}
+function calc(){
+  const s=SITES[cur],c=s.cur;
+  const vals={};FIELDS.forEach(f=>vals[f]=v(f));
+  const r=compute(vals,cur);
+  const price=r.price;
+  const f=x=>c+' '+x.toFixed(2);
+  $i('d1').textContent=f(r.cogsCur);
+  $i('d2').textContent=f(r.commission);
+  $i('d3').textContent=f(r.taxAmt);
+  $i('d4').textContent=f(r.netPrice);
+  $i('d5').textContent=f(vals.fbaFee);
+  $i('d6').textContent=f(r.shipCur);
+  $i('d7').textContent=f(vals.storage);
+  $i('d8').textContent=f(r.refund)+'（单次 '+f(r.refundOnce)+'）';
+  $i('d9').textContent=f(r.otherC);
+  $i('d10').textContent=f(r.total);
+  const p=$i('profit');
+  p.textContent=(r.profit<0?'-':'')+c+' '+Math.abs(r.profit).toFixed(2);
+  p.style.color=r.profit>=0?'var(--deep)':'var(--bad)';
+  $i('profitCny').textContent='¥'+r.profitCny.toFixed(2);
+  $i('margin').textContent=price>0?r.margin.toFixed(1)+'%':'--';
+  $i('p2').textContent=(r.profitAds<0?'-':'')+c+' '+Math.abs(r.profitAds).toFixed(2)+'（广告 '+f(r.adsAmt)+'）';
+  $i('m2').textContent=price>0?r.marginAds.toFixed(1)+'%':'--';
+  const vd=$i('v'),m2=r.marginAds;
+  if(r.profit<0){vd.className='verdict bad';vd.textContent='✗ 每单净亏 '+c+' '+Math.abs(r.profit).toFixed(2)+'，这个定价不能上';}
+  else if(m2<5){vd.className='verdict mid';vd.textContent='△ 扣广告后利润率仅 '+m2.toFixed(1)+'%，基本白干——压广告或提价';}
+  else if(m2<15){vd.className='verdict mid';vd.textContent='△ 扣广告后 '+m2.toFixed(1)+'%，偏薄，注意退货率与广告预算';}
+  else{vd.className='verdict ok';vd.textContent='✓ 扣广告后利润率 '+m2.toFixed(1)+'%，健康';}
+}
+
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',()=>{
+  if(el.id==='fx')fxTouched=true;
+  calc();
+}));
+
+/* ================= 产品数据保存（localStorage） ================= */
+const KEY='fba_records_v2';
+let records=[];
+function loadStore(){
+  try{records=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){records=[];}
+  if(!Array.isArray(records))records=[];
+}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){}}
+function tip(msg,err){
+  const t=$i('saveTip');t.textContent=msg;t.className='savetip'+(err?' err':'');
+  clearTimeout(tip._t);tip._t=setTimeout(()=>{t.textContent='';},3000);
+}
+function saveRecord(){
+  const name=($i('prodName').value||'').trim();
+  if(!name){tip('先给产品起个名字再保存',true);$i('prodName').focus();return;}
+  const vals={};FIELDS.forEach(f=>vals[f]=+$i(f).value||0);
+  // 同名同站点视为覆盖
+  const idx=records.findIndex(r=>r.name===name&&r.site===cur);
+  const rec={id:idx>=0?records[idx].id:Date.now()+''+Math.floor(Math.random()*1000),
+    name,site:cur,vals,ts:Date.now()};
+  if(idx>=0){records[idx]=rec;tip('已覆盖更新：'+name);}
+  else{records.unshift(rec);tip('已保存：'+name+' · '+SITES[cur].name);}
+  persist();renderRecords();
+}
+function applyRecord(id){
+  const r=records.find(x=>x.id===id);if(!r)return;
+  cur=r.site;fxTouched=true;
+  FIELDS.forEach(f=>{if(r.vals[f]!==undefined)$i(f).value=r.vals[f];});
+  $i('prodName').value=r.name;
+  document.querySelectorAll('.cur').forEach(e=>e.textContent=SITES[cur].cur);
+  document.querySelectorAll('.curName').forEach(e=>e.textContent=SITES[cur].cname);
+  document.querySelectorAll('.site-btn').forEach(b=>b.classList.toggle('active',b.dataset.k===cur));
+  $i('siteNameTip').textContent=SITES[cur].name.replace(/^\S+\s/,'');
+  calc();renderRecords();
+  window.scrollTo({top:0,behavior:'smooth'});
+  tip('已载入：'+r.name);
+}
+function delRecord(id){
+  const r=records.find(x=>x.id===id);if(!r)return;
+  if(!confirm('删除「'+r.name+'」（'+SITES[r.site].name+'）？删除后不可恢复。'))return;
+  records=records.filter(x=>x.id!==id);persist();renderRecords();
+}
+function renameRecord(id){
+  const r=records.find(x=>x.id===id);if(!r)return;
+  const nn=prompt('新的产品名称：',r.name);
+  if(nn&&nn.trim()){r.name=nn.trim();persist();renderRecords();}
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtDT(ts){const d=new Date(ts);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function renderRecords(){
+  const box=$i('recTable');
+  const mode=$i('filterSite').value;
+  let list=records.slice().sort((a,b)=>b.ts-a.ts);
+  if(mode==='cur')list=list.filter(r=>r.site===cur);
+  if(!list.length){
+    box.innerHTML='<div class="empty">还没有保存的产品。填好数据后在上面输入名称，点「保存到'+SITES[cur].name.replace(/^\S+\s/,'')+'」。</div>';
+    return;
+  }
+  let h='<div class="tblwrap"><table><thead><tr>'+
+    '<th>产品名称</th><th>站点</th><th class="num">售价</th><th class="num">采购(¥)</th><th class="num">头程</th><th class="num">FBA费</th><th class="num">佣金</th><th class="num">税费</th><th class="num">仓储</th><th class="num">退货均摊</th><th class="num">其它</th><th class="num">总成本</th><th class="num">利润/件</th><th class="num">利润率</th><th class="num">扣广告利润</th><th class="num">扣广告率</th><th>更新时间</th><th>操作</th></tr></thead><tbody>';
+  list.forEach(r=>{
+    const s=SITES[r.site],c=compute(r.vals,r.site);
+    const f=x=>s.cur+' '+x.toFixed(2);
+    const pc=v=>v<0?'var(--bad)':'var(--deep)';
+    h+='<tr>'+
+      '<td class="nm" title="'+escHtml(r.name)+'">'+escHtml(r.name)+'</td>'+
+      '<td><span class="badge-site">'+s.name.replace(/^\S+\s/,'')+'</span></td>'+
+      '<td class="num">'+f(c.price)+'</td>'+
+      '<td class="num">¥'+r.vals.cogs.toFixed(1)+'</td>'+
+      '<td class="num">'+f(c.shipCur)+'</td>'+
+      '<td class="num">'+f(r.vals.fbaFee)+'</td>'+
+      '<td class="num">'+f(c.commission)+'</td>'+
+      '<td class="num">'+f(c.taxAmt)+'</td>'+
+      '<td class="num">'+f(r.vals.storage)+'</td>'+
+      '<td class="num">'+f(c.refund)+'</td>'+
+      '<td class="num">'+f(c.otherC)+'</td>'+
+      '<td class="num" style="font-weight:700">'+f(c.total)+'</td>'+
+      '<td class="num" style="color:'+pc(c.profit)+';font-weight:800">'+f(c.profit)+'</td>'+
+      '<td class="num">'+c.margin.toFixed(1)+'%</td>'+
+      '<td class="num" style="color:'+pc(c.profitAds)+';font-weight:700">'+f(c.profitAds)+'</td>'+
+      '<td class="num">'+c.marginAds.toFixed(1)+'%</td>'+
+      '<td style="color:var(--sub)">'+fmtDT(r.ts)+'</td>'+
+      '<td><button class="act" onclick="applyRecord(\''+r.id+'\')">载入</button>'+
+      '<button class="act" onclick="showDetail(\''+r.id+'\')">明细</button>'+
+      '<button class="act" onclick="renameRecord(\''+r.id+'\')">改名</button>'+
+      '<button class="act del" onclick="delRecord(\''+r.id+'\')">删除</button></td></tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<div style="font-size:11.5px;color:var(--sub);margin-top:8px">共 '+list.length+' 条'+(mode==='cur'?'（'+SITES[cur].name+'）':'（全部站点）')+'。各列货币随站点显示（£/€/$/C$）；点「明细」看单次退货成本、人民币折算等完整数据。</div>';
+  box.innerHTML=h;
+}
+function showDetail(id){
+  const r=records.find(x=>x.id===id);if(!r)return;
+  const s=SITES[r.site],c=compute(r.vals,r.site);
+  let m=$i('detailMask');
+  if(!m){
+    m=document.createElement('div');m.id='detailMask';m.className='mask';
+    m.innerHTML='<div class="modal" style="width:470px"><h3 id="dtTitle"></h3><div id="dtBody" style="overflow:auto"></div><div class="modal-act"><button class="btn ghost" onclick="document.getElementById(\'detailMask\').style.display=\'none\'">关闭</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',function(e){if(e.target===m)m.style.display='none';});
+  }
+  $i('dtTitle').textContent=r.name+' · '+s.name.replace(/^\S+\s/,'');
+  const row=(a,b)=>'<tr><td>'+a+'</td><td>'+b+'</td></tr>';
+  const f=x=>s.cur+' '+x.toFixed(2);
+  $i('dtBody').innerHTML='<table class="dtl">'+
+    row('售价（含税）',f(c.price))+
+    row('税后净售价 = 售价÷(1+'+r.vals.tax+'%)',f(c.netPrice))+
+    row('税费（'+r.vals.tax+'%）',f(c.taxAmt))+
+    row('采购成本（¥'+r.vals.cogs+'）',f(c.cogsCur))+
+    row('头程（¥'+r.vals.shipRate+'/kg × '+r.vals.weight+'kg ÷汇率）',f(c.shipCur))+
+    row('FBA 配送费',f(r.vals.fbaFee))+
+    row('佣金（售价×'+r.vals.ref+'%）',f(c.commission))+
+    row('仓储+入库配置费',f(r.vals.storage))+
+    row('退货均摊（单次 '+f(c.refundOnce)+' × '+r.vals.ret+'%）',f(c.refund))+
+    row('其它成本（'+r.vals.other+'%）',f(c.otherC))+
+    '<tr class="sum"><td>总成本</td><td>'+f(c.total)+'</td></tr>'+
+    row('汇率（1 '+s.cname+'）','¥'+Number(c.fx).toFixed(4))+
+    row('<b>利润 / 件</b>','<b style="color:'+(c.profit<0?'var(--bad)':'var(--deep)')+'">'+f(c.profit)+'（¥'+c.profitCny.toFixed(2)+'）</b>')+
+    row('<b>利润率（÷净售价）</b>','<b>'+c.margin.toFixed(1)+'%</b>')+
+    row('广告费（净售价×'+r.vals.ads+'%）',f(c.adsAmt))+
+    row('<b>扣广告后利润</b>','<b style="color:'+(c.profitAds<0?'var(--bad)':'var(--deep)')+'">'+f(c.profitAds)+'（¥'+c.profitAdsCny.toFixed(2)+'）</b>')+
+    row('<b>扣广告后利润率</b>','<b>'+c.marginAds.toFixed(1)+'%</b>')+
+    '</table>';
+  m.style.display='flex';
+}
+function exportRecords(){
+  if(!records.length){alert('还没有保存的数据，先填好参数点「保存」再导出');return;}
+  const json=JSON.stringify(records,null,2);
+  const name='FBA产品利润数据_'+new Date().toISOString().slice(0,10)+'.json';
+  let started=false;
+  try{
+    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=name;a.rel='noopener';a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){try{a.remove();URL.revokeObjectURL(url);}catch(e){}},2000);
+    started=true;
+  }catch(e){started=false;}
+  showBackup(json,name,started);
+}
+function showBackup(json,name,started){
+  let m=$i('backupMask');
+  if(!m){
+    m=document.createElement('div');m.id='backupMask';m.className='mask';
+    m.innerHTML='<div class="modal">'+
+      '<h3>数据备份</h3>'+
+      '<p id="bkMsg" class="bkmsg"></p>'+
+      '<textarea id="bkText" readonly spellcheck="false"></textarea>'+
+      '<div class="modal-act">'+
+        '<button class="btn" onclick="copyBackup()">复制全部内容</button>'+
+        '<button class="btn ghost" onclick="downloadBackup()">再试一次下载</button>'+
+        '<button class="btn ghost" onclick="closeBackup()">关闭</button>'+
+      '</div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',function(e){if(e.target===m)closeBackup();});
+  }
+  m.dataset.name=name;
+  $i('bkText').value=json;
+  $i('bkMsg').innerHTML=started
+    ? '已发起下载：<b>'+name+'</b>。如果没有看到文件（预览窗口里常被浏览器拦），点「复制全部内容」粘到记事本，存成 .json 即可。'
+    : '浏览器不允许直接下载。点「复制全部内容」粘到记事本，另存为 <b>'+name+'</b>。';
+  m.style.display='flex';
+}
+function closeBackup(){const m=$i('backupMask');if(m)m.style.display='none';}
+function copyBackup(){
+  const t=$i('bkText');t.removeAttribute('readonly');t.select();t.setSelectionRange(0,999999);
+  let ok=false;
+  try{ok=document.execCommand('copy');}catch(e){ok=false;}
+  t.setAttribute('readonly','');
+  if(ok){alert('已复制，粘到记事本另存为 .json 文件即可');}
+  else{
+    try{
+      navigator.clipboard.writeText(t.value).then(function(){alert('已复制');},function(){alert('复制失败，请手动全选文本框内容（Ctrl+A、Ctrl+C）');});
+    }catch(e){alert('复制失败，请手动全选文本框内容（Ctrl+A、Ctrl+C）');}
+  }
+}
+function downloadBackup(){
+  const m=$i('backupMask');
+  const name=m.dataset.name||'FBA产品利润数据.json';
+  const txt=$i('bkText').value;
+  try{
+    const a=document.createElement('a');
+    a.href='data:application/json;charset=utf-8,'+encodeURIComponent(txt);
+    a.download=name;a.style.display='none';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){try{a.remove();}catch(e){}},2000);
+  }catch(e){alert('仍无法下载，请用「复制全部内容」');}
+}
+/* ================= 极简 XLSX 生成器（纯前端无依赖，zip 用 store 模式） ================= */
+const CRC_T=(function(){const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
+function crc32(u8){let c=0xFFFFFFFF;for(let i=0;i<u8.length;i++)c=CRC_T[(c^u8[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function zipStore(files){
+  const enc=new TextEncoder();const parts=[],central=[];let off=0;
+  files.forEach(f=>{
+    const nm=enc.encode(f.name),d=f.data,crc=crc32(d),n=nm.length;
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,d.length,true);lh.setUint32(22,d.length,true);
+    lh.setUint16(26,n,true);
+    parts.push(new Uint8Array(lh.buffer),nm,d);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);
+    ch.setUint16(8,0x0800,true);ch.setUint32(16,crc,true);
+    ch.setUint32(20,d.length,true);ch.setUint32(24,d.length,true);
+    ch.setUint16(28,n,true);ch.setUint32(42,off,true);
+    central.push(new Uint8Array(ch.buffer),nm);
+    off+=30+n+d.length;
+  });
+  const cdSize=central.reduce((a,b)=>a+b.length,0);
+  const eo=new DataView(new ArrayBuffer(22));
+  eo.setUint32(0,0x06054b50,true);eo.setUint16(8,files.length,true);eo.setUint16(10,files.length,true);
+  eo.setUint32(12,cdSize,true);eo.setUint32(16,off,true);
+  const all=parts.concat(central,[new Uint8Array(eo.buffer)]);
+  const total=all.reduce((a,b)=>a+b.length,0);
+  const out=new Uint8Array(total);let p=0;
+  all.forEach(b=>{out.set(b,p);p+=b.length;});
+  return out;
+}
+function colName(n){let s='';while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26);}return s;}
+function xesc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function cellXml(ref,c){
+  if(!c)return '';
+  const st=' s="'+(c.s!==undefined?c.s:4)+'"';
+  if(c.t==='n'){if(!isFinite(c.v))return '';return '<c r="'+ref+'"'+st+'><v>'+c.v+'</v></c>';}
+  const txt=String(c.v);
+  if(txt==='')return '';
+  return '<c r="'+ref+'"'+st+' t="inlineStr"><is><t xml:space="preserve">'+xesc(txt)+'</t></is></c>';
+}
+const XSTYLES='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+'<numFmts count="3"><numFmt numFmtId="164" formatCode="#,##0.00"/><numFmt numFmtId="165" formatCode="0.0000"/><numFmt numFmtId="166" formatCode="0.0%"/></numFmts>'+
+'<fonts count="4">'+
+'<font><sz val="10"/><name val="Microsoft YaHei"/></font>'+
+'<font><b/><sz val="10"/><color rgb="FF0E7490"/><name val="Microsoft YaHei"/></font>'+
+'<font><sz val="9"/><color rgb="FF6B93A3"/><name val="Microsoft YaHei"/></font>'+
+'<font><b/><sz val="10"/><color rgb="FFC0392B"/><name val="Microsoft YaHei"/></font>'+
+'</fonts>'+
+'<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE0F2FE"/><bgColor indexed="64"/></patternFill></fill></fills>'+
+'<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD9F0F6"/></left><right style="thin"><color rgb="FFD9F0F6"/></right><top style="thin"><color rgb="FFD9F0F6"/></top><bottom style="thin"><color rgb="FFD9F0F6"/></bottom><diagonal/></border></borders>'+
+'<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+'<cellXfs count="8">'+
+'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+
+'<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>'+
+'<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>'+
+'<xf numFmtId="166" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>'+
+'<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>'+
+'<xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>'+
+'<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf>'+
+'<xf numFmtId="164" fontId="3" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyFont="1"/>'+
+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+function makeXlsx(sheets){
+  const enc=new TextEncoder(),sheetFiles=[],wbSheets=[],rels=[],ct=[];
+  sheets.forEach((sp,i)=>{
+    const idx=i+1;
+    const rowsXml=sp.rows.map((row,ri)=>{
+      let cs='';
+      row.forEach((c,ci)=>{if(c)cs+=cellXml(colName(ci+1)+(ri+1),c);});
+      return '<row r="'+(ri+1)+'">'+cs+'</row>';
+    }).join('');
+    const freeze=sp.freeze||0;
+    sheetFiles.push({name:'xl/worksheets/sheet'+idx+'.xml',data:enc.encode(
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+      '<sheetViews><sheetView tabSelected="'+(idx===1?1:0)+'" workbookViewId="0">'+(freeze?'<pane ySplit="'+freeze+'" topLeftCell="A'+(freeze+1)+'" activePane="bottomLeft" state="frozen"/>':'')+'</sheetView></sheetViews>'+
+      '<sheetFormatPr defaultRowHeight="15"/>'+
+      (sp.widths?'<cols>'+sp.widths.map((w,ci)=>'<col min="'+(ci+1)+'" max="'+(ci+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols>':'')+
+      '<sheetData>'+rowsXml+'</sheetData></worksheet>')});
+    wbSheets.push('<sheet name="'+xesc(sp.name)+'" sheetId="'+idx+'" r:id="rId'+idx+'"/>');
+    rels.push('<Relationship Id="rId'+idx+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+idx+'.xml"/>');
+    ct.push('<Override PartName="/xl/worksheets/sheet'+idx+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>');
+  });
+  rels.push('<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>');
+  const files=[
+    {name:'[Content_Types].xml',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+ct.join('')+'</Types>')},
+    {name:'_rels/.rels',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')},
+    {name:'xl/workbook.xml',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+wbSheets.join('')+'</sheets></workbook>')},
+    {name:'xl/_rels/workbook.xml.rels',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+rels.join('')+'</Relationships>')},
+    {name:'xl/styles.xml',data:enc.encode(XSTYLES)}
+  ].concat(sheetFiles);
+  return new Blob([zipStore(files)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+function H(s){return{v:String(s),t:'s',s:1}}
+function T(s){return{v:String(s),t:'s',s:4}}
+function Nv(v,st){return{v:Math.round((Number(v)||0)*100000)/100000,t:'n',s:st===undefined?2:st}}
+function saveBlob(blob,name){
+  try{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=name;a.style.display='none';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){try{a.remove();URL.revokeObjectURL(url);}catch(e){}},3000);
+  }catch(e){alert('下载失败：'+(e&&e.message||e));}
+}
+
+/* ================= 导出 Excel（明细，与页面表格同一口径） ================= */
+const EX_COLS=[
+ ['产品名称',22],['站点',11],['币种',6],['售价(含税)',11],['汇率(1本币=¥)',13],['税率%',7],
+ ['税后净售价',11],['税费',9],['采购成本(¥/件)',13],['采购成本(本币)',13],['头程单价(¥/kg)',12],['重量(kg)',9],
+ ['头程运费(本币)',12],['FBA配送费(本币)',13],['佣金%',7],['佣金(本币)',11],['仓储入库费(本币)',13],
+ ['退货率%',8],['退货佣金计提%',12],['弃置费(本币)',11],['单次退货成本(本币)',14],['均摊退货成本(本币)',14],
+ ['其它费率%',9],['其它成本(本币)',12],['总成本(本币)',12],['广告占比%',9],['广告费(本币)',11],
+ ['利润/件(本币)',12],['利润(¥)',11],['利润率%(÷净售价)',14],['扣广告利润(本币)',13],['扣广告利润率%',12],['更新时间',16]
+];
+function exportExcel(){
+  if(!records.length){alert('还没有保存的数据，先填好参数点「保存」再导出');return;}
+  const list=records.slice().sort((a,b)=>b.ts-a.ts);
+  const rows=[[
+    {v:'FBA 产品利润明细表（口径同「成本与利润计算表」）　导出时间：'+fmtDT(Date.now())+'　共 '+list.length+' 条',t:'s',s:1}
+  ]];
+  rows.push(EX_COLS.map(c=>H(c[0])));
+  list.forEach(r=>{
+    const s=SITES[r.site],c=compute(r.vals,r.site);
+    const ps=c.profit<0?7:2,pa=c.profitAds<0?7:2;
+    rows.push([
+      T(r.name),T(s.name.replace(/^\S+\s/,'')),T(s.cur),
+      Nv(r.vals.price),Nv(c.fx,5),Nv(r.vals.tax),Nv(c.netPrice),Nv(c.taxAmt),
+      Nv(r.vals.cogs),Nv(c.cogsCur),Nv(r.vals.shipRate),Nv(r.vals.weight),
+      Nv(c.shipCur),Nv(r.vals.fbaFee),Nv(r.vals.ref),Nv(c.commission),Nv(r.vals.storage),
+      Nv(r.vals.ret),Nv(r.vals.refundComm),Nv(r.vals.dispose),Nv(c.refundOnce),Nv(c.refund),
+      Nv(r.vals.other),Nv(c.otherC),Nv(c.total),
+      Nv(r.vals.ads),Nv(c.adsAmt),
+      Nv(c.profit,ps),Nv(c.profitCny,ps),Nv(c.margin/100,3),Nv(c.profitAds,pa),Nv(c.marginAds/100,3),
+      T(fmtDT(r.ts))
+    ]);
+  });
+  const name='FBA产品利润明细_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  saveBlob(makeXlsx([{name:'利润汇总',rows,widths:EX_COLS.map(c=>c[1]),freeze:2}]),name);
+  tip('已生成 '+name+'；若浏览器没弹出下载窗口，点右侧「JSON 备份」先拿数据');
+}
+
+/* ================= 导入模板 ================= */
+const TP_COLS=[
+ ['产品名称 *',26],['站点 *',12],['售价(含税) *',12],['采购成本(¥/件) *',15],['头程单价(¥/kg)',13],['重量(kg)',9],
+ ['FBA配送费(本币)',13],['仓储入库费(本币)',13],['佣金%',8],['税率%(VAT/GST)',13],['汇率(1本币=¥)',13],
+ ['退货率%',8],['退货佣金计提%',12],['弃置费(本币)',11],['其它费率%',9],['广告占比%',10]
+];
+function downloadTemplate(){
+  const rows=[[
+    {v:'FBA 利润计算器 · 导入模板（浅蓝表头一行不要删，从第 3 行开始填你的产品）',t:'s',s:1}
+  ]];
+  rows.push(TP_COLS.map(c=>H(c[0])));
+  rows.push([T('B0DK13MV1R 泳镜 白+粉'),T('英国站'),Nv(16.99),Nv(16),Nv(15),Nv(0.22),Nv(2.85),Nv(0.44),Nv(15),Nv(20),Nv(9.10),Nv(3),Nv(20),Nv(0),Nv(3),Nv(20)]);
+  rows.push([T('示例：无线耳机 Pro'),T('美国站'),Nv(25.99),Nv(32),Nv(16),Nv(0.30),Nv(5.60),Nv(0.40),Nv(15),Nv(0),Nv(7.10),Nv(4),Nv(20),Nv(0.30),Nv(3),Nv(20)]);
+  [
+   '填表说明：',
+   '1. 站点可填：英国站 / 德国站 / 美国站 / 加拿大站，或 UK / DE / US / CA（不区分大小写）。',
+   '2. 带 * 的三列必填（产品名称、站点、售价）；其余列留空时，工具按该站点的默认值计算。',
+   '3. 汇率留空 = 导入时自动用当时的实时汇率；填了数字就按你填的算。',
+   '4. FBA配送费、仓储、弃置费按站点币种理解（英国=£ 德国=€ 美国=$ 加拿大=C$），不用另填币种。',
+   '5. 退货佣金计提默认 20（亚马逊退货时按原佣金的 20% 收手续费）；弃置费英国站一般 0.2~0.5。',
+   '6. 「产品名称 + 站点」和工具里已有记录相同的会覆盖，不同则新增。',
+   '7. 填好后保存，回到工具页点「⬆ 导入表格」选择这个文件即可；也支持另存为「CSV UTF-8」导入。',
+   '8. 税率：英国 20 / 德国 19 / 美国 0 / 加拿大 5，按你实际销售税务口径填。'
+  ].forEach(t=>rows.push([{v:t,t:'s',s:6}]));
+  saveBlob(makeXlsx([
+    {name:'导入模板',rows,widths:TP_COLS.map(c=>c[1]),freeze:2},
+    {name:'说明',rows:[[T('这个工作表只是说明，不用填。导入时工具只读「导入模板」这张表。')]],widths:[60]}
+  ]),'FBA利润工具_导入模板.xlsx');
+  tip('已下载导入模板；在 Excel 里填好保存后，点「⬆ 导入表格」选择它');
+}
+
+/* ================= 导入表格（xlsx / csv / json） ================= */
+function norm(s){return String(s===undefined||s===null?'':s).toLowerCase().replace(/（/g,'(').replace(/）/g,')').replace(/[\s＿*＊]/g,'')}
+function parseNum(x){
+  if(x===undefined||x===null)return NaN;
+  if(typeof x==='number')return x;
+  const s=String(x).replace(/[¥￥$£€,，\s]/g,'');
+  if(s==='')return NaN;
+  const n=parseFloat(s);
+  return isNaN(n)?NaN:n;
+}
+function resolveSite(x){
+  const s=norm(x);if(!s)return null;
+  if(/英国|uk|gb|英镑/.test(s))return 'UK';
+  if(/加拿大|canada|cad|^ca$/.test(s))return 'CA';
+  if(/德国|germany|欧元|^de$/.test(s))return 'DE';
+  if(/美国|usa|unitedstates|美元|^us$/.test(s))return 'US';
+  return null;
+}
+const FIELD_ALIAS={
+ name:['产品名称','产品名','名称','产品','sku'],
+ site:['站点','国家','市场','site'],
+ price:['售价','售价(含税)','价格','销售价'],
+ cogs:['采购成本','采购价','采购单价','产品采购成本'],
+ shipRate:['头程单价','运费单价','头程运费单价','海运单价'],
+ weight:['重量','产品重量','单件重量'],
+ fbaFee:['fba配送费','fba费用','fba费','配送费','履约费'],
+ storage:['仓储入库费','仓储+入库配置费','仓储费','入库配置费'],
+ ref:['佣金%','佣金比例','销售佣金%','平台佣金%'],
+ tax:['税率%','税率','vat%','gst%','增值税'],
+ fx:['汇率','汇率(1本币=¥)','本币汇率'],
+ ret:['退货率%','退货率','平均退货率%'],
+ refundComm:['退货佣金计提%','退货佣金计提','退货佣金比例%','退款管理费%'],
+ dispose:['弃置费','销毁费'],
+ other:['其它费率%','其它成本%','其他费率%','其它费用%'],
+ ads:['广告占比%','广告占比','广告%','广告比例%','tacos%']
+};
+const EXCLUDE=['利润','净售价','总成本','均摊','单次','税费','折合','广告费','更新','时间','币种','保存'];
+function matchField(h){
+  const n=norm(h);
+  if(!n)return null;
+  if(EXCLUDE.some(x=>n.includes(norm(x))))return null;
+  if((n.includes('本币'))&&(n.includes('采购')||n.includes('头程')))return null; // 导出表里的换算列，不是输入列
+  for(const f in FIELD_ALIAS){
+    if(FIELD_ALIAS[f].some(a=>norm(a)===n))return f;
+  }
+  let best=null,bestLen=0;
+  for(const f in FIELD_ALIAS){
+    FIELD_ALIAS[f].forEach(a=>{
+      const an=norm(a);
+      if(an.length>bestLen&&n.includes(an)){best=f;bestLen=an.length;}
+    });
+  }
+  return best;
+}
+function parseCSV(text){
+  text=String(text).replace(/^\uFEFF/,'');
+  const rows=[];let row=[],cell='',q=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(q){if(ch==='"'){if(text[i+1]==='"'){cell+='"';i++;}else q=false;}else cell+=ch;}
+    else if(ch==='"')q=true;
+    else if(ch===','){row.push(cell);cell='';}
+    else if(ch==='\n'){row.push(cell);rows.push(row);row=[];cell='';}
+    else if(ch==='\r'){}
+    else cell+=ch;
+  }
+  if(cell!==''||row.length){row.push(cell);rows.push(row);}
+  return rows;
+}
+async function inflateRaw(bytes){
+  if(typeof DecompressionStream==='undefined')throw new Error('当前浏览器不支持解压 xlsx，请把表格另存为「CSV UTF-8」再导入');
+  const st=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(st).arrayBuffer());
+}
+async function entryBytes(e){return (e&&e.method===8)?await inflateRaw(e.data):e.data;}
+async function unzip(u8){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
+  let eocd=-1;
+  for(let i=u8.length-22;i>=0&&i>u8.length-100000;i--){
+    if(dv.getUint32(i,true)===0x06054b50){eocd=i;break;}
+  }
+  if(eocd<0)throw new Error('不是有效的 xlsx 文件（找不到 zip 目录）');
+  const count=dv.getUint16(eocd+10,true),cdOff=dv.getUint32(eocd+16,true);
+  const out={};let p=cdOff;
+  const td=new TextDecoder('utf-8');
+  for(let i=0;i<count;i++){
+    if(dv.getUint32(p,true)!==0x02014b50)break;
+    const method=dv.getUint16(p+10,true),csize=dv.getUint32(p+20,true);
+    const nlen=dv.getUint16(p+28,true),elen=dv.getUint16(p+30,true),clen=dv.getUint16(p+32,true);
+    const lho=dv.getUint32(p+42,true);
+    const name=td.decode(u8.subarray(p+46,p+46+nlen));
+    const lnlen=dv.getUint16(lho+26,true),lelen=dv.getUint16(lho+28,true);
+    const dstart=lho+30+lnlen+lelen;
+    out[name]={method,data:u8.subarray(dstart,dstart+csize)};
+    p+=46+nlen+elen+clen;
+  }
+  return out;
+}
+async function fileToMatrix(file){
+  if(/\.csv$/i.test(file.name)||file.type==='text/csv')return parseCSV(await file.text());
+  const u8=new Uint8Array(await file.arrayBuffer());
+  const z=await unzip(u8);
+  let shared=[];
+  if(z['xl/sharedStrings.xml']){
+    const doc=new DOMParser().parseFromString(new TextDecoder('utf-8').decode(await inflateRaw(z['xl/sharedStrings.xml'].data)),'application/xml');
+    shared=Array.prototype.map.call(doc.getElementsByTagName('si'),si=>{
+      let s='';const ts=si.getElementsByTagName('t');
+      for(let i=0;i<ts.length;i++)s+=ts[i].textContent;
+      return s;
+    });
+  }
+  const names=Object.keys(z).filter(k=>/^xl\/worksheets\/sheet\d+\.xml$/.test(k)).sort();
+  const key=names.indexOf('xl/worksheets/sheet1.xml')>=0?'xl/worksheets/sheet1.xml':names[0];
+  if(!key)throw new Error('xlsx 里找不到工作表');
+  const doc=new DOMParser().parseFromString(new TextDecoder('utf-8').decode(await inflateRaw(z[key].data)),'application/xml');
+  const grid=[];
+  Array.prototype.forEach.call(doc.getElementsByTagName('row'),(rowEl,ri)=>{
+    Array.prototype.forEach.call(rowEl.getElementsByTagName('c'),cEl=>{
+      const ref=cEl.getAttribute('r')||'';const m=/^([A-Z]+)/.exec(ref);
+      if(!m)return;
+      let ci=0;for(const ch of m[1])ci=ci*26+(ch.charCodeAt(0)-64);ci--;
+      const t=cEl.getAttribute('t');let val='';
+      if(t==='s'){const vE=cEl.getElementsByTagName('v')[0];val=shared[vE?+vE.textContent:0]||'';}
+      else if(t==='inlineStr'){let s='';const isE=cEl.getElementsByTagName('is')[0];if(isE){const ts=isE.getElementsByTagName('t');for(let i=0;i<ts.length;i++)s+=ts[i].textContent;}val=s;}
+      else{const vE=cEl.getElementsByTagName('v')[0];val=vE?vE.textContent:'';}
+      if(!grid[ri])grid[ri]=[];
+      grid[ri][ci]=val;
+    });
+  });
+  return grid;
+}
+function importJson(f){
+  return new Promise(res=>{
+    const rd=new FileReader();
+    rd.onload=function(){
+      try{
+        const arr=JSON.parse(rd.result);
+        if(!Array.isArray(arr))throw new Error('JSON 应该是记录数组');
+        let add=0,rep=0;
+        arr.forEach(function(r){
+          if(!r||!r.name||!r.vals)return;
+          const i=records.findIndex(x=>x.id===r.id||(x.name===r.name&&x.site===r.site));
+          if(i>=0){records[i]=r;rep++;}else{records.push(r);add++;}
+        });
+        persist();renderRecords();
+        alert('JSON 导入完成：新增 '+add+' 条，覆盖 '+rep+' 条。');
+      }catch(e){alert('导入失败：'+e.message);}
+      res();
+    };
+    rd.onerror=function(){alert('读取文件失败');res();};
+    rd.readAsText(f,'utf-8');
+  });
+}
+async function importSheet(inp){
+  const f=inp.files&&inp.files[0];
+  inp.value='';
+  if(!f)return;
+  if(/\.json$/i.test(f.name)){await importJson(f);return;}
+  if(/\.xls$/i.test(f.name)){alert('旧版 .xls 格式不支持，请在 Excel 里另存为 .xlsx 或「CSV UTF-8」再导入');return;}
+  try{
+    const grid=await fileToMatrix(f);
+    if(!grid||!grid.length){alert('没有读到任何数据');return;}
+    let hi=-1;
+    for(let i=0;i<Math.min(grid.length,10);i++){
+      const cells=(grid[i]||[]).map(norm);
+      if(cells.some(x=>x.includes('产品')||x.includes('sku')||x==='名称')&&cells.some(x=>x.includes('售价')||x.includes('价格'))){hi=i;break;}
+    }
+    if(hi<0){alert('没找到表头行：表头需要包含「产品名称」和「售价」。请用「下载导入模板」的格式填。');return;}
+    const heads=(grid[hi]||[]).map(norm);
+    const colMap={};
+    heads.forEach((h,j)=>{const fld=matchField(h);if(fld&&colMap[fld]===undefined)colMap[fld]=j;});
+    if(colMap.name===undefined||colMap.price===undefined){alert('表头缺少「产品名称」或「售价」列，无法导入。');return;}
+    let add=0,rep=0,skip=0;
+    for(let i=hi+1;i<grid.length;i++){
+      const row=grid[i]||[];
+      const get=f2=>colMap[f2]!==undefined?row[colMap[f2]]:undefined;
+      const name=String(get('name')||'').trim();
+      if(!name)continue;
+      const siteKey=resolveSite(get('site'))||cur;
+      const s=SITES[siteKey];
+      const vals={price:s.price,weight:s.weight,fbaFee:s.fba,storage:s.store,tax:s.tax,
+        cogs:0,shipRate:15,ref:15,ret:3,refundComm:20,dispose:0,other:3,ads:20,fx:(FRESH[s.code]||s.fx)};
+      const put=(f2,x)=>{const n=parseNum(x);if(!isNaN(n))vals[f2]=n;};
+      put('price',get('price'));put('cogs',get('cogs'));put('shipRate',get('shipRate'));put('weight',get('weight'));
+      put('fbaFee',get('fbaFee'));put('storage',get('storage'));put('ref',get('ref'));put('tax',get('tax'));
+      put('ret',get('ret'));put('refundComm',get('refundComm'));put('dispose',get('dispose'));put('other',get('other'));put('ads',get('ads'));
+      put('fx',get('fx'));
+      if(!(vals.price>0)){skip++;continue;}
+      const idx=records.findIndex(r=>r.name===name&&r.site===siteKey);
+      const rec={id:idx>=0?records[idx].id:Date.now()+''+Math.floor(Math.random()*1000)+add,
+        name,site:siteKey,vals,ts:Date.now()};
+      if(idx>=0){records[idx]=rec;rep++;}else{records.unshift(rec);add++;}
+    }
+    persist();renderRecords();
+    alert('导入完成：新增 '+add+' 条，覆盖 '+rep+' 条'+(skip?'，跳过 '+skip+' 行（缺产品名或售价）':'')+'。');
+  }catch(e){
+    alert('导入失败：'+(e&&e.message?e.message:'文件无法解析')+'。xlsx 打不开时，把表格另存为「CSV UTF-8」再试。');
+  }
+}
+
+buildSites();applySite();fetchRates(false);loadStore();renderRecords();
+</script>
+</body>
+</html>

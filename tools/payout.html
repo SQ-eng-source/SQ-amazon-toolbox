@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>回款计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>月度回款计算器</h1>
+  <p class="desc">从月销售额出发，把亚马逊扣的钱一项项列清楚，算出真正到你银行账户的钱。报表利润≠回款。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入（月度）</h2>
+      <label>月销售额（USD）</label><input type="number" id="sales" value="50000" step="500">
+      <label>平台佣金（%）</label><input type="number" id="ref" value="15" step="0.5">
+      <label>FBA 配送费合计（USD）</label><input type="number" id="fba" value="7000" step="100">
+      <label>仓储费+长期仓储（USD）</label><input type="number" id="storage" value="400" step="50">
+      <label>广告费（USD）</label><input type="number" id="ads" value="5000" step="100">
+      <label>退货/赔付等杂项扣款（USD）</label><input type="number" id="misc" value="600" step="50">
+      <label>产品采购已付成本（USD）</label><input type="number" id="cogs" value="14000" step="100">
+      <label>回款周期（14 天结算一次，填账期天数）</label><input type="number" id="cycle" value="14" step="1">
+    </div>
+    <div class="card">
+      <h2>② 回款结果</h2>
+      <label>本月预计回款（未扣采购）</label>
+      <div class="big" id="net" style="color:var(--accent)">--</div>
+      <div class="row"><span>平台佣金</span><b id="r1">--</b></div>
+      <div class="row"><span>所有扣款合计</span><b id="r2">--</b></div>
+      <div class="row"><span>扣款占销售额</span><b id="r3">--</b></div>
+      <div class="row"><span>经营现金流（扣采购后）</span><b id="r4">--</b></div>
+      <div class="row"><span>在途冻结资金（约）</span><b id="r5">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="tip">在途冻结 = 回款周期 ÷ 30 × 月销售额，扩量时这部分会越滚越大——很多"报表赚钱、账户没钱"就是它造成的。</p>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const s=+$('sales').value||0,ref=s*(+$('ref').value||0)/100,
+        fba=+$('fba').value||0,st=+$('storage').value||0,ads=+$('ads').value||0,
+        misc=+$('misc').value||0,cogs=+$('cogs').value||0,cyc=+$('cycle').value||14;
+  const deduct=ref+fba+st+ads+misc, net=s-deduct;
+  $('r1').textContent='$'+ref.toFixed(0);
+  $('r2').textContent='$'+deduct.toFixed(0);
+  $('r3').textContent=s>0?(deduct/s*100).toFixed(1)+'%':'--';
+  $('r4').textContent='$'+(net-cogs).toFixed(0);
+  $('r5').textContent='$'+(s*cyc/30).toFixed(0);
+  $('net').textContent='$'+net.toFixed(0);
+  const v=$('v');
+  if(net<0){v.className='verdict bad';v.textContent='⚠ 回款为负：要么在烧钱冲量期，要么成本结构有问题';}
+  else if((net-cogs)<0){v.className='verdict mid';v.textContent='回款 $'+net.toFixed(0)+' 但扣完采购成本现金流为负——需要预生产资金垫，注意资金链';}
+  else{v.className='verdict ok';v.textContent='扣款占 '+ (deduct/s*100).toFixed(1)+'%（健康区间 30–45%），月净现金 $'+(net-cogs).toFixed(0);;}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

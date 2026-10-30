@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="CSgXhbigACH2UBa8l8gX4b">
+<head data-page-node-id="XpvjHrDftwSgOqCYNQCpDD">
+<meta charset="UTF-8" data-page-node-id="RFoGlFdvRq9UbLsK8mQxog">
+<title>盈亏平衡 ACoS 计算器</title>
+<style>
+  :root{
+    --bg:#f2fbfd; --card:#ffffff; --ink:#1f2329; --sub:#6b7280;
+    --line:#e5e7eb; --accent:#0891b2; --accent-soft:#e0f2fe;
+    --ok:#0a8f5b; --bad:#c0392b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+  body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}
+  .wrap{width:860px}
+  h1{font-size:22px;margin-bottom:4px}
+  .desc{color:var(--sub);font-size:13px;margin-bottom:24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
+  .card h2{font-size:15px;margin-bottom:14px}
+  label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}
+  input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}
+  input:focus{outline:none;border-color:var(--accent)}
+  .hint{font-size:12px;color:var(--sub);margin-top:3px}
+  .big{font-size:34px;font-weight:700;margin:6px 0}
+  .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .row:last-child{border:none}
+  .row b{font-size:14px}
+  .verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}
+  .verdict.ok{background:#e6f6ef;color:var(--ok)}
+  .verdict.bad{background:#fdecea;color:var(--bad)}
+  .verdict.mid{background:var(--accent-soft);color:var(--accent)}
+</style>
+</head>
+<body data-page-node-id="RS1NLDFcRuHqFS2IFtzKfB">
+<div class="wrap" data-page-node-id="oGJku7LgzFVlSyUCXH3WE3">
+  <h1 data-page-node-id="4pgFqqKgGDrLNyB7IWkK5F">盈亏平衡 ACoS 计算器</h1>
+  <p class="desc" data-page-node-id="zdGAgOMEQaLv7kXEiBBH8d">填左侧成本数据，右侧自动算出你的广告"保本线"。ACoS 低于保本线 = 广告在赚钱；高于 = 卖一单亏一单。</p>
+
+  <div class="grid" data-page-node-id="PIyuZtko5dMtsp9etIKhvG">
+    <div class="card" data-page-node-id="nwQwiQo6gvNEkis1cxqo0l">
+      <h2 data-page-node-id="r77CZfhfGQWgde03AG3xHx">① 单位经济模型（单个订单）</h2>
+      <label data-page-node-id="I2V7JpeiUtwzzEHKRQdXvg">售价（USD）</label>
+      <input type="number" id="price" value="25.99" step="0.01" data-page-node-id="elMTyzS87jR9miRT7eVoDW">
+      <label data-page-node-id="nECcWtha7taawm5OulPhFZ">产品成本（采购+包装，USD）</label>
+      <input type="number" id="cogs" value="4.50" step="0.01" data-page-node-id="LibnXvVYpDvSwe320iBr8G">
+      <label data-page-node-id="Hm6lNwOEkIoBdaerFwbPaj">头程运费分摊（USD/件）</label>
+      <input type="number" id="freight" value="1.20" step="0.01" data-page-node-id="e5uZiI9FoMgFjUzJcopSht">
+      <label data-page-node-id="L8agjD55OHhnQRLN7rOaJz">FBA 配送费（USD）</label>
+      <input type="number" id="fbaFee" value="5.20" step="0.01" data-page-node-id="IF1TqpA8qq5AUqHpSDt6IL">
+      <label data-page-node-id="H1DM9elIgHW0ffufcbfrg3">平台佣金比例（%）</label>
+      <input type="number" id="refFee" value="15" step="0.1" data-page-node-id="iXlT3AYUkLhu09pHSIujQy">
+      <label data-page-node-id="83eIcvDA1fZMMFIPf4XGXS">仓储+其他分摊（USD/件，选填）</label>
+      <input type="number" id="other" value="0.50" step="0.01" data-page-node-id="oKaKffqmGJeapYmwunGtF5">
+    </div>
+
+    <div class="card" data-page-node-id="zbn4hTeruHP5mt74XrW0Bq">
+      <h2 data-page-node-id="5H4kXiv3eTvnLINg2D8dxt">② 保本线结果</h2>
+      <label data-page-node-id="4WPcSQUPZhJIKwFwds1Nqv">盈亏平衡 ACoS</label>
+      <div class="big" id="bACoS" style="color:var(--accent)" data-page-node-id="j6kVbGo9Sz02k2PSWYjQUt">--%</div>
+      <div class="row" data-page-node-id="ld7TT8UcAs3SepkHFtdCgB"><span data-page-node-id="03upliNvkFGQIFJFubGIn8">毛利（未扣广告）</span><b id="profit" data-page-node-id="8GFOAOyE9EQ2f2mEh5EhN0">--</b></div>
+      <div class="row" data-page-node-id="MsUpcvJiNfSGrfElso2QAU"><span data-page-node-id="nYZUjPvR2cjgXn4a1pEowC">保本单次获客成本</span><b id="maxCpa" data-page-node-id="gFGrALMlB7Mh8mpDicGWHq">--</b></div>
+      <div class="row" data-page-node-id="bZ0rhBjSfirRft67VfDty1"><span data-page-node-id="7f80ynnE8dTj2Kz46uBl5c">毛利率</span><b id="margin" data-page-node-id="Qn8lxyn601hdUZFfBr57jE">--</b></div>
+
+      <h2 style="margin-top:18px" data-page-node-id="1NVy6QUgg5Y0mnZlWCRZzr">③ 你的实际广告表现</h2>
+      <label data-page-node-id="Ytj5SRqRdVMtTZ3mCalERQ">实际 ACoS（%）</label>
+      <input type="number" id="realACoS" value="22" step="0.1" data-page-node-id="u9oXFSHhEMMnxtYY8SgDdE">
+      <div class="verdict mid" id="verdict" data-page-node-id="a1lzD9Zr6HzcQDZGB3ARuy">填入实际 ACoS 查看判断</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function calc(){
+  const price=+$('price').value||0, cogs=+$('cogs').value||0,
+        freight=+$('freight').value||0, fba=+$('fbaFee').value||0,
+        ref=price*(+$('refFee').value||0)/100, other=+$('other').value||0;
+  const profit=price-cogs-freight-fba-ref-other;
+  const b=price>0?profit/price*100:0;
+  $('profit').textContent='$'+profit.toFixed(2);
+  $('maxCpa').textContent='$'+profit.toFixed(2)+' / 单';
+  $('margin').textContent=price>0?(profit/price*100).toFixed(1)+'%':'--';
+  $('bACoS').textContent=(b>0?b.toFixed(1):'0.0')+'%';
+
+  const real=+$('realACoS').value||0, v=$('verdict');
+  if(real<=b && b>0){v.className='verdict ok';v.textContent='✓ 有钱赚：实际 '+real.toFixed(1)+'% 低于保本线 '+b.toFixed(1)+'%';}
+  else if(b>0){v.className='verdict bad';v.textContent='✗ 在亏钱：实际 '+real.toFixed(1)+'% 高于保本线 '+b.toFixed(1)+'%，每单广告超支 $'+((real-b)/100*price).toFixed(2);}
+  else{v.className='verdict bad';v.textContent='✗ 毛利为负，广告投多少亏多少，先解决成本结构';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));
+calc();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# 本地启动器（双击打开工具台，导出 Excel 不被浏览器拦截）
+*.bat
+# 系统杂物
+Thumbs.db
+.DS_Store

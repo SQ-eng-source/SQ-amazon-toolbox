@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>FBA 补货计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}.unit{font-size:12px;color:var(--sub);margin-top:3px}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FBA 补货计算器</h1>
+  <p class="desc">核心公式：补货点 = 日均销量 ×（生产 + 头程 + 入仓天数）+ 安全库存天数。现在库存低于补货点就该下单了。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入</h2>
+      <label>日均销量（件/天）</label><input type="number" id="ads" value="30" step="1">
+      <label>FBA 在库库存（件）</label><input type="number" id="inv" value="600" step="1">
+      <label>在途库存（件）</label><input type="number" id="transit" value="400" step="1">
+      <label>采购生产周期（天）</label><input type="number" id="prod" value="15" step="1">
+      <label>头程运输 + 入仓上架（天）</label><input type="number" id="ship" value="35" step="1">
+      <label>安全库存天数（建议 15–30）</label><input type="number" id="safe" value="20" step="1">
+    </div>
+    <div class="card">
+      <h2>② 补货判断</h2>
+      <label>补货点（件）</label>
+      <div class="big" id="rop" style="color:var(--accent)">--</div>
+      <div class="row"><span>可用库存（在库+在途）</span><b id="avail">--</b></div>
+      <div class="row"><span>可售天数</span><b id="days">--</b></div>
+      <div class="row"><span>建议本次下单量（覆盖一个补货周期）</span><b id="qty">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="unit" style="margin-top:10px">建议下单量 = 日均销量 ×（周期天数 + 安全天数）− 可用库存，向上取整到箱头友好数。</p>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const ads=+$('ads').value||0,inv=+$('inv').value||0,tr=+$('transit').value||0,
+        lead=(+$('prod').value||0)+(+$('ship').value||0),safe=+$('safe').value||0;
+  const rop=ads*(lead+safe), avail=inv+tr;
+  $('rop').textContent=Math.round(rop).toLocaleString();
+  $('avail').textContent=avail.toLocaleString();
+  $('days').textContent=ads>0?(avail/ads).toFixed(1)+' 天':'--';
+  const qty=Math.max(0,Math.ceil(ads*(lead+safe)-avail));
+  $('qty').textContent=qty.toLocaleString()+' 件';
+  const v=$('v');
+  if(avail<rop){v.className='verdict bad';v.textContent='⚠ 库存已跌破补货点，赶紧下单，再拖要断货了（还差 '+Math.round(rop-avail)+' 件）；建议同批发两厂或空运一部分';}
+  else if(avail/ads<lead+safe+15){v.className='verdict mid';v.textContent='库存能撑 '+Math.floor(avail/ads)+' 天，处于补货窗口内，本周期内下单即可';}
+  else{v.className='verdict ok';v.textContent='库存健康，能撑 '+Math.floor(avail/ads)+' 天，暂不用动';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

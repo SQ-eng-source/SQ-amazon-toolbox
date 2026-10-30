@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>PPC 预算分配器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:960px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--sub);font-weight:600;font-size:12px}td input{padding:6px 8px}.alloc{font-weight:700;color:var(--accent)}.note{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.7}.hl{background:#e0f2fe}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>PPC 预算分配器</h1>
+  <p class="desc">把月度广告预算按各活动（Campaign）的表现分配，而不是拍脑袋。核心逻辑：钱跟着"赚钱的词"走，潜力款给培育预算。</p>
+
+  <div class="card">
+    <h2>① 总预算与分配策略</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+      <div><label>月度广告总预算（USD）</label><input type="number" id="total" value="3000" step="100"></div>
+      <div><label>表现好Campaign保底系数（倍数加成）</label><input type="number" id="mult" value="1.5" step="0.1"></div>
+      <div><label>新品培育预留（占总预算 %）</label><input type="number" id="newpct" value="15" step="1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 填各 Campaign 表现（月度）</h2>
+    <table id="tb">
+      <tr><th>Campaign 名称</th><th>花费 $</th><th>销售额 $</th><th>ACoS</th><th>角色</th><th style="width:140px">建议日预算</th></tr>
+      <tr><td><input value="主推款-核心词" style="border:none;font-weight:600"></td><td><input type="number" value="600"></td><td><input type="number" value="2400"></td><td class="aos"></td><td><select><option>主推-冲量</option><option>赚钱-收割</option><option>新品-培育</option><option>测试</option></select></td><td class="alloc">--</td></tr>
+      <tr><td><input value="主推款-长尾词" style="border:none;font-weight:600"></td><td><input type="number" value="300"></td><td><input type="number" value="1500"></td><td class="aos"></td><td><select><option>主推-冲量</option><option selected>赚钱-收割</option><option>新品-培育</option><option>测试</option></select></td><td class="alloc">--</td></tr>
+      <tr><td><input value="新品-自动" style="border:none;font-weight:600"></td><td><input type="number" value="200"></td><td><input type="number" value="600"></td><td class="aos"></td><td><select><option>主推-冲量</option><option>赚钱-收割</option><option selected>新品-培育</option><option>测试</option></select></td><td class="alloc">--</td></tr>
+      <tr><td><input value="测试-新词" style="border:none;font-weight:600"></td><td><input type="number" value="150"></td><td><input type="number" value="200"></td><td class="aos"></td><td><select><option>主推-冲量</option><option>赚钱-收割</option><option>新品-培育</option><option selected>测试</option></select></td><td class="alloc">--</td></tr>
+    </table>
+    <div class="note">分配权重 = 花费 ÷ ACoS（同 ACoS 下花得多的说明体量大，可承接更多预算）；"赚钱-收割"额外乘保底系数；测试类给固定小预算不参与加权。</div>
+  </div>
+
+  <div class="card">
+    <h2>③ 分配结果</h2>
+    <div id="out" style="font-size:14px;line-height:2"></div>
+  </div>
+</div>
+<script>
+function calc(){
+  const total=+$('total').value||0, mult=+$('mult').value||1, newpct=(+$('newpct').value||0)/100;
+  const rows=[...document.querySelectorAll('#tb tr')].slice(1);
+  let weights=[], sum=0;
+  rows.forEach(r=>{
+    const spend=+r.children[1].firstElementChild.value||0, sales=+r.children[2].firstElementChild.value||0;
+    const role=r.children[4].firstElementChild.value;
+    const aos=spend>0?spend/sales*100:0;
+    r.children[3].textContent=aos?aos.toFixed(1)+'%':'--';
+    r.children[3].className='aos'+(aos>35?'" style="color:var(--bad)':'"');
+    r.children[3].setAttribute('style',aos>35?'color:var(--bad);font-weight:600':aos<20?'color:var(--ok);font-weight:600':'');
+    let w=(aos>0&&aos<60)?spend/aos:0;
+    if(role==='赚钱-收割')w*=mult;
+    if(role==='测试')w=0;
+    weights.push({r,spend,sales,aos,role,w});sum+=w;
+  });
+  const newBudget=total*newpct, pool=total-newBudget;
+  const out=[];
+  rows.forEach((r,i)=>{
+    const it=weights[i];let daily;
+    if(it.role==='测试'){daily=it.r.children[1].firstElementChild.value?(+it.r.children[1].firstElementChild.value/30):10;}
+    else daily=sum>0?pool*it.w/sum/30:pool/rows.length/30;
+    if(it.role==='新品-培育')daily+=newBudget/rows.length/30;
+    it.r.children[5].textContent='$'+daily.toFixed(2);
+    out.push(it.r.children[0].firstElementChild.value+': $'+daily.toFixed(2)+'/天'+(it.role==='测试'?'（固定测试预算）':''));
+  });
+  document.getElementById('out').innerHTML='<b>'+out.join('<br>')+'</b><br><span style="color:var(--sub);font-size:12px">注意：单日预算建议至少能撑 15–20 次点击（日预算 ÷ CPC ≥ 15），否则数据不够学不出东西。</span>';
+}
+document.querySelectorAll('input,select').forEach(i=>i.addEventListener('input',calc));
+document.querySelectorAll('select').forEach(i=>i.addEventListener('change',calc));
+calc();
+</script>
+</body>
+</html>

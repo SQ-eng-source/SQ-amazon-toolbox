@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>FBA 利润计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FBA 利润计算器</h1>
+  <p class="desc">从售价倒推每个环节扣掉多少钱，回答一个问题：这单落到兜里还剩多少。支持批量模拟不同售价。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入</h2>
+      <label>售价（USD）</label><input type="number" id="price" value="29.99" step="0.01">
+      <label>产品成本（USD）</label><input type="number" id="cogs" value="5.00" step="0.01">
+      <label>头程运费分摊（USD/件）</label><input type="number" id="freight" value="1.50" step="0.01">
+      <label>FBA 配送费（USD）</label><input type="number" id="fbaFee" value="5.60" step="0.01">
+      <label>平台佣金（%）</label><input type="number" id="ref" value="15" step="0.1">
+      <label>退货率（%）——按比例折算损失</label><input type="number" id="ret" value="5" step="0.5">
+      <label>广告费分摊（USD/单，选填）</label><input type="number" id="ads" value="2.00" step="0.01">
+    </div>
+    <div class="card">
+      <h2>② 结果</h2>
+      <label>净利润 / 单</label>
+      <div class="big" id="net" style="color:var(--accent)">--</div>
+      <div class="row"><span>平台佣金</span><b id="r1">--</b></div>
+      <div class="row"><span>退货损失折算</span><b id="r2">--</b></div>
+      <div class="row"><span>净利润率</span><b id="r3">--</b></div>
+      <div class="row"><span>投入产出比（售价÷总成本）</span><b id="r4">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const p=+$('price').value||0,c=+$('cogs').value||0,f=+$('freight').value||0,
+        fee=+$('fbaFee').value||0,ref=p*(+$('ref').value||0)/100,
+        ret=(+$('ret').value||0)/100*(c+f),ads=+$('ads').value||0;
+  const net=p-ref-fee-c-f-ret-ads;
+  $('r1').textContent='$'+ref.toFixed(2);
+  $('r2').textContent='$'+ret.toFixed(2);
+  $('r3').textContent=p>0?(net/p*100).toFixed(1)+'%':'--';
+  $('r4').textContent=p>0?(p/(ref+fee+c+f+ret+ads)||0).toFixed(2)+'x':'--';
+  $('net').textContent='$'+net.toFixed(2);
+  const v=$('v');
+  if(net<0){v.className='verdict bad';v.textContent='净亏 $'+Math.abs(net).toFixed(2)+'，这个定价不能上';}
+  else if(net/p*100<10){v.className='verdict mid';v.textContent='净利率 '+ (net/p*100).toFixed(1)+'%，低于 10%，广告一超支就亏';}
+  else{v.className='verdict ok';v.textContent='净利率 '+(net/p*100).toFixed(1)+'%，健康';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

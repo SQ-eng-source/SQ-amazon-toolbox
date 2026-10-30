@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>广告出价计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>广告出价计算器</h1>
+  <p class="desc">从你的保本利润倒推：这个关键词每次点击最多出多少钱。出价超过这个数，转化再好也是白干。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入</h2>
+      <label>售价（USD）</label><input type="number" id="price" value="29.99" step="0.01">
+      <label>单件总成本（产品+头程+FBA+佣金，USD）</label><input type="number" id="cost" value="14.00" step="0.01">
+      <label>目标广告 ACoS（保本=毛利率；冲排名可放宽）</label><input type="number" id="tACoS" value="30" step="1">
+      <label>该词当前转化率 CVR（%）</label><input type="number" id="cvr" value="12" step="0.5">
+      <label>（可选）当前实际 CPC（USD）</label><input type="number" id="cpc" value="0.85" step="0.01">
+    </div>
+    <div class="card">
+      <h2>② 出价建议</h2>
+      <label>最高可承受 CPC</label>
+      <div class="big" id="maxcpc" style="color:var(--accent)">--</div>
+      <div class="row"><span>目标获客成本（每单广告费上限）</span><b id="cpa">--</b></div>
+      <div class="row"><span>单件毛利</span><b id="gp">--</b></div>
+      <div class="row"><span>按当前 CPC 的盈亏判断</span><b id="cur">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="tip">公式：最高 CPC = 售价 × 目标ACoS × CVR。例：$29.99 × 30% × 12% ≈ $1.08。CVR 越低，能出的价越低——差词不是降价能救的。</p>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const p=+$('price').value||0,c=+$('cost').value||0,
+        t=(+$('tACoS').value||0)/100,cvr=(+$('cvr').value||0)/100,cpc=+$('cpc').value||0;
+  const gp=p-c, cpa=p*t, max=cpa*cvr;
+  $('gp').textContent='$'+gp.toFixed(2);
+  $('cpa').textContent='$'+cpa.toFixed(2);
+  $('maxcpc').textContent='$'+max.toFixed(2);
+  const cur=$('cur');
+  if(cpc>0){if(cpc*cvr<=cpa*0.999){cur.innerHTML='<span style="color:var(--ok)">$'+cpc.toFixed(2)+' 可以跑</span>';}else{cur.innerHTML='<span style="color:var(--bad)">$'+cpc.toFixed(2)+' 超了，实际CPA $'+(cpc*cvr).toFixed(2)+'</span>';}}
+  else cur.textContent='未填';
+  const v=$('v');
+  if(max<=0){v.className='verdict bad';v.textContent='毛利率为负，先解决成本再谈广告';}
+  else if(cpc>0&&cpc>max){v.className='verdict bad';v.textContent='当前 CPC 高出上限 $'+(cpc-max).toFixed(2)+'：降 bid 或加否定，别硬扛';}
+  else if(cpc>0&&cpc<max*0.7){v.className='verdict ok';v.textContent='出价保守，还有 '+((max/cpc-1)*100).toFixed(0)+'% 提价抢排名的空间';}
+  else{v.className='verdict mid';v.textContent='建议开价 $'+(max*0.85).toFixed(2)+'–$'+max.toFixed(2)+'，留点缓冲再按数据调';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>测评/赠品成本计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>种子评论成本计算器（合规折扣方式）</h1>
+  <p class="desc">用大额优惠券/站外折扣做种子评论时，算清每条评论的真实成本，并和直接投广告换评论的成本做对比。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 折扣方式</h2>
+      <label>计划获取评论数（单）</label><input type="number" id="n" value="30" step="1">
+      <label>折扣后成交价（USD）</label><input type="number" id="deal" value="9.99" step="0.01">
+      <label>单件总成本（产品+FBA+佣金，USD）</label><input type="number" id="cost" value="12.50" step="0.01">
+      <label>预计留评率（%，种子单一般 30–60）</label><input type="number" id="rr" value="40" step="5">
+      <label>每单额外费用/服务费（USD，选填）</label><input type="number" id="svc" value="0" step="0.5">
+    </div>
+    <div class="card">
+      <h2>② 成本结果</h2>
+      <label>每条评论的真实成本</label>
+      <div class="big" id="cpr" style="color:var(--accent)">--</div>
+      <div class="row"><span>总单量 / 预计评论数</span><b id="cnt">--</b></div>
+      <div class="row"><span>每单亏损（成交价−总成本）</span><b id="perLoss">--</b></div>
+      <div class="row"><span>项目总亏损</span><b id="total">--</b></div>
+      <div class="row"><span>对比：广告获评论成本参考（$15–40/条）</span><b id="cmp">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="tip">重要提醒：只能用站外折扣/Vine 等合规方式，任何"付费换好评"都违反亚马逊政策，会被封号。Vine 每条成本≈$200 注册费 ÷ 30 条 ≈ $7/条，也可以对比。</p>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const n=+$('n').value||0,deal=+$('deal').value||0,cost=+$('cost').value||0,
+        rr=(+$('rr').value||0)/100,svc=+$('svc').value||0;
+  const perLoss=cost-deal+svc, totalLoss=perLoss*n, reviews=n*rr;
+  $('cnt').textContent=n+' 单 / 约 '+Math.round(reviews)+' 条';
+  $('perLoss').textContent='$'+perLoss.toFixed(2);
+  $('total').textContent='$'+totalLoss.toFixed(2);
+  const cpr=reviews>0?totalLoss/reviews:0;
+  $('cpr').textContent='$'+cpr.toFixed(1)+' / 条';
+  const v=$('v');
+  if(cpr<7){v.className='verdict ok';v.textContent='比 Vine（≈$7/条）还便宜，可行——前提是折扣渠道合规';}
+  else if(cpr<15){v.className='verdict mid';v.textContent='$'+cpr.toFixed(1)+'/条，介于 Vine 和广告之间，可做；注意留评率若低于 '+Math.max(20,Math.round(rr*0.6))+'% 就不划算了';}
+  else{v.className='verdict mid';v.textContent='$'+cpr.toFixed(1)+'/条偏贵，直接投 Vine 或提单价少亏更省；留评率是关键变量';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

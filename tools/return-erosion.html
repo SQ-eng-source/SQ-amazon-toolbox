@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>退货率利润侵蚀计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>退货率利润侵蚀计算器</h1>
+  <p class="desc">退货不只是"退回一单"——每单退货要搭进去逆向运费、翻新损耗，甚至直接报废。算清楚退货率每升 1% 吞掉多少钱。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入</h2>
+      <label>月销量（件）</label><input type="number" id="vol" value="600" step="10">
+      <label>当前退货率（%）</label><input type="number" id="ret" value="8" step="0.5">
+      <label>售价（USD）</label><input type="number" id="price" value="29.99" step="0.01">
+      <label>单件总成本（USD）</label><input type="number" id="cost" value="13.00" step="0.01">
+      <label>退货后可二次销售比例（%）</label><input type="number" id="resale" value="70" step="5">
+      <label>不可售件的残值回收（USD/件）</label><input type="number" id="salv" value="1.00" step="0.1">
+      <label>模拟：如果退货率降到（%）</label><input type="number" id="target" value="5" step="0.5">
+    </div>
+    <div class="card">
+      <h2>② 侵蚀分析</h2>
+      <label>当前退货造成的月损失</label>
+      <div class="big" id="loss" style="color:var(--bad)">--</div>
+      <div class="row"><span>每月退货件数</span><b id="cnt">--</b></div>
+      <div class="row"><span>单件退货净损失</span><b id="per">--</b></div>
+      <div class="row"><span>退货侵蚀掉的净利率</span><b id="erode">--</b></div>
+      <div class="row"><span>降到 <span id="tl"></span>% 后每月能省</span><b id="save" style="color:var(--ok)">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="tip">单件退货净损失 = 未退货部分利润 −（可售件的翻新损耗 + 不可售件的成本 − 残值）。质量问题的钱，比广告费还贵。</p>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const vol=+$('vol').value||0,r=(+$('ret').value||0)/100,p=+$('price').value||0,
+        c=+$('cost').value||0,rs=(+$('resale').value||0)/100,sv=+$('salv').value||0,t=(+$('target').value||0)/100;
+  $('tl').textContent=t*100;
+  const perLoss=1-rs*(1)-(rs*0)+( (1-rs)*c - sv ) + rs*c*0.10; // 翻新损耗按成本10%估
+  // 更直白：可售件损失=翻新损耗(成本10%)+二次售价折扣按20%估；不可售件损失=成本-残值
+  const refurb=c*0.10, resaleDiscount=p*0.20*rs;
+  const unitLoss=refurb+resaleDiscount+(1-rs)*(c-sv);
+  const cnt=vol*r, monthly=cnt*unitLoss;
+  const profit=(p-c)*vol;
+  $('cnt').textContent=Math.round(cnt).toLocaleString()+' 件';
+  $('per').textContent='$'+unitLoss.toFixed(2);
+  $('loss').textContent='$'+monthly.toFixed(0);
+  $('erode').textContent=profit>0?(monthly/profit*100).toFixed(1)+'%':'--';
+  const save=(r-t)*vol*unitLoss;
+  $('save').textContent='$'+save.toFixed(0)+'/月';
+  const v=$('v');
+  if(r>15){v.className='verdict bad';v.textContent='⚠ 退货率 '+ (r*100).toFixed(1)+'% 已超红线（类目一般 <10%），先查退货原因 Top 3，这比优化广告值钱';}
+  else if(save>monthly*0.3){v.className='verdict mid';v.textContent='降到 '+ (t*100).toFixed(1)+'% 一年多赚 $'+(save*12).toFixed(0)+'——值得专门立项修（包装/说明书/详情页预期管理）';}
+  else{v.className='verdict ok';v.textContent='退货率在正常范围，每月损失 $'+monthly.toFixed(0)+'，保持监控即可';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>

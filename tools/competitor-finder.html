@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="Ldrp43IughW0wunl9fHKIr">
+<head data-page-node-id="7VIVK3w2ZELiv8kytD8M1p">
+<meta charset="UTF-8" data-page-node-id="xQWJfYTEWxE7x93Z60Vl4D">
+<title>AI 竞品挖掘器</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--soft:#e0f2fe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:28px;display:flex;justify-content:center}
+.wrap{width:1000px}
+h1{font-size:21px;margin-bottom:4px}
+.desc{color:var(--sub);font-size:13px;margin-bottom:20px;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.card h2{font-size:14px;margin-bottom:12px;color:var(--deep)}
+label{display:block;font-size:12.5px;color:var(--sub);margin:9px 0 4px}
+input,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;font-size:13.5px}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{height:64px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+button{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--sub);font-size:12px;font-weight:600}
+.score{font-weight:800;font-size:15px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11.5px;font-weight:600}
+.b1{background:#e0f2fe;color:var(--deep)}   /* 直接竞品 */
+.b2{background:#fff7e6;color:#b7791f}       /* 间接竞品 */
+.b3{background:#fdecea;color:var(--bad)}    /* 威胁 */
+.b0{background:#f1f5f9;color:var(--sub)}
+.verdict{margin-top:10px;padding:11px;border-radius:8px;font-size:13px;font-weight:600;line-height:1.6;background:var(--soft);color:var(--deep)}
+.kw{display:inline-block;background:var(--soft);color:var(--deep);border-radius:4px;padding:2px 7px;margin:2px;font-size:12px}
+.kw.hit{background:#d9f7e8;color:var(--ok);font-weight:600}
+.overlap{font-size:26px;font-weight:800;color:var(--accent)}
+.muted{font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.7}
+.del{background:none;color:var(--bad);font-size:15px;padding:2px 8px}
+</style>
+</head>
+<body data-page-node-id="Jp8jKxGCRBk5V4pXXc0DM7">
+<div class="wrap" data-page-node-id="oYL2eUBZJ7qIE6li6dK29W">
+  <h1 data-page-node-id="Mu0Ucy3AcvjBFjYkjFjBdf">🔍 AI 竞品挖掘器</h1>
+  <p class="desc" data-page-node-id="3qSASekJlHaAwR7GOCokeL">类卖家精灵「AI 找竞品」的本地版：录入你的产品画像和候选竞品，按 <b data-page-node-id="ioZvkcTx1WLsEOnGjyHx4C">价格接近度 + 关键词重合 + 市场位次</b> 加权打分，自动分成 <b data-page-node-id="c92FgpqCz3MN3S1J86e5l0">直接竞品 / 间接竞品 / 威胁款 / 不相关</b> 四档，并算出listing 关键词重合度。数据手工录入（从卖家精灵/H10 插件抄），算法在本地跑，不外发。</p>
+
+  <div class="card" data-page-node-id="S1IbcIyTPqXJF7FB03AVo3">
+    <h2 data-page-node-id="9zt1GZYxdZMsFRYnBeIgfJ">① 你的产品画像</h2>
+    <div class="row2" data-page-node-id="oHU6xHrZjDd4lRDwvZVB4Q">
+      <div data-page-node-id="JxkWlDat8s6iqX29ODOFgH"><label data-page-node-id="NBpqHCGPtef6yBYQRXioPU">售价（USD）</label><input type="number" id="myPrice" value="25.99" step="0.01" data-page-node-id="fgLBw21zaD9ssuFp84wwfj"></div>
+      <div data-page-node-id="h3wRHdmbRBtf1EqH0DZG6z"><label data-page-node-id="TdD0NHFDcBFVaRQVT0XM12">评分</label><input type="number" id="myRating" value="4.5" step="0.1" data-page-node-id="zlFmSTxRCJtAwnTDYPIB45"></div>
+      <div data-page-node-id="x4TfGD4IsD7RC7kvsBAppo"><label data-page-node-id="HcqNLCGPZ0v3aDEuip9u7L">评论数</label><input type="number" id="myRev" value="320" step="10" data-page-node-id="9RsCZ72mxv1cCix2j2Xr3Z"></div>
+      <div data-page-node-id="7DlC07q3Src8mckXnOs4gz"><label data-page-node-id="A9uCKKCD9xMdl02LoaORpn">BSR 排名</label><input type="number" id="myBsr" value="3000" step="100" data-page-node-id="8C3aLiF4RodiH641nPQ3rl"></div>
+    </div>
+    <label data-page-node-id="BupkwRJLW7QEiE502w8s8m">核心关键词（逗号分隔，如 wireless earbuds, bluetooth headphones, sport earphones）</label>
+    <textarea id="myKw">wireless earbuds, bluetooth headphones, sport earphones, noise cancelling, ipx7 waterproof</textarea>
+  </div>
+
+  <div class="card" data-page-node-id="E5oieqQmt0nlKzb6D1xAVC">
+    <h2 data-page-node-id="TyAdpasPPQRKUU7Ism9pGH">② 候选竞品（从插件数据里抄进来）</h2>
+    <div class="row2" data-page-node-id="3ZOHM8aQUCKMRnaAl6Ksn2">
+      <div data-page-node-id="9iPMvw9stSr1qg74Qu8g23"><label data-page-node-id="yesXXHvVNtyWerpgZXSBUE">ASIN / 名称</label><input id="cName" placeholder="如 B0XXXXXXX" data-page-node-id="XxvLXBea41wKJzHUnZsLiY"></div>
+      <div data-page-node-id="mBwP1eL5mY7KP9BAW9HJyt"><label data-page-node-id="pIdk3llKfCQwSmKJGvJM8D">售价（USD）</label><input type="number" id="cPrice" value="24.99" step="0.01" data-page-node-id="Jq5NGVh3qdb8CRXmMiBQt3"></div>
+      <div data-page-node-id="ntU2gzLDNb5Lkrj9LBBvBW"><label data-page-node-id="tbec6mz7GX63vAUyouie28">评分</label><input type="number" id="cRating" value="4.4" step="0.1" data-page-node-id="qedZ5zl9M67IuE5JRjHtaG"></div>
+      <div data-page-node-id="uGgaJOnoCG0PCvZ1w8hqCJ"><label data-page-node-id="CxWp5BkVS7GjdB6yjcF6WF">评论数</label><input type="number" id="cRev" value="1500" step="10" data-page-node-id="Ip0E1WmBnWZ6o0xrf6KqD1"></div>
+    </div>
+    <div class="row2" data-page-node-id="oAyGwiuuRyBSx7g8mO7oSV">
+      <div data-page-node-id="Uj23MitjEckMiB1ZcjzD4G"><label data-page-node-id="hiHaL7YqUkMXV4aD5sbRKA">BSR</label><input type="number" id="cBsr" value="2000" step="100" data-page-node-id="GROIVP6wt1WeprCbEbk7NQ"></div>
+      <div style="grid-column:span 3" data-page-node-id="4lSSQzSfc49JfBmBYTCQE9"><label data-page-node-id="qdE3jCDkdr4ZhLnheKlvgb">竞品 Listing 关键词（逗号分隔）</label><input id="cKw" placeholder="从标题+五点里抄" data-page-node-id="6vO453JCUlCYRXMJizrsTf"></div>
+    </div>
+    <div style="margin-top:12px" data-page-node-id="VTS0kPaQH7ZZ0hrZTCueBt"><button onclick="addC()" data-page-node-id="lySNwG2tKF0NHZDmEAW4o9">＋ 添加候选竞品</button></div>
+    <table id="tb" data-page-node-id="fE9g9ulxskVafhm6rvnNlV"></table>
+    <div id="verdict" class="verdict" style="display:none" data-page-node-id="j3V5pHT0ur4BnBfoESvAQP"></div>
+    <p class="muted" data-page-node-id="x3H4QBUwVG1yPOl8MsK4DO">打分逻辑：价格相似（±20% 内满分）40% ＋ 关键词重合度 40% ＋ 体量位次差 20%。总分 ≥75 直接竞品；50–74 间接竞品；≥60 且评论数是你 5 倍以上标记为威胁款；&lt;50 不相关。</p>
+  </div>
+
+  <div class="card" data-page-node-id="kRmGfL7rtD1ZnHFzQfKuDA">
+    <h2 data-page-node-id="euGkoGaR5B5mkfy3J95YnH">③ 关键词重合度对比</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" data-page-node-id="eB2s53xYdotE5MhkS2aY73">
+      <div data-page-node-id="O8q3yY7rZEi3pmjgw1D7Hq"><label data-page-node-id="SMfeDFJ3d3pnyYG9A1ib8J">你的关键词列表（逗号分隔）</label><textarea id="kwA">wireless earbuds, bluetooth headphones, sport earphones, noise cancelling, ipx7, running earbuds</textarea></div>
+      <div data-page-node-id="6WjZb7VJWWHLyin3YUYq9t"><label data-page-node-id="Bvn7BEbhGzfYogKT3WdipP">某个竞品 / 类目的关键词列表</label><textarea id="kwB">bluetooth earbuds, wireless headphones, sport earphones, enc earbuds, ipx7 waterproof, gym headphones, running earbuds</textarea></div>
+    </div>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:24px" data-page-node-id="9tvsrtqXSBXimyxU3vgngL">
+      <div data-page-node-id="ganrXMYoQxBjR9uHT5sK2r"><label data-page-node-id="YE6P4Rl3uucEHBr1BtXt3u">杰卡德重合度</label><div class="overlap" id="jac" data-page-node-id="vCqEX6ZbILhviIkF3AQJJK">--%</div></div>
+      <div style="flex:1" data-page-node-id="UhwTqk6kCGOF8IJ9Xvu7Ie"><label data-page-node-id="8xB9V7d2q4vOWWOyET5lCc">共同词</label><div id="common" data-page-node-id="KPNYjV5MEVXGfdLYQoWcRs"></div><label style="margin-top:8px" data-page-node-id="rI0jC2ChSE37hJf0OKRM9j">它有 · 你没有（选词机会）</label><div id="onlyB" data-page-node-id="d7udgjQ9WjLioHYanr6vA8"></div></div>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+const list=[];
+function addC(){
+  list.push({name:$('cName').value||'未命名'+(list.length+1),
+    price:+$('cPrice').value||0,rating:+$('cRating').value||0,
+    rev:+$('cRev').value||0,bsr:+$('cBsr').value||0,
+    kw:$('cKw').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean)});
+  $('cName').value='';$('cKw').value='';
+  render();
+}
+function score(c){
+  const myP=+$('myPrice').value||1,myR=+$('myRev').value||1,myB=+$('myBsr').value||1;
+  const myKw=$('myKw').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const priceSim=Math.max(0,1-Math.abs(c.price-myP)/Math.max(myP,c.price)/0.2)*0.4; // ±20%内线性
+  const inter=myKw.filter(k=>c.kw.some(x=>x.includes(k)||k.includes(x))).length;
+  const kwSim=myKw.length?inter/myKw.length*0.4:0;
+  const posSim=Math.max(0,1-Math.abs(Math.log(c.bsr||1)-Math.log(myB))/Math.log(10)*0.5)*0.2;
+  return {s:Math.round((priceSim+kwSim+posSim)*100),inter};
+}
+function render(){
+  const myKw=$('myKw').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const myRev=+$('myRev').value||1;
+  let html='<tr><th>竞品</th><th>价格</th><th>评分/评论</th><th>BSR</th><th>词命中</th><th>总分</th><th>判定</th><th></th></tr>';
+  list.forEach((c,i)=>{
+    const {s,inter}=score(c);
+    let tag,cls;
+    if(s>=75){tag='直接竞品';cls='b1'}
+    else if(s>=50){tag='间接竞品';cls='b2'}
+    else{tag='不相关';cls='b0'}
+    if(s>=60&&c.rev>=myRev*5){tag='⚠ 威胁款';cls='b3'}
+    html+='<tr><td><b>'+c.name+'</b></td><td>$'+c.price.toFixed(2)+'</td><td>'+c.rating+'★ / '+c.rev.toLocaleString()+'</td><td>'+c.bsr.toLocaleString()+'</td><td>'+inter+'/'+myKw.length+'</td><td class="score" style="color:'+(s>=75?'var(--deep)':s>=50?'#b7791f':'var(--sub)')+'">'+s+'</td><td><span class="badge '+cls+'">'+tag+'</span></td><td><button class="del" onclick="list.splice('+i+',1);render()">✕</button></td></tr>';
+  });
+  $('tb').innerHTML=html;
+  const v=$('verdict');
+  if(list.length){
+    v.style.display='block';
+    const direct=list.filter(c=>score(c).s>=75).length;
+    const threat=list.filter(c=>{const r=score(c);return r.s>=60&&c.rev>=myRev*5}).length;
+    v.innerHTML=direct+' 个直接竞品、'+threat+' 个威胁款。'+(threat?'威胁款评论体量远超你，别正面刚词，绕开打长尾；':'。')+'直接竞品里挑价格和评分都贴的 2–3 个做深度拆解（图片/五点/差评）。';
+  }else v.style.display='none';
+  jac();
+}
+function jac(){
+  const A=new Set($('kwA').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean));
+  const B=new Set($('kwB').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean));
+  const com=[...A].filter(x=>[...B].some(y=>y.includes(x)||x.includes(y)));
+  const onlyB=[...B].filter(x=>!com.some(c=>x.includes(c)||c.includes(x)));
+  const uni=new Set([...A,...B]).size;
+  $('jac').textContent=uni?Math.round(com.length/uni*100)+'%':'--%';
+  $('common').innerHTML=com.map(k=>'<span class="kw hit">'+k+'</span>').join('')||'<span style="color:var(--sub);font-size:12px">无</span>';
+  $('onlyB').innerHTML=onlyB.map(k=>'<span class="kw">'+k+'</span>').join('')||'<span style="color:var(--sub);font-size:12px">无</span>';
+}
+document.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',render));
+addC();render();
+</script>
+</body>
+</html>
