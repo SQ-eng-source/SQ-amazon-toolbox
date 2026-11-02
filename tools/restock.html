@@ -2,52 +2,471 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>FBA 补货计算器</title>
-<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}.unit{font-size:12px;color:var(--sub);margin-top:3px}</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FBA 补货计算器 · SKU 看板</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--ok:#0a8f5b;--bad:#c0392b;--warn:#b7791f;--soft:#e0f2fe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:28px 20px;display:flex;justify-content:center}
+.wrap{width:1060px;max-width:100%}
+h1{font-size:22px;color:var(--deep);margin-bottom:6px}
+h1 span{font-size:12px;color:var(--sub);font-weight:400;margin-left:6px}
+.desc{color:var(--sub);font-size:13px;line-height:1.7;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
+.card h2{font-size:15px;color:var(--deep);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.grp{font-size:11px;color:var(--sub);font-weight:400}
+label{display:block;font-size:12.5px;color:var(--sub);margin:10px 0 4px}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;color:var(--ink);background:#fff}
+input:focus,select:focus{outline:none;border-color:var(--turq)}
+.big{font-size:32px;font-weight:700;margin:4px 0;color:var(--accent)}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.row:last-child{border:none}
+.row b{font-size:13.5px;font-variant-numeric:tabular-nums}
+.verdict{margin-top:12px;padding:11px;border-radius:8px;font-size:13.5px;font-weight:600;text-align:center;line-height:1.6}
+.verdict.ok{background:#e6f6ef;color:var(--ok)}
+.verdict.bad{background:#fdecea;color:var(--bad)}
+.verdict.mid{background:var(--soft);color:var(--deep)}
+.unit{font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.6}
+.btn{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--deep);border:1px solid var(--line);font-weight:600}
+.btn:hover{filter:brightness(1.05)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;vertical-align:middle;background:#c3d8e2}
+.dot.on{background:var(--ok)}.dot.busy{background:var(--accent);animation:dp 1s infinite}.dot.err{background:var(--bad)}
+@keyframes dp{0%,100%{opacity:.3}50%{opacity:1}}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:940px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#f6fcfe;color:var(--sub);font-weight:600;font-size:11.5px}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:#f9fdfe}
+.tag{display:inline-block;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600}
+.tag.bad{background:#fdecea;color:var(--bad)}
+.tag.warn{background:#fdf6e3;color:var(--warn)}
+.tag.mid{background:var(--soft);color:var(--deep)}
+.tag.ok{background:#e6f6ef;color:var(--ok)}
+.act{border:none;background:none;color:var(--accent);cursor:pointer;font-size:12px;padding:2px 5px;text-decoration:underline}
+.act.del{color:var(--bad)}
+.empty{padding:26px 0;text-align:center;color:var(--sub);font-size:13px}
+.sum{font-size:12.5px;color:var(--sub);margin:10px 0 0;line-height:1.7}
+.sum b{color:var(--ink)}
+.mask{position:fixed;inset:0;background:rgba(18,51,63,.38);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
+.modal{width:560px;max-width:100%;max-height:86vh;overflow:auto;background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 18px 50px rgba(6,50,66,.28)}
+.modal h3{font-size:15px;color:var(--deep);margin-bottom:8px}
+.bkmsg{font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:10px}
+.syncrow{display:flex;gap:8px;align-items:center;margin-bottom:9px}
+.syncrow label{width:92px;flex:none;margin:0}
+.syncmsg{font-size:12px;line-height:1.7;background:#f6fcfe;border-left:2px solid #a5dfeb;border-radius:0 4px 4px 0;padding:8px 10px;margin:10px 0;color:var(--ink);word-break:break-all}
+.syncmsg.err{background:#fdf0ee;border-left-color:#e8a99b;color:#8c2f1d}
+.modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.savetip{font-size:12px;min-height:16px;color:var(--ok);margin-top:6px}
+.savetip.err{color:var(--bad)}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <h1>FBA 补货计算器</h1>
-  <p class="desc">核心公式：补货点 = 日均销量 ×（生产 + 头程 + 入仓天数）+ 安全库存天数。现在库存低于补货点就该下单了。</p>
+  <h1>FBA 补货计算器<span>单款试算 + SKU 看板</span></h1>
+  <p class="desc">补货点 = 日均销量 ×（生产 + 头程 + 入仓天数）+ 安全库存天数。可售天数低于（生产+头程）就要断货了。<br>下面把多个 SKU 存起来，每周只需更新「日均销量 / 在库 / 在途」三格，它会自动按紧急度排序。</p>
+
   <div class="grid">
     <div class="card">
-      <h2>① 输入</h2>
-      <label>日均销量（件/天）</label><input type="number" id="ads" value="30" step="1">
-      <label>FBA 在库库存（件）</label><input type="number" id="inv" value="600" step="1">
-      <label>在途库存（件）</label><input type="number" id="transit" value="400" step="1">
-      <label>采购生产周期（天）</label><input type="number" id="prod" value="15" step="1">
-      <label>头程运输 + 入仓上架（天）</label><input type="number" id="ship" value="35" step="1">
+      <h2>① 单款试算</h2>
+      <label>SKU / 产品名</label><input id="name" placeholder="如 B0DK13MV1R 泳镜 白+粉">
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label>站点</label><select id="site"><option>UK 英国</option><option>DE 德国</option><option>US 美国</option><option>CA 加拿大</option></select></div>
+        <div style="flex:1"><label>日均销量（件/天）</label><input type="number" id="ads" value="30" step="1"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label>FBA 在库（件）</label><input type="number" id="inv" value="600" step="1"></div>
+        <div style="flex:1"><label>在途（件）</label><input type="number" id="transit" value="400" step="1"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label>生产周期（天）</label><input type="number" id="prod" value="15" step="1"></div>
+        <div style="flex:1"><label>头程+上架（天）</label><input type="number" id="ship" value="35" step="1"></div>
+      </div>
       <label>安全库存天数（建议 15–30）</label><input type="number" id="safe" value="20" step="1">
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn" onclick="saveSku()">💾 保存到看板</button>
+        <button class="btn ghost" onclick="resetForm()">清空</button>
+      </div>
+      <div class="savetip" id="saveTip"></div>
     </div>
+
     <div class="card">
-      <h2>② 补货判断</h2>
+      <h2>② 当前这款的判断</h2>
       <label>补货点（件）</label>
-      <div class="big" id="rop" style="color:var(--accent)">--</div>
+      <div class="big" id="rop">--</div>
       <div class="row"><span>可用库存（在库+在途）</span><b id="avail">--</b></div>
       <div class="row"><span>可售天数</span><b id="days">--</b></div>
-      <div class="row"><span>建议本次下单量（覆盖一个补货周期）</span><b id="qty">--</b></div>
+      <div class="row"><span>建议本次下单量</span><b id="qty">--</b></div>
       <div class="verdict mid" id="v">--</div>
-      <p class="unit" style="margin-top:10px">建议下单量 = 日均销量 ×（周期天数 + 安全天数）− 可用库存，向上取整到箱头友好数。</p>
+      <p class="unit">建议下单量 = 日均 ×（周期 + 安全天数）− 可用库存；最迟下单日 = 今天 +（可售天数 − 生产 − 头程）。</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="toolbar">
+      <h2 style="margin:0">③ SKU 补货看板 <span class="grp">（按可售天数从少到多）</span></h2>
+      <div class="btnrow">
+        <button class="btn" onclick="exportCsv()">⬇ 导出 CSV</button>
+        <button class="btn ghost" onclick="openSync()">☁ 云同步<span id="syncDot" class="dot"></span></button>
+      </div>
+    </div>
+    <div id="tbl"></div>
+    <p class="sum" id="summary"></p>
+    <p class="unit">周更做法：点某行「载入」→ 改日均/在库/在途 → 点「保存到看板」（同名+同站点自动覆盖，原有历史保留）。数据默认只存在本浏览器，开云同步后可跨设备共用。</p>
+  </div>
+</div>
+
+<div class="mask" id="syncMask">
+  <div class="modal">
+    <h3>☁ 云同步</h3>
+    <p class="bkmsg">和 FBA 利润工具共用同一把令牌，存到同一个私有仓库，只是文件名不同（<b>restock.json</b>）。令牌只保存在本机浏览器。</p>
+    <div class="syncrow"><label>仓库</label><input id="syRepo" spellcheck="false" placeholder="用户名/仓库名"></div>
+    <div class="syncrow"><label>分支 / 文件</label><input id="syBranch" spellcheck="false" style="flex:0 0 96px"><input id="syFile" spellcheck="false"></div>
+    <div class="syncrow"><label>令牌</label><input id="syToken" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_..."></div>
+    <div class="syncmsg" id="syncMsg">未连接。</div>
+    <p class="bkmsg" style="font-size:11.5px;margin:0 0 8px">合并规则：同一 SKU（名称+站点）以更新时间较新的为准，两边独有的都保留。</p>
+    <div class="modal-act" style="justify-content:space-between">
+      <button class="btn ghost" onclick="disconnectSync()">断开并清除令牌</button>
+      <span style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost" onclick="manualSync('pull')">仅下载云端</button>
+        <button class="btn ghost" onclick="manualSync('push')">仅上传本地</button>
+        <button class="btn" onclick="manualSync('merge')">合并同步</button>
+        <button class="btn ghost" onclick="closeSync()">关闭</button>
+      </span>
     </div>
   </div>
 </div>
+
 <script>
 function $(i){return document.getElementById(i)}
-function calc(){
-  const ads=+$('ads').value||0,inv=+$('inv').value||0,tr=+$('transit').value||0,
-        lead=(+$('prod').value||0)+(+$('ship').value||0),safe=+$('safe').value||0;
-  const rop=ads*(lead+safe), avail=inv+tr;
-  $('rop').textContent=Math.round(rop).toLocaleString();
-  $('avail').textContent=avail.toLocaleString();
-  $('days').textContent=ads>0?(avail/ads).toFixed(1)+' 天':'--';
-  const qty=Math.max(0,Math.ceil(ads*(lead+safe)-avail));
-  $('qty').textContent=qty.toLocaleString()+' 件';
-  const v=$('v');
-  if(avail<rop){v.className='verdict bad';v.textContent='⚠ 库存已跌破补货点，赶紧下单，再拖要断货了（还差 '+Math.round(rop-avail)+' 件）；建议同批发两厂或空运一部分';}
-  else if(avail/ads<lead+safe+15){v.className='verdict mid';v.textContent='库存能撑 '+Math.floor(avail/ads)+' 天，处于补货窗口内，本周期内下单即可';}
-  else{v.className='verdict ok';v.textContent='库存健康，能撑 '+Math.floor(avail/ads)+' 天，暂不用动';}
+const SITE_CUR={'UK 英国':'£','DE 德国':'€','US 美国':'$','CA 加拿大':'C$'};
+const KEY='restock_skus_v1';
+let skus=[];
+
+/* ---------- 计算 ---------- */
+function calcOne(r){
+  const ads=+r.ads||0,lead=(+r.prod||0)+(+r.ship||0),safe=+r.safe||0;
+  const rop=ads*(lead+safe),avail=(+r.inv||0)+(+r.transit||0);
+  const days=ads>0?avail/ads:Infinity;
+  const qty=Math.max(0,Math.ceil(rop-avail));
+  let lv='ok',label='健康',note='';
+  if(ads<=0){lv='mid';label='无销量';note='日均销量为 0，检查是否停售';}
+  else if(days<lead){lv='bad';label='断货风险';note='可售 '+days.toFixed(0)+' 天 < 补货周期 '+lead+' 天';}
+  else if(avail<rop){lv='warn';label='该下单';note='可用低于补货点，还差 '+Math.round(rop-avail)+' 件';}
+  else if(days<lead+safe+15){lv='mid';label='窗口内';note='可售 '+days.toFixed(0)+' 天，本周期下单即可';}
+  else{lv='ok';label='充足';note='可售 '+days.toFixed(0)+' 天';}
+  return {rops:Math.round(rop),avail,days,qty,lv,label,note,lead};
 }
-document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+function lastOrder(days,lead){ // 最迟下单日
+  if(!isFinite(days))return '--';
+  const d=new Date(Date.now()+Math.max(0,(days-lead))*86400000);
+  return (d.getMonth()+1)+'/'+d.getDate();
+}
+
+/* ---------- 单款试算 ---------- */
+function calc(){
+  const r=read('name');
+  const c=calcOne(r);
+  $('rop').textContent=c.rops.toLocaleString();
+  $('avail').textContent=c.avail.toLocaleString();
+  $('days').textContent=isFinite(c.days)?c.days.toFixed(1)+' 天':'--';
+  $('qty').textContent=c.qty.toLocaleString()+' 件';
+  const v=$('v');
+  if(c.lv==='bad'){v.className='verdict bad';v.textContent='⚠ '+c.note+'，现在下单已经赶不上，考虑空运一部分或调拨';}
+  else if(c.lv==='warn'){v.className='verdict bad';v.textContent='⚠ 库存跌破补货点（'+c.note+'），本周期内必须下单';}
+  else if(c.lv==='mid'){v.className='verdict mid';v.textContent='△ '+c.note+'；最迟下单日 '+lastOrder(c.days,c.lead);}
+  else{v.className='verdict ok';v.textContent='✓ '+c.note+'，最迟下单日 '+lastOrder(c.days,c.lead);}
+}
+function read(){
+  return {name:($('name').value||'').trim(),site:$('site').value,
+    ads:+$('ads').value||0,inv:+$('inv').value||0,transit:+$('transit').value||0,
+    prod:+$('prod').value||0,ship:+$('ship').value||0,safe:+$('safe').value||0};
+}
+function fill(r){
+  $('name').value=r.name||'';$('site').value=r.site||'UK 英国';
+  $('ads').value=r.ads;$('inv').value=r.inv;$('transit').value=r.transit;
+  $('prod').value=r.prod;$('ship').value=r.ship;$('safe').value=r.safe;
+  calc();
+}
+function resetForm(){
+  fill({name:'',site:'UK 英国',ads:0,inv:0,transit:0,prod:15,ship:35,safe:20});
+  $('saveTip').textContent='';
+}
+
+/* ---------- 保存 / 渲染 ---------- */
+function loadLocal(){try{skus=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){skus=[];}if(!Array.isArray(skus))skus=[];}
+function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(skus));}catch(e){}}
+function persist(){persistLocal();schedulePush();}
+function tipMsg(m,err){
+  const t=$('saveTip');t.textContent=m;t.className='savetip'+(err?' err':'');
+  clearTimeout(tipMsg._t);tipMsg._t=setTimeout(()=>{if(t.textContent===m)t.textContent='';},3500);
+}
+function saveSku(){
+  const r=read();
+  if(!r.name){tipMsg('先填 SKU / 产品名',true);$('name').focus();return;}
+  const i=skus.findIndex(x=>x.name===r.name&&x.site===r.site);
+  const now=Date.now();
+  if(i>=0){
+    const old=skus[i];
+    const hist=(old.hist||[]).concat([{ts:old.ts,ads:old.ads,inv:old.inv}]).slice(-12);
+    skus[i]=Object.assign({},r,{id:old.id,ts:now,hist});
+    tipMsg('已更新：'+r.name+'（历史留存 '+(hist.length)+' 次）');
+  }else{
+    skus.unshift(Object.assign({},r,{id:now+''+Math.floor(Math.random()*1000),ts:now,hist:[]}));
+    tipMsg('已加入看板：'+r.name);
+  }
+  persist();render();
+}
+function delSku(id){
+  const r=skus.find(x=>x.id===id);if(!r)return;
+  if(!confirm('从看板删除「'+r.name+'」（'+r.site+'）？不影响已导出文件。'))return;
+  skus=skus.filter(x=>x.id!==id);persist();render();
+}
+function renameSku(id){
+  const r=skus.find(x=>x.id===id);if(!r)return;
+  const n=prompt('新的 SKU / 产品名：',r.name);
+  if(n&&n.trim()){r.name=n.trim();r.ts=Date.now();persist();render();}
+}
+function fmtDT(ts){const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function delta(r){
+  const h=(r.hist||[]);if(!h.length)return '<span style="color:var(--sub)">—</span>';
+  const prev=h[h.length-1].ads||0;if(!prev)return '<span style="color:var(--sub)">—</span>';
+  const p=(r.ads-prev)/prev*100;
+  const col=p>0?'var(--ok)':(p<0?'var(--bad)':'var(--sub)');
+  return '<span style="color:'+col+'">'+(p>0?'+':'')+p.toFixed(0)+'%</span>';
+}
+function render(){
+  const box=$('tbl');
+  if(!skus.length){
+    box.innerHTML='<div class="empty">还没有 SKU。左边填一款，点「保存到看板」；之后每周改三个数字重新保存即可。</div>';
+    $('summary').textContent='';
+    return;
+  }
+  const list=skus.map(r=>Object.assign({},r,{c:calcOne(r)}))
+    .sort((a,b)=>(isFinite(a.c.days)?a.c.days:1e9)-(isFinite(b.c.days)?b.c.days:1e9));
+  let h='<div class="tblwrap"><table><thead><tr>'+
+    '<th>SKU / 产品</th><th>站点</th><th class="num">日均</th><th class="num">在库</th><th class="num">在途</th><th class="num">可用</th>'+
+    '<th class="num">可售天</th><th class="num">补货点</th><th class="num">建议下单</th><th class="num">销量环比</th><th>最迟下单</th><th>状态</th><th>更新</th><th>操作</th>'+
+    '</tr></thead><tbody>';
+  list.forEach(r=>{
+    const c=r.c;
+    h+='<tr>'+
+      '<td><b>'+esc(r.name)+'</b></td>'+
+      '<td>'+esc(r.site)+'</td>'+
+      '<td class="num">'+r.ads+'</td>'+
+      '<td class="num">'+r.inv+'</td>'+
+      '<td class="num">'+r.transit+'</td>'+
+      '<td class="num">'+c.avail.toLocaleString()+'</td>'+
+      '<td class="num"><b style="color:'+(c.days<c.lead?'var(--bad)':(c.days<c.lead+(+r.safe||0)?'var(--warn)':'var(--ink)'))+'">'+(isFinite(c.days)?c.days.toFixed(0):'—')+'</b></td>'+
+      '<td class="num">'+c.rops.toLocaleString()+'</td>'+
+      '<td class="num"'+(c.qty>0?' style="font-weight:700;color:var(--deep)"':'')+'>'+(c.qty>0?c.qty.toLocaleString():'0')+'</td>'+
+      '<td class="num">'+delta(r)+'</td>'+
+      '<td>'+lastOrder(c.days,c.lead)+'</td>'+
+      '<td><span class="tag '+c.lv+'">'+c.label+'</span></td>'+
+      '<td style="color:var(--sub)">'+fmtDT(r.ts)+'</td>'+
+      '<td><button class="act" onclick="load_(\''+r.id+'\')">载入</button>'+
+      '<button class="act" onclick="renameSku(\''+r.id+'\')">改名</button>'+
+      '<button class="act del" onclick="delSku(\''+r.id+'\')">删除</button></td>'+
+    '</tr>';
+  });
+  h+='</tbody></table></div>';
+  box.innerHTML=h;
+  const bad=list.filter(r=>r.c.lv==='bad').length, warn=list.filter(r=>r.c.lv==='warn').length;
+  const need=list.filter(r=>r.c.qty>0);
+  $('summary').innerHTML='共 <b>'+list.length+'</b> 个 SKU：断货风险 <b style="color:var(--bad)">'+bad+'</b> 个，该下单 <b style="color:var(--warn)">'+warn+'</b> 个'+
+    (need.length?'；本周期建议补货合计 <b>'+need.reduce((s,r)=>s+r.c.qty,0).toLocaleString()+'</b> 件':'');
+}
+function load_(id){
+  const r=skus.find(x=>x.id===id);if(!r)return;
+  fill(r);
+  window.scrollTo({top:0,behavior:'smooth'});
+  tipMsg('已载入「'+r.name+'」，改完数字再点保存');
+}
+function exportCsv(){
+  if(!skus.length){alert('看板是空的，先保存至少一个 SKU');return;}
+  const rows=[['SKU/产品','站点','日均销量','在库','在途','可用库存','可售天数','补货点','建议下单','最迟下单日','状态','更新时间']];
+  skus.map(r=>Object.assign({},r,{c:calcOne(r)})).sort((a,b)=>a.c.days-b.c.days).forEach(r=>{
+    rows.push([r.name,r.site,r.ads,r.inv,r.transit,r.c.avail,isFinite(r.c.days)?r.c.days.toFixed(1):'',r.c.rops,r.c.qty,lastOrder(r.c.days,r.c.lead),r.c.label,fmtDT(r.ts)]);
+  });
+  const csv='\ufeff'+rows.map(r=>r.map(v=>{const s=String(v==null?'':v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='补货看板_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},2000);
+}
+
+/* ---------- 云同步（与 FBA 工具共用令牌，独立文件） ---------- */
+const SHARED_CFG='fba_sync_cfg_v1', OWN_CFG='restock_sync_cfg_v1';
+let cfg={repo:'',branch:'main',file:'restock.json',token:'',lastSync:0};
+let syncing=false,syncTimer=null;
+function syncReady(){return !!(cfg.token&&cfg.repo)}
+function loadCfg(){
+  let sh={},own={};
+  try{sh=JSON.parse(localStorage.getItem(SHARED_CFG)||'{}')}catch(e){}
+  try{own=JSON.parse(localStorage.getItem(OWN_CFG)||'{}')}catch(e){}
+  cfg.repo=sh.repo||'';cfg.branch=sh.branch||'main';cfg.token=sh.token||'';
+  cfg.file=own.file||'restock.json';cfg.lastSync=own.lastSync||0;
+  setDot(syncReady()?'on':'');
+}
+function saveCfg(){
+  const repo=($('syRepo').value||'').trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'');
+  const br=($('syBranch').value||'main').trim()||'main';
+  const file=($('syFile').value||'restock.json').trim()||'restock.json';
+  const tk=($('syToken').value||'').trim();
+  cfg.repo=repo;cfg.branch=br;cfg.file=file;if(tk)cfg.token=tk;
+  try{
+    localStorage.setItem(SHARED_CFG,JSON.stringify({repo:cfg.repo,branch:cfg.branch,token:cfg.token}));
+    localStorage.setItem(OWN_CFG,JSON.stringify({file:cfg.file,lastSync:cfg.lastSync}));
+  }catch(e){}
+  setDot(syncReady()?'on':'');
+  return syncReady();
+}
+function setDot(s){const d=$('syncDot');if(!d)return;d.className='dot'+(s?' '+s:'');d.title=s==='err'?'同步出错':(s==='busy'?'同步中':(s==='on'?'已连接云同步':'未启用云同步'));}
+function b64enc(str){
+  const b=new TextEncoder().encode(str);let s='';const C=0x8000;
+  for(let i=0;i<b.length;i+=C)s+=String.fromCharCode.apply(null,b.subarray(i,i+C));
+  return btoa(s);
+}
+function b64dec(x){
+  const bin=atob(String(x||'').replace(/\s/g,''));const b=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(b);
+}
+function hdr(){return {'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}
+function ghUrl(){return 'https://api.github.com/repos/'+cfg.repo+'/contents/'+cfg.file.split('/').map(encodeURIComponent).join('/')}
+function ghErr(c,t){
+  if(c===401)return '令牌无效或已过期（401），重新生成一个再填';
+  if(c===403)return '令牌没有这个仓库的写权限（403）——检查 Contents 是否 Read and write';
+  if(c===404)return '仓库或文件不存在（404）——检查仓库名是否为 用户名/仓库名';
+  if(c===409||c===422)return '版本冲突（'+c+'），再点一次合并同步';
+  return 'GitHub 返回 HTTP '+c+'：'+String(t||'').slice(0,140);
+}
+async function ghCheck(){
+  const r=await fetch('https://api.github.com/repos/'+cfg.repo,{headers:hdr(),cache:'no-store'});
+  if(r.status===404)throw new Error('仓库不存在或令牌访问不到（404）——检查仓库名与令牌授权范围');
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  if(j.permissions&&j.permissions.push===false)throw new Error('令牌对该仓库只有读权限——把 Contents 改成 Read and write');
+  return j;
+}
+async function ghRead(){
+  const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(cfg.branch)+'&_='+Date.now(),{headers:hdr(),cache:'no-store'});
+  if(r.status===404)return {sha:null,list:[]};
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  let list=[];
+  try{list=JSON.parse(b64dec(j.content)||'[]')}catch(e){throw new Error('仓库里的 '+cfg.file+' 不是有效 JSON');}
+  return {sha:j.sha,list:Array.isArray(list)?list:[]};
+}
+async function ghWrite(list,sha,msg){
+  const body={message:(msg||'补货看板同步')+' · '+fmtDT(Date.now()),content:b64enc(JSON.stringify(list,null,2)),branch:cfg.branch};
+  if(sha)body.sha=sha;
+  const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},hdr()),body:JSON.stringify(body)});
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();return j&&j.content?j.content.sha:null;
+}
+function merge(local,remote){
+  const k=r=>r.name+'||'+r.site;
+  const m=new Map();let add=0,upd=0;
+  (local||[]).forEach(r=>{if(r&&r.name)m.set(k(r),r)});
+  (remote||[]).forEach(r=>{
+    if(!r||!r.name)return;
+    const key=k(r),old=m.get(key);
+    if(!old){m.set(key,r);add++;}
+    else if((r.ts||0)>(old.ts||0)){m.set(key,Object.assign({},r,{id:old.id||r.id}));upd++;}
+  });
+  return {list:[...m.values()].sort((a,b)=>(b.ts||0)-(a.ts||0)),add,upd};
+}
+function openSync(){
+  $('syRepo').value=cfg.repo;
+  $('syBranch').value=cfg.branch||'main';
+  $('syFile').value=cfg.file||'restock.json';
+  $('syToken').value=cfg.token||'';
+  syncStatus();$('syncMask').style.display='flex';
+}
+function closeSync(){$('syncMask').style.display='none'}
+function syncStatus(t,err){
+  const b=$('syncMsg');if(!b)return;
+  if(t){b.className='syncmsg'+(err?' err':'');b.innerHTML=t;return;}
+  b.className='syncmsg';
+  if(!syncReady()){b.innerHTML='未连接。如果 FBA 工具已经配过，这里只要填同样的仓库名即可（令牌可留空沿用）。';return;}
+  b.innerHTML='已连接 <b>'+esc(cfg.repo)+'</b>（'+esc(cfg.branch)+' / '+esc(cfg.file)+'）<br>本机 <b>'+skus.length+'</b> 个 SKU'+(cfg.lastSync?'；上次同步 '+fmtDT(cfg.lastSync):'；尚未同步');
+}
+function disconnectSync(){
+  if(!confirm('断开云同步并清除本机令牌？仓库里的数据不会删除。'))return;
+  cfg.token='';cfg.repo='';
+  try{
+    localStorage.removeItem(SHARED_CFG);
+    localStorage.setItem(OWN_CFG,JSON.stringify({file:cfg.file,lastSync:0}));
+  }catch(e){}
+  $('syToken').value='';setDot('');syncStatus();
+}
+async function manualSync(mode){
+  if(!saveCfg()){syncStatus('仓库名和令牌都要有；若 FBA 工具已配过，令牌可留空。',true);return;}
+  if(syncing){syncStatus('正在同步，稍等…');return;}
+  if(mode==='pull'&&!confirm('用云端覆盖本机？本机 '+skus.length+' 个 SKU 会被替换。'))return;
+  if(mode==='push'&&!confirm('用本机覆盖云端？云端现有记录会被替换。'))return;
+  syncing=true;setDot('busy');syncStatus('正在同步…');
+  try{
+    await ghCheck();
+    const r=await ghRead();let out='';
+    if(mode==='pull'){skus=r.list.slice();persistLocal();render();out='已从云端下载 <b>'+skus.length+'</b> 个 SKU';}
+    else if(mode==='push'){await ghWrite(skus,r.sha,'覆盖上传');out='已上传本机 <b>'+skus.length+'</b> 个 SKU';}
+    else{
+      const m=merge(skus,r.list);skus=m.list;persistLocal();render();
+      await ghWrite(skus,r.sha,'合并同步');
+      out='合并完成：新增 <b>'+m.add+'</b>，更新 <b>'+m.upd+'</b>，现共 <b>'+skus.length+'</b> 个';
+    }
+    cfg.lastSync=Date.now();persistOwn();setDot('on');syncStatus(out+'<br>'+fmtDT(cfg.lastSync));
+  }catch(e){setDot('err');syncStatus('同步失败：'+esc(e.message||e),true);}
+  finally{syncing=false;}
+}
+function persistOwn(){try{localStorage.setItem(OWN_CFG,JSON.stringify({file:cfg.file,lastSync:cfg.lastSync}))}catch(e){}}
+function schedulePush(){
+  if(!syncReady()||syncing)return;
+  clearTimeout(syncTimer);syncTimer=setTimeout(pushQuiet,1500);
+}
+async function pushQuiet(){
+  if(!syncReady()||syncing)return;
+  syncing=true;setDot('busy');
+  try{
+    await ghCheck();
+    const r=await ghRead();
+    const m=merge(skus,r.list);skus=m.list;persistLocal();render();
+    await ghWrite(skus,r.sha,'自动同步');
+    cfg.lastSync=Date.now();persistOwn();setDot('on');
+  }catch(e){setDot('err');console.warn('[云同步]',e);}
+  finally{syncing=false;}
+}
+async function autoSync(){
+  if(!syncReady()||syncing)return;
+  syncing=true;setDot('busy');
+  try{
+    await ghCheck();
+    const r=await ghRead();
+    const m=merge(skus,r.list);
+    const need=!r.sha||(m.add+m.upd>0||m.list.length!==r.list.length);
+    skus=m.list;persistLocal();render();
+    if(need)await ghWrite(skus,r.sha,'自动同步');
+    cfg.lastSync=Date.now();persistOwn();setDot('on');
+  }catch(e){setDot('err');console.warn('[云同步]',e);}
+  finally{syncing=false;}
+}
+$('syncMask').addEventListener('click',function(e){if(e.target===$('syncMask'))closeSync()});
+
+/* ---------- 初始化 ---------- */
+document.querySelectorAll('input,select').forEach(el=>{
+  if(['syRepo','syBranch','syFile','syToken'].indexOf(el.id)>=0)return;
+  el.addEventListener('input',calc);
+});
+loadLocal();loadCfg();calc();render();autoSync();
 </script>
 </body>
 </html>
