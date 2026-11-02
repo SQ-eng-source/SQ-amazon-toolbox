@@ -63,6 +63,14 @@ tbody tr:hover{background:#f9fdfe}
 .modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
 .savetip{font-size:12px;min-height:16px;color:var(--ok);margin-top:6px}
 .savetip.err{color:var(--bad)}
+.helps{margin:4px 0 10px;border:1px solid var(--line);border-radius:8px;background:#f9fdfe;padding:0 10px}
+.helps summary{cursor:pointer;font-size:12px;color:var(--deep);padding:9px 0;font-weight:600;outline:none}
+.helps summary::marker{color:var(--turq)}
+.helpb{width:100%;border-collapse:collapse;font-size:11.5px;color:var(--ink);margin-bottom:8px}
+.helpb td{padding:6px 8px;border-top:1px dashed var(--line);vertical-align:top;line-height:1.65}
+.helpb td:first-child{width:96px;white-space:nowrap;color:var(--deep)}
+.helpb td b{font-weight:600}
+.helpw{font-size:11.5px;color:var(--warn);line-height:1.65;background:#fdf6e3;border-left:2px solid #e8c98a;border-radius:0 4px 4px 0;padding:7px 9px;margin:0 0 10px}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -130,6 +138,17 @@ tbody tr:hover{background:#f9fdfe}
     <div class="syncrow"><label>令牌</label><input id="syToken" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_..."></div>
     <div class="syncmsg" id="syncMsg">未连接。</div>
     <p class="bkmsg" style="font-size:11.5px;margin:0 0 8px">合并规则：同一 SKU（名称+站点）以更新时间较新的为准，两边独有的都保留。</p>
+    <details class="helps">
+      <summary>这几个按钮分别什么时候用</summary>
+      <table class="helpb">
+        <tr><td><b>合并同步</b></td><td><b>日常只点这个。</b>首次连接、平时手动同步都点它。两边数据合到一起，同一 SKU 取更新的那条，谁也不会被删。</td></tr>
+        <tr><td><b>仅下载云端</b></td><td>用云端<b>整体覆盖</b>本机（本机数据会被替换）。适用：<br>① 新电脑首次接入，本机一堆旧测试数据、想让云端为准；<br>② 本机搞乱了（改错、删错、页面数据异常），云端才是准的；<br>③ 别人在另一台机器更新过，你确定本机这条不需要保留。</td></tr>
+        <tr><td><b>仅上传本地</b></td><td>用本机<b>整体覆盖</b>云端。适用：云端被误改／误删，而你本机是对的，需要把云端重置回本机状态。</td></tr>
+        <tr><td><b>断开并清除令牌</b></td><td>仅清掉本机保存的令牌，停止自动同步；仓库里的数据<b>不会删</b>。适用：换人用这台电脑、或怀疑令牌泄露。</td></tr>
+        <tr><td><b>关闭</b></td><td>只关窗口，不做任何同步。</td></tr>
+      </table>
+      <p class="helpw">⚠ 两个“仅”都是覆盖式操作，点之前会弹确认框。不确定时一律用「合并同步」——它只会新增和更新，永远不会减少记录。</p>
+    </details>
     <div class="modal-act" style="justify-content:space-between">
       <button class="btn ghost" onclick="disconnectSync()">断开并清除令牌</button>
       <span style="display:flex;gap:8px;flex-wrap:wrap">
