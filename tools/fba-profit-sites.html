@@ -84,6 +84,17 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 .bkmsg b{color:var(--ink)}
 .modal textarea{flex:1;min-height:220px;width:100%;border:1px solid var(--line);border-radius:8px;background:#f6fcfe;color:var(--ink);font-family:Consolas,Monaco,monospace;font-size:11.5px;line-height:1.5;padding:10px;resize:vertical}
 .modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;vertical-align:middle;background:#c3d8e2}
+.dot.on{background:#0a8f5b}
+.dot.busy{background:#0891b2;animation:dpulse 1s ease-in-out infinite}
+.dot.err{background:#c0392b}
+@keyframes dpulse{0%,100%{opacity:.3}50%{opacity:1}}
+.syncrow{display:flex;gap:8px;align-items:center;margin-bottom:9px}
+.syncrow label{width:92px;flex:none;font-size:12px;color:var(--sub)}
+.syncrow input{flex:1;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12.5px;color:var(--ink);font-family:inherit}
+.syncmsg{font-size:12px;line-height:1.7;background:#f6fcfe;border-left:2px solid #a5dfeb;border-radius:0 4px 4px 0;padding:8px 10px;margin:10px 0;color:var(--ink);word-break:break-all}
+.syncmsg.err{background:#fdf0ee;border-left-color:#e8a99b;color:#8c2f1d}
+.syncmsg b{color:var(--deep)}
 </style>
 </head>
 <body data-page-node-id="QUP5dskH31AuB7DkFsdp5G">
@@ -174,12 +185,13 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
         <button class="btn" onclick="exportExcel()">⬇ 导出 Excel</button>
         <button class="btn ghost" onclick="document.getElementById('impFile').click()">⬆ 导入表格</button>
         <button class="btn ghost" onclick="downloadTemplate()">下载导入模板</button>
+        <button class="btn ghost" onclick="openSync()">☁ 云同步<span id="syncDot" class="dot"></span></button>
         <a class="mini" onclick="exportRecords()">JSON 备份</a>
         <input type="file" id="impFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="importSheet(this)">
       </div>
     </div>
     <div id="recTable"></div>
-    <p class="hint" style="margin-top:10px">数据保存在本浏览器本地（localStorage），关掉网页不会丢；换电脑或清缓存会丢。<b>建议定期点「导出 Excel」存一份</b>（就是一张跟你原表口径一致的明细表）；反过来，在外部 Excel 里按「导入模板」填好，也能直接导入这里。</p>
+    <p class="hint" style="margin-top:10px">默认存在本浏览器本地（localStorage），关掉网页不会丢，但换电脑、换浏览器、清缓存会丢。想跨设备共用，点「☁ 云同步」把记录存进你自己的 GitHub 私有仓库；想留档，点「⬇ 导出 Excel」存一份明细表。反过来，在外部 Excel 里按「导入模板」填好，也能直接导入这里。</p>
   </div>
 </div>
 
@@ -317,7 +329,8 @@ function loadStore(){
   try{records=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){records=[];}
   if(!Array.isArray(records))records=[];
 }
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){}}
+function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(records));}catch(e){}}
+function persist(){persistLocal();schedulePush();}
 function tip(msg,err){
   const t=$i('saveTip');t.textContent=msg;t.className='savetip'+(err?' err':'');
   clearTimeout(tip._t);tip._t=setTimeout(()=>{t.textContent='';},3000);
@@ -873,7 +886,212 @@ async function importSheet(inp){
   }
 }
 
-buildSites();applySite();fetchRates(false);loadStore();renderRecords();
+/* ================= 云同步：把记录存进 GitHub 仓库里的一个 json ================= */
+const SYNC_KEY='fba_sync_cfg_v1';
+const SYNC_DEFAULT_REPO='SQ-eng-source/SQ-amazon-toolbox-data';
+let syncCfg={repo:'',branch:'main',file:'records.json',token:'',lastSync:0};
+let syncSha=null,syncing=false,syncTimer=null;
+
+function loadSyncCfg(){
+  try{
+    const o=JSON.parse(localStorage.getItem(SYNC_KEY)||'{}');
+    syncCfg={repo:o.repo||'',branch:o.branch||'main',file:o.file||'records.json',token:o.token||'',lastSync:o.lastSync||0};
+  }catch(e){}
+  setDot(syncReady()?'on':'');
+}
+function setDot(state){
+  const d=$i('syncDot');if(!d)return;
+  d.className='dot'+(state?' '+state:'');
+  d.title=state==='err'?'同步出错':(state==='busy'?'同步中':(state==='on'?'已连接云同步':'未启用云同步'));
+}
+function syncReady(){return !!(syncCfg.token&&syncCfg.repo)}
+function saveSyncCfg(){
+  const repo=($i('syRepo').value||'').trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'');
+  const br=($i('syBranch').value||'main').trim()||'main';
+  const file=($i('syFile').value||'records.json').trim()||'records.json';
+  const tk=($i('syToken').value||'').trim();
+  syncCfg.repo=repo;syncCfg.branch=br;syncCfg.file=file;
+  if(tk)syncCfg.token=tk;
+  try{localStorage.setItem(SYNC_KEY,JSON.stringify(syncCfg));}catch(e){}
+  setDot(syncReady()?'on':'');
+  return syncReady();
+}
+function b64enc(str){
+  const bytes=new TextEncoder().encode(str);let s='';const CH=0x8000;
+  for(let i=0;i<bytes.length;i+=CH)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH));
+  return btoa(s);
+}
+function b64dec(b64){
+  const bin=atob(String(b64||'').replace(/\s/g,''));
+  const bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function ghHeaders(){
+  return {'Authorization':'Bearer '+syncCfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+}
+function ghUrl(){
+  return 'https://api.github.com/repos/'+syncCfg.repo+'/contents/'+syncCfg.file.split('/').map(encodeURIComponent).join('/');
+}
+function ghErr(code,txt){
+  if(code===401)return '令牌无效或已过期（401），重新生成一个再填进来';
+  if(code===403)return '令牌没有这个仓库的写权限（403）——检查是否给了 Contents 的 Read and write';
+  if(code===404)return '仓库或文件不存在（404）——检查仓库名是否为 用户名/仓库名，私有仓库必须用有权限的令牌';
+  if(code===409||code===422)return '版本冲突（'+code+'），再点一次合并同步即可';
+  return 'GitHub 返回 HTTP '+code+'：'+String(txt||'').slice(0,150);
+}
+async function ghCheckRepo(){
+  const r=await fetch('https://api.github.com/repos/'+syncCfg.repo,{headers:ghHeaders(),cache:'no-store'});
+  if(r.status===404)throw new Error('仓库不存在或令牌访问不到（404）——确认仓库名写成「用户名/仓库名」，并检查令牌授权里勾了这个仓库');
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  if(j.permissions&&j.permissions.push===false)throw new Error('令牌对这个仓库只有读权限——把 Contents 改成 Read and write 再试');
+  return j;
+}
+async function ghRead(){
+  const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(syncCfg.branch)+'&_='+Date.now(),{headers:ghHeaders(),cache:'no-store'});
+  if(r.status===404)return {sha:null,list:[]};
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  let list=[];
+  try{list=JSON.parse(b64dec(j.content)||'[]');}catch(e){throw new Error('仓库里的 '+syncCfg.file+' 不是有效的 JSON，先备份后手工修一下');}
+  if(!Array.isArray(list))list=[];
+  return {sha:j.sha,list};
+}
+async function ghWrite(list,sha,msg){
+  const body={message:(msg||'同步产品数据')+' · '+fmtDT(Date.now()),content:b64enc(JSON.stringify(list,null,2)),branch:syncCfg.branch};
+  if(sha)body.sha=sha;
+  const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify(body)});
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  return j&&j.content?j.content.sha:null;
+}
+function mergeRecords(local,remote){
+  const key=r=>r.name+'||'+r.site;
+  const map=new Map();
+  let add=0,upd=0;
+  (local||[]).forEach(r=>{if(r&&r.name&&r.vals)map.set(key(r),r);});
+  (remote||[]).forEach(r=>{
+    if(!r||!r.name||!r.vals)return;
+    const k=key(r),old=map.get(k);
+    if(!old){map.set(k,r);add++;}
+    else if((r.ts||0)>(old.ts||0)){map.set(k,Object.assign({},r,{id:old.id||r.id}));upd++;}
+  });
+  return {list:[...map.values()].sort((a,b)=>(b.ts||0)-(a.ts||0)),add,upd};
+}
+function openSync(){
+  let m=$i('syncMask');
+  if(!m){
+    m=document.createElement('div');m.id='syncMask';m.className='mask';
+    m.innerHTML='<div class="modal" style="width:580px">'+
+      '<h3>☁ 云同步</h3>'+
+      '<p class="bkmsg">把已保存的产品存进 <b>你自己的 GitHub 私有仓库</b>，换电脑、换浏览器打开看到的是同一份数据。令牌只存在本机浏览器里，保存在仓库中的只有产品数据。</p>'+
+      '<div class="syncrow"><label>仓库</label><input id="syRepo" spellcheck="false" placeholder="用户名/仓库名"></div>'+
+      '<div class="syncrow"><label>分支 / 文件</label><input id="syBranch" spellcheck="false" placeholder="main" style="flex:0 0 96px"><input id="syFile" spellcheck="false" placeholder="records.json"></div>'+
+      '<div class="syncrow"><label>令牌</label><input id="syToken" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_...（只授权该私有仓库 Contents 读写）"></div>'+
+      '<div class="syncmsg" id="syncMsg">未连接。</div>'+
+      '<p class="bkmsg" style="font-size:11.5px;margin:0 0 8px">合并规则：同一产品（名称+站点）以更新时间较新的为准，两边独有的记录都会保留。首次连接请点「合并同步」。</p>'+
+      '<div class="modal-act" style="justify-content:space-between">'+
+        '<button class="btn ghost" onclick="disconnectSync()">断开并清除令牌</button>'+
+        '<span style="display:flex;gap:8px;flex-wrap:wrap">'+
+          '<button class="btn ghost" onclick="manualSync(\'pull\')">仅下载云端</button>'+
+          '<button class="btn ghost" onclick="manualSync(\'push\')">仅上传本地</button>'+
+          '<button class="btn" onclick="manualSync(\'merge\')">合并同步</button>'+
+          '<button class="btn ghost" onclick="closeSync()">关闭</button>'+
+        '</span>'+
+      '</div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',function(e){if(e.target===m)closeSync();});
+  }
+  $i('syRepo').value=syncCfg.repo||SYNC_DEFAULT_REPO;
+  $i('syBranch').value=syncCfg.branch||'main';
+  $i('syFile').value=syncCfg.file||'records.json';
+  $i('syToken').value=syncCfg.token||'';
+  syncStatus();
+  m.style.display='flex';
+}
+function closeSync(){const m=$i('syncMask');if(m)m.style.display='none';}
+function syncStatus(text,err){
+  const box=$i('syncMsg');if(!box)return;
+  if(text){box.className='syncmsg'+(err?' err':'');box.innerHTML=text;return;}
+  box.className='syncmsg';
+  if(!syncReady()){box.innerHTML='未连接。填好仓库和令牌，点「合并同步」开始；之后每次保存都会自动同步。';return;}
+  box.innerHTML='已连接 <b>'+escHtml(syncCfg.repo)+'</b>（'+escHtml(syncCfg.branch)+' / '+escHtml(syncCfg.file)+'）<br>本机 <b>'+records.length+'</b> 条'+(syncCfg.lastSync?'；上次同步 '+fmtDT(syncCfg.lastSync):'；尚未同步');
+}
+function disconnectSync(){
+  if(!confirm('断开云同步并清除本机保存的令牌？已上传到仓库的数据不会删除，本机记录也保留。'))return;
+  syncCfg.token='';syncCfg.repo='';
+  try{localStorage.setItem(SYNC_KEY,JSON.stringify(syncCfg));}catch(e){}
+  if($i('syToken'))$i('syToken').value='';
+  setDot('');syncStatus();tip('已断开云同步');
+}
+async function manualSync(mode){
+  if(!saveSyncCfg()){syncStatus('仓库和令牌都要填。',true);return;}
+  if(syncing){syncStatus('正在同步，稍等…');return;}
+  if(mode==='pull'&&!confirm('用云端数据覆盖本机？本机现有 '+records.length+' 条会被替换。'))return;
+  if(mode==='push'&&!confirm('用本机数据覆盖云端？云端现有记录会被替换。'))return;
+  syncing=true;setDot('busy');syncStatus('正在同步…');
+  try{
+    await ghCheckRepo();
+    const r=await ghRead();
+    let out='';
+    if(mode==='pull'){
+      records=r.list.slice();persistLocal();renderRecords();
+      out='已从云端下载 <b>'+records.length+'</b> 条';
+    }else if(mode==='push'){
+      syncSha=await ghWrite(records,r.sha,'覆盖上传');
+      out='已上传本机 <b>'+records.length+'</b> 条';
+    }else{
+      const m=mergeRecords(records,r.list);
+      records=m.list;persistLocal();renderRecords();
+      syncSha=await ghWrite(records,r.sha,'合并同步');
+      out='合并完成：新增 <b>'+m.add+'</b> 条，更新 <b>'+m.upd+'</b> 条，现共 <b>'+records.length+'</b> 条';
+    }
+    syncCfg.lastSync=Date.now();
+    try{localStorage.setItem(SYNC_KEY,JSON.stringify(syncCfg));}catch(e){}
+    setDot('on');syncStatus(out+'<br>'+fmtDT(syncCfg.lastSync));tip('云同步完成');
+  }catch(e){
+    setDot('err');syncStatus('同步失败：'+escHtml(e.message||e),true);
+  }finally{syncing=false;}
+}
+function schedulePush(){
+  if(!syncReady()||syncing)return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(pushQuiet,1500);
+}
+async function pushQuiet(){
+  if(!syncReady()||syncing)return;
+  syncing=true;setDot('busy');
+  try{
+    await ghCheckRepo();
+    const r=await ghRead();
+    const m=mergeRecords(records,r.list);
+    records=m.list;persistLocal();renderRecords();
+    syncSha=await ghWrite(records,r.sha,'自动同步');
+    syncCfg.lastSync=Date.now();
+    try{localStorage.setItem(SYNC_KEY,JSON.stringify(syncCfg));}catch(e){}
+    setDot('on');
+  }catch(e){setDot('err');console.warn('[云同步]',e);}
+  finally{syncing=false;}
+}
+async function autoSync(){
+  if(!syncReady()||syncing)return;
+  syncing=true;setDot('busy');
+  try{
+    await ghCheckRepo();
+    const r=await ghRead();
+    const m=mergeRecords(records,r.list);
+    const needWrite=!r.sha||(m.add+m.upd>0)||m.list.length!==r.list.length;
+    records=m.list;persistLocal();renderRecords();
+    if(needWrite)syncSha=await ghWrite(records,r.sha,'自动同步');
+    syncCfg.lastSync=Date.now();
+    try{localStorage.setItem(SYNC_KEY,JSON.stringify(syncCfg));}catch(e){}
+    setDot('on');
+  }catch(e){setDot('err');console.warn('[云同步]',e);}
+  finally{syncing=false;}
+}
+
+buildSites();applySite();fetchRates(false);loadStore();loadSyncCfg();renderRecords();autoSync();
 </script>
 </body>
 </html>
