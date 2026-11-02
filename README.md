@@ -2,7 +2,7 @@
 
 亚马逊运营工具台 · 纯静态网页，离线可用，无需后端。
 
-在线地址：https://sq-eng-source.github.io/amazon-toolbox/
+在线地址：https://sq-eng-source.github.io/SQ-amazon-toolbox/
 
 ## 结构
 
