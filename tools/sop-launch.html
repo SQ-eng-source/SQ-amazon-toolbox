@@ -64,6 +64,16 @@ input[type=text],input[type=date]{width:100%}
 .task .note:focus{border-color:var(--turq);border-style:solid;outline:none}
 .empty{padding:26px 0;text-align:center;color:var(--sub);font-size:13px}
 .sum{font-size:12.5px;color:var(--sub);line-height:1.7;margin-top:6px}
+#undoBar{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);display:none;align-items:center;gap:10px;
+  background:#12333f;color:#e8f7fb;border-radius:10px;padding:10px 12px 10px 16px;font-size:13px;
+  box-shadow:0 8px 24px rgba(18,51,63,.28);z-index:200;opacity:0;transition:opacity .18s,transform .18s;max-width:92vw}
+#undoBar.in{opacity:1;transform:translate(-50%,0)}
+#undoBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#undoBtn{background:var(--turq);color:#062a33;border:none;border-radius:7px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+#undoBtn:hover{filter:brightness(1.08)}
+#undoX{background:transparent;border:none;color:#8fb8c7;font-size:14px;cursor:pointer;padding:4px 6px;line-height:1}
+#undoX:hover{color:#fff}
+@media print{#undoBar{display:none !important}}
 .mask{position:fixed;inset:0;background:rgba(18,51,63,.38);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
 .modal{width:560px;max-width:100%;max-height:86vh;overflow:auto;background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 18px 50px rgba(6,50,66,.28)}
 .modal h3{font-size:15px;color:var(--deep);margin-bottom:8px}
@@ -106,6 +116,12 @@ input[type=text],input[type=date]{width:100%}
     <div id="board" style="margin-top:14px"></div>
     <p class="sum" id="boardSum"></p>
   </div>
+</div>
+
+<div id="undoBar">
+  <span id="undoTxt"></span>
+  <button id="undoBtn" onclick="doUndo()">撤销</button>
+  <button id="undoX" onclick="closeUndo()" title="关掉">✕</button>
 </div>
 
 <div class="mask" id="syncMask">
@@ -228,15 +244,76 @@ function cur(){return plans.find(p=>p.id===curId)}
 function toggleTask(tid){
   const p=cur();if(!p)return;
   p.tasks=p.tasks||{};
-  if(p.tasks[tid]&&p.tasks[tid].done)delete p.tasks[tid];
-  else p.tasks[tid]={done:true,ts:Date.now()};
-  p.ts=Date.now();persist();renderBoard();renderPlans();
+  const now=Date.now();
+  const prev=p.tasks[tid]||{};
+  if(prev.done){
+    // 取消勾选：留一条 done:false 的墓碑（带时间戳），而不是直接删掉。
+    // 直接删会让云端那条「完成」在下次合并时被当成"更完整"而复活。
+    p.tasks[tid]={done:false,note:prev.note||'',ts:now,cancelTs:now,undoTs:prev.undoTs||prev.ts||0};
+    armUndo(tid);
+  }else{
+    // 勾选：保留备注；undoTs 记住"原本就勾着"的时间点，撤销后能恢复原样。
+    // cancelTs 不再保留——这次勾选就是最新意图，旧取消记录已无意义。
+    p.tasks[tid]={done:true,note:prev.note||'',ts:now,undoTs:prev.cancelTs||prev.undoTs||prev.ts||0};
+  }
+  p.ts=now;persist();renderBoard();renderPlans();
 }
+/* 撤销：取消勾选后 8 秒内可点撤回，恢复为勾选 */
+let undoState=null,undoTimer=null;
+function armUndo(tid){
+  const p=cur();if(!p)return;
+  const rec=p.tasks[tid]||{};
+  undoState={pid:p.id,tid,undoTs:rec.undoTs||0};
+  const bar=$('undoBar');
+  if(bar){
+    const t=TASKS.find(x=>x.id===tid);
+    $('undoTxt').textContent='已取消勾选：'+shortT(t?t.t:tid);
+    bar.style.display='flex';
+    bar.classList.remove('in');
+    requestAnimationFrame(()=>bar.classList.add('in'));
+  }
+  clearTimeout(undoTimer);
+  undoTimer=setTimeout(closeUndo,8000);
+}
+function closeUndo(){
+  clearTimeout(undoTimer);undoState=null;
+  const bar=$('undoBar');
+  if(bar){
+    bar.classList.remove('in');
+    clearTimeout(closeUndo._t);
+    closeUndo._t=setTimeout(()=>{if(!undoState)bar.style.display='none'},180);
+  }
+}
+function doUndo(){
+  if(!undoState)return;
+  const {pid,tid,undoTs}=undoState;
+  const p=plans.find(x=>x.id===pid);
+  if(!p||!p.tasks||!p.tasks[tid]){closeUndo();return;}
+  const now=Date.now();
+  // 关键：ts 用现在，保证这次"恢复"比云端那条取消记录新，合并时才不会又被取消掉
+  p.tasks[tid]={done:true,note:p.tasks[tid].note||'',ts:now,undoTs};
+  p.ts=now;
+  closeUndo();persist();renderBoard();renderPlans();
+}
+/* 键盘：Ctrl/⌘+Z 也能撤销 */
+document.addEventListener('keydown',function(e){
+  if(!undoState)return;
+  if((e.ctrlKey||e.metaKey)&&String(e.key).toLowerCase()==='z'){
+    const tag=(e.target&&e.target.tagName)||'';
+    if(tag==='INPUT'||tag==='TEXTAREA')return;   // 输入框里交给浏览器自己的撤销
+    e.preventDefault();doUndo();
+  }
+});
+function shortT(s){s=String(s||'');return s.length>22?s.slice(0,22)+'…':s}
 function saveNote(tid,v){
   const p=cur();if(!p)return;
   p.tasks=p.tasks||{};
+  const prev=p.tasks[tid]||{};
   if(!p.tasks[tid])p.tasks[tid]={done:false};
-  p.tasks[tid].note=v;p.ts=Date.now();
+  p.tasks[tid].note=v;
+  p.tasks[tid].ts=Date.now();          // 备注改动也要带时间戳，否则多端合并会被旧值盖掉
+  p.tasks[tid].done=!!prev.done;
+  p.ts=Date.now();
   clearTimeout(saveNote._t);saveNote._t=setTimeout(()=>{persist()},1200);
 }
 
@@ -423,7 +500,12 @@ function merge(local,remote,remoteDels){
       const tasks=Object.assign({},old.tasks||{});
       Object.keys(p.tasks||{}).forEach(tid=>{
         const a=tasks[tid],b=p.tasks[tid];
-        if(!a||(b.ts||0)>(a.ts||0))tasks[tid]=b;
+        if(!a) tasks[tid]=b;
+        else if((b.ts||0)>(a.ts||0)) tasks[tid]=b;   // 谁最后动过听谁的（取消也算动作，见 toggleTask）
+        else if((b.ts||0)===(a.ts||0)){
+          // 时间戳打平：取消状态优先，避免"完成"在两边来回复活
+          if(a.done!==b.done) tasks[tid]=a.done?b:a;
+        }
       });
       const win=(p.ts||0)>=(old.ts||0)?p:old;
       m.set(k(p),Object.assign({},win,{tasks,ts:Math.max(old.ts||0,p.ts||0)}));upd++;
