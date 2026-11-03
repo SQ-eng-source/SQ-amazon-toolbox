@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>标题规范与大小写转换</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:26px;display:flex;justify-content:center}.wrap{width:940px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:18px;line-height:1.7}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}.card h2{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:12px;color:var(--sub);font-weight:400}
+textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:6px;font-size:14px;line-height:1.7;resize:vertical;min-height:76px;font-family:inherit}textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+textarea.out{background:#f8fdfe;border-color:#bfe7f2;min-height:76px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:6px 12px;font-size:12.5px;font-family:inherit}
+button:hover{background:#f2fbfd;border-color:#22d3ee}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:#0e7490}
+.meta{font-size:12.5px;color:var(--sub);margin-left:auto}
+.meta b{color:var(--ink);font-size:14px}
+.meta b.over{color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:0}
+.chip{font-size:11.5px;background:#e6fafc;color:var(--deep);border:1px solid #bfe7f2;border-radius:5px;padding:3px 7px}
+.chip i{font-style:normal;opacity:.55;margin-left:3px}
+.chip.keep{background:#f3f4f6;border-color:#e5e7eb;color:#6b7280}
+.flag{font-size:12.5px;line-height:1.65;padding:9px 11px;border-radius:6px;margin-top:8px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}
+.flag.warn{background:#fef3c7;color:var(--warnb)}
+.flag.bad{background:#fdecea;color:var(--bad)}
+.diffbox{font-size:13.5px;line-height:1.9;color:#374151;background:#fff;border:1px dashed #bfe7f2;border-radius:6px;padding:10px 12px;margin-top:10px;word-break:break-word}
+.diffbox:empty{display:none}
+.diffmark{background:#fff3b0;border-radius:2px;padding:0 2px}
+.tip{font-size:12px;color:var(--sub);line-height:1.75;margin-top:8px}
+.tip code{background:#f2fbfd;border:1px solid #e5e7eb;border-radius:3px;padding:1px 4px;font-size:11.5px}
+label.sm{font-size:12.5px;color:var(--sub);display:block;margin-bottom:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>标题规范与大小写转换</h1>
+  <p class="desc">把标题从「随便写」变成「亚马逊规范写法」：实词首字母大写、介词冠词小写、品牌与型号不被误伤，同时检查字符上限和关键词堆砌。</p>
+
+  <div class="card">
+    <h2>① 原标题 <span class="hint">粘贴进来，下面实时出结果</span></h2>
+    <textarea id="src" placeholder="粘贴你的标题...">premium wireless earbuds, BEST bluetooth 5.3 headphones with charging case, ipx7 waterproof for iphone android, Black</textarea>
+    <div class="bar">
+      <button class="primary" onclick="apply()">转成规范写法</button>
+      <button onclick="copyOut()">复制结果</button>
+      <button onclick="clearAll()">清空</button>
+      <span class="meta">原字符数 <b id="srcLen">0</b></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 规范后的标题 <span class="hint">黄色高亮 = 本次改动的地方</span></h2>
+    <textarea id="out" class="out" placeholder="结果会出现在这里..." oninput="onEdit()"></textarea>
+    <div id="diffBox" class="diffbox"></div>
+    <div class="bar">
+      <span class="meta">字符数 <b id="outLen">0</b> / <b id="limit">200</b></span>
+      <span class="meta" style="margin-left:0">单词数 <b id="wordCnt">0</b></span>
+    </div>
+    <div id="flags"></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 保持原样的词 <span class="hint">这些没被转换，因为转了反而是错的</span></h2>
+    <div class="chips" id="keepList"></div>
+    <p class="tip">
+      下面这些词默认<b>不动</b>，避免把对的写错：<br>
+      · <b>品牌与型号</b>：iPhone、iPad、USB-C、IPX7、TWS、4K、XL、S/M/L<br>
+      · <b>全大写缩写</b>：USB、LED、RGB、HDMI、GPS、APP<br>
+      · <b>带大写字母的混写词</b>：iPhone、eBay、McDonald's<br>
+      · <b>标题里出现中文</b>时不做大小写处理<br>
+      想强制转换某个词，在下面「自定义规则」里加。
+    </p>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label class="sm">永远小写的词（默认已含 of / for / with / the / and 等）</label>
+        <textarea id="cfgSmall" style="min-height:58px">a, an, the, and, or, but, nor, for, so, yet, at, by, in, of, on, to, up, as, per, via, vs</textarea>
+      </div>
+      <div>
+        <label class="sm">永远保持原样的词（品牌、型号，逗号分隔）</label>
+        <textarea id="cfgKeep" style="min-height:58px">iPhone, iPad, iPod, MacBook, AirPods, eBay, YouTube, USB, USB-C, LED, RGB, HDMI, GPS, APP, TWS, IPX7, IPX8, 4K, 8K, XL, XXL</textarea>
+      </div>
+    </div>
+    <div class="bar">
+      <label class="sm" style="margin:0">字符上限</label>
+      <input id="cfgLimit" type="number" value="200" min="50" max="500" style="width:88px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit">
+      <span class="tip" style="margin:0">大多类目 200，服装/鞋部分类目 150，具体看后台</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+/* ---------- 小工具 ---------- */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const list2arr=s=>s.split(/[,，\n]/).map(x=>x.trim()).filter(Boolean);
+
+/* ---------- 标题大小写转换 ---------- */
+/* 规则：整词判断。不碰 iPhone 这类混写词、不碰 USB/IPX7 这类缩写、不碰中文。
+   全大写的普通英文词（BEST / FREE / PREMIUM）会被纠正成正常写法。 */
+const PLAIN=new Set(('best free new hot sale top great perfect super ultra premium pro max mini plus '+
+  'waterproof wireless bluetooth charging case gift set pack kit home travel outdoor sport fitness '+
+  'original official genuine quality strong heavy duty large small soft hard fast quick easy clean '+
+  'safe durable portable folding adjustable reusable washable').split(/\s+/));
+function isPlainWord(w){ return PLAIN.has(w) || (/^[a-z]+$/.test(w) && w.length>=3); }
+/* 判断「这是缩写/型号，别动它」：
+   含数字（IPX7 / 4K / 5.3）→ 保留；带连字符（USB-C / XL-L）→ 保留；
+   纯大写、长度 ≤4、且不是常见英文词 → 保留（USB / LED / TWS / RGB / HDMI）；
+   其余全大写普通词（BEST / FREE / PREMIUM / DOG / BED）→ 不算缩写，会被纠正成正常写法 */
+const ABBR_STOP=new Set('best free new hot sale top great deal gift gifts set sets fast ship home dog cat pet bag bed car gym'.split(/\s+/));
+function isAbbr(p,lower){
+  if(/[a-z]/.test(p)) return false;                 // 不是全大写，走后面的逻辑
+  if(/\d/.test(p)) return true;                      // IPX7 / 4K / 5.3 这类，一定保留
+  if(p.includes('-')) return true;                   // USB-C / XL-L
+  if(lower.length<=4 && !ABBR_STOP.has(lower) && !isPlainWord(lower)) return true;  // USB LED TWS
+  return false;
+}
+
+function toTitleCase(raw,smallSet,keepSet){
+  // 按「字母 / 数字 / 其他」切块，其他字符（空格 逗号 括号 顿号 连字符）原样保留
+  const parts=raw.split(/([^\p{L}\p{N}]+)/u);
+  const total=parts.filter(p=>p && /[\p{L}\p{N}]/u.test(p)).length;
+  let seq=0;
+
+  return parts.map((p,i)=>{
+    if(!p || !/[\p{L}\p{N}]/u.test(p)) return p;   // 分隔符，原样
+    const isFirst = seq===0;
+    const isLast  = seq===total-1;
+    seq++;
+
+    // 中文直接返回
+    if(/[\u4e00-\u9fa5]/.test(p)) return p;
+
+    const lower=p.toLowerCase();
+    // 1) 自定义保留词 → 按用户写的原样返回（优先级最高）
+    if(keepSet[lower]) return keepSet[lower];
+    // 2) 全大写且不像普通英文词（USB / LED / IPX7 / TWS / 4K）→ 原样
+    if(isAbbr(p,lower)) return p;
+    // 3) 大写开头的混写词（iPhone / eBay / McDonald's）→ 原样，别硬转
+    if(/^[A-Z][a-z]+[A-Z]/.test(p)) return p;
+
+    // 4) 首词、末词必须大写；其余词：在小写表里 → 压小写，否则首字母大写
+    if(!isFirst && !isLast && smallSet.has(lower)) return lower;
+    return cap(p);
+  }).join('');
+}
+function cap(w){
+  // 统一小写后，把「每个字母段的开头」大写：
+  //   BEST → Best、hi-fi → Hi-Fi、3ft → 3Ft、usb-c → Usb-C
+  return w.toLowerCase().replace(/(^|[^a-z])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+}
+
+/* ---------- 高亮差异 ---------- */
+function diffHTML(a,b){
+  // 逐词对比，只标出变化的词；标黄的是「新写法」
+  const ea=a.split(/(\s+)/), eb=b.split(/(\s+)/);
+  let out='';
+  const n=Math.max(ea.length,eb.length);
+  for(let i=0;i<n;i++){
+    const x=(ea[i]||'').trim(), y=eb[i]||'';
+    if(!y) continue;
+    if(x===y.trim()) out+=esc(y);
+    else if(/^\s*$/.test(y)) out+=y;
+    else out+='<span class="diffmark">'+esc(y)+'</span>';
+  }
+  return out;
+}
+
+/* ---------- 检查 ---------- */
+const BANNED=['best','#1','no.1','number one','free shipping','free gift','guarantee','cheapest','hot sale','100%','top rated','world\'s best','money back','wholesale'];
+function audit(txt,limit){
+  const chars=[...txt].length;
+  let out=[];
+  // 字符数
+  if(chars>limit) out.push(['bad','超出上限 '+chars+'/'+limit+'，后台会直接截断，关键词白放']);
+  else if(chars>limit*0.94) out.push(['warn','已经 '+chars+'/'+limit+'，快贴顶了——再加词就会被截']);
+  else out.push(['ok','字符数 OK：'+chars+'/'+limit+'，还能放 '+(limit-chars)+' 个字符']);
+  // 全大写词
+  const caps=txt.match(/\b[A-Z]{4,}\b/g)||[];
+  if(caps.length) out.push(['warn','全大写词 '+caps.length+' 个（'+caps.slice(0,6).join(', ')+'）——亚马逊视为关键词堆砌风险，除非是品牌缩写']);
+  // 连续大写堆叠（3 个以上全大写词连着）
+  if(/\b[A-Z]{3,}\b[\s,]+\b[A-Z]{3,}\b[\s,]+\b[A-Z]{3,}\b/.test(txt)) out.push(['bad','连续 3 个以上全大写词，很像 spam 写法']);
+  // 违禁词
+  const low=txt.toLowerCase(), hits=BANNED.filter(w=>low.includes(w));
+  if(hits.length) out.push(['bad','疑似违规/营销词：'+hits.map(h=>'<b>'+esc(h)+'</b>').join('、')]);
+  // 特殊符号
+  if(/[【】\[\]{}]/.test(txt)) out.push(['warn','含中文括号/方括号装饰符——部分类目可以，但官方不鼓励']);
+  if(/[!！]{2,}/.test(txt)) out.push(['warn','连续感叹号，权重会被压']);
+  if(/[~～]/.test(txt)) out.push(['warn','含波浪号「~」，亚马逊标题通常不允许']);
+  // 逗号分隔结构
+  const segs=txt.split(',').map(s=>s.trim()).filter(Boolean);
+  if(segs.length>=2 && segs.length<=6) out.push(['ok','结构 OK：'+segs.length+' 段，符合「主词 + 卖点 + 规格 + 颜色」的读法']);
+  else if(segs.length>6) out.push(['warn','分了 '+segs.length+' 段，太碎；建议压到 3-5 段']);
+  // 重复词
+  const ws=txt.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[];
+  const cnt={}; ws.forEach(w=>{if(w.length>2)cnt[w]=(cnt[w]||0)+1});
+  const dup=Object.keys(cnt).filter(w=>cnt[w]>1 && !['for','the','and','with'].includes(w));
+  if(dup.length) out.push(['warn','重复出现的词：'+dup.join('、')+'——占字符不涨权重']);
+  return out;
+}
+
+/* ---------- 主流程 ---------- */
+function render(){
+  const src=$('src').value;
+  const small=new Set(list2arr($('cfgSmall').value).map(x=>x.toLowerCase()));
+  const keepArr=list2arr($('cfgKeep').value);
+  const keep={}; keepArr.forEach(k=>keep[k.toLowerCase()]=k);
+  const limit=+$('cfgLimit').value||200;
+
+  $('srcLen').textContent=[...src].length;
+  $('limit').textContent=limit;
+
+  const out=toTitleCase(src,small,keep);
+  $('out').value=out;
+
+  const n=[...out].length;
+  $('outLen').textContent=n;
+  $('outLen').className=n>limit?'over':'';
+  $('wordCnt').textContent=(out.trim().match(/[\p{L}\p{N}]+/gu)||[]).length;
+
+  // 差异高亮：只标出被改动的词
+  $('diffBox').innerHTML=out.trim()?diffHTML(src,out):'';
+
+  // 保持原样的词清单
+  const words=[...new Set(src.split(/[^\p{L}\p{N}\-]+/u).filter(Boolean))];
+  const kept=words.filter(w=>{
+    const lw=w.toLowerCase();
+    if(keep[lw]) return true;
+    if(/[a-z]/.test(w)) return /^[A-Z][a-z]+[A-Z]/.test(w);   // iPhone/eBay 这类
+    return isAbbr(w,lw);
+  });
+  $('keepList').innerHTML=kept.length
+    ? kept.map(w=>'<span class="chip keep">'+esc(w)+'</span>').join('')
+    : '<span class="chip" style="background:#fff;color:#9ca3af;border-style:dashed">这段标题里没有需要保留原样的词</span>';
+
+  // 检查
+  const res=audit(out,limit);
+  $('flags').innerHTML=res.map(([lvl,msg])=>'<div class="flag '+lvl+'">'+msg+'</div>').join('')
+    ||'<div class="flag ok">没发现问题</div>';
+}
+
+let manual=false;
+function onEdit(){ manual=true; render2(); }
+function render2(){
+  const out=$('out').value, limit=+$('cfgLimit').value||200;
+  const n=[...out].length;
+  $('outLen').textContent=n; $('outLen').className=n>limit?'over':'';
+  $('wordCnt').textContent=(out.trim().match(/[\p{L}\p{N}]+/gu)||[]).length;
+  $('diffBox').innerHTML='';
+  $('flags').innerHTML=audit(out,limit).map(([lvl,msg])=>'<div class="flag '+lvl+'">'+msg+'</div>').join('');
+}
+
+function apply(){
+  manual=false;
+  render();
+}
+function copyOut(){
+  const t=$('out').value;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=event&&event.target; if(b){const old=b.textContent;b.textContent='已复制 ✓';setTimeout(()=>b.textContent=old,1200);}
+  }).catch(()=>{
+    $('out').select(); document.execCommand('copy');
+  });
+}
+function clearAll(){
+  $('src').value=''; $('out').value='';
+  render2();
+}
+
+['src','cfgSmall','cfgKeep','cfgLimit'].forEach(id=>$(id).addEventListener('input',()=>{
+  if(!manual) render();
+}));
+render();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· Listing 物料 / 标题规范与大小写转换</span><a href="../index.html#listing">打开完整工具台 ↗</a></div>
+</body>
+</html>
