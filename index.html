@@ -51,9 +51,9 @@ iframe{flex:1;border:none;width:100%}
   <header>
     <div class="dot"></div><span id="head">新品 SOP</span><span class="crumb" id="crumb"></span>
     <a id="back" href="#" onclick="return backHub()" style="display:none">← 返回板块</a>
-    <a id="raw" href="tools/_hub-sop.html" target="_blank">单独打开 ↗</a>
+    <a id="raw" href="tools/hub-sop.html" target="_blank">单独打开 ↗</a>
   </header>
-  <iframe id="frame" src="tools/_hub-sop.html"></iframe>
+  <iframe id="frame" src="tools/hub-sop.html"></iframe>
 </main>
 <script>
 const STRUCT=[
@@ -83,8 +83,8 @@ function go(id,name){
   const btn=document.querySelector('.nav-item[data-id="'+id+'"]');
   if(btn)btn.classList.add('active');
   setHead(name,'');
-  document.getElementById('frame').src='tools/_hub-'+id+'.html';
-  document.getElementById('raw').href='tools/_hub-'+id+'.html';
+  document.getElementById('frame').src='tools/hub-'+id+'.html';
+  document.getElementById('raw').href='tools/hub-'+id+'.html';
   document.getElementById('back').style.display='none';
   location.hash=id;
 }
