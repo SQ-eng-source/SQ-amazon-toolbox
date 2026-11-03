@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="zh-CN" data-page-node-id="R0fuuA0vBU3posmEYhwCw8">
+<head data-page-node-id="EjMP65px02S9kKgRxEJzaq">
+<meta charset="UTF-8" data-page-node-id="JbXzbPRJMk4TCtL2V13oaH">
+<meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="xUMSlPo3PKvPtIx1ltpGxC">
 <title>推新品 SOP · 上架排期清单</title>
 <style>
 :root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--ok:#0a8f5b;--bad:#c0392b;--warn:#b7791f;--soft:#e0f2fe}
@@ -69,10 +69,14 @@ input[type=text],input[type=date]{width:100%}
   box-shadow:0 8px 24px rgba(18,51,63,.28);z-index:200;opacity:0;transition:opacity .18s,transform .18s;max-width:92vw}
 #undoBar.in{opacity:1;transform:translate(-50%,0)}
 #undoBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#undoBtn{background:var(--turq);color:#062a33;border:none;border-radius:7px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+#undoBtn{position:relative;overflow:hidden;background:var(--turq);color:#062a33;border:none;border-radius:7px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px}
 #undoBtn:hover{filter:brightness(1.08)}
-#undoX{background:transparent;border:none;color:#8fb8c7;font-size:14px;cursor:pointer;padding:4px 6px;line-height:1}
-#undoX:hover{color:#fff}
+#undoBtn b{font-variant-numeric:tabular-nums;font-size:12px;background:rgba(6,42,51,.16);border-radius:4px;padding:1px 5px;font-weight:700}
+/* 按钮内的倒计时进度条，从满到空 */
+#undoBtn::before{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:#0e7490;opacity:.45;transform-origin:left center}
+#undoBtn.ticking::before{animation:undoShrink 5s linear forwards}
+@keyframes undoShrink{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+#undoBar.out{opacity:0;transform:translate(-50%,14px)}
 @media print{#undoBar{display:none !important}}
 .mask{position:fixed;inset:0;background:rgba(18,51,63,.38);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
 .modal{width:560px;max-width:100%;max-height:86vh;overflow:auto;background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 18px 50px rgba(6,50,66,.28)}
@@ -86,61 +90,60 @@ input[type=text],input[type=date]{width:100%}
 .helpw{font-size:11.5px;color:var(--warn);line-height:1.65;background:#fdf6e3;border-left:2px solid #e8c98a;border-radius:0 4px 4px 0;padding:7px 9px;margin:0 0 10px}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <h1>推新品 SOP<span>25 个节点 · 按上架日自动排期</span></h1>
-  <p class="desc">新品从备货到放量的完整节奏。建一个产品计划、填上架日，清单会自动换算成具体日期；每完成一项勾一下，支持备注（负责人/链接/坑）。数据可云同步，跨设备共用。</p>
+<body data-page-node-id="KR2XiSaf3ByUSB2GDghLcI">
+<div class="wrap" data-page-node-id="cqFD94dk4Kl4phyUTIvBB8">
+  <h1 data-page-node-id="OReJDGhQHgHJOPUbd9Y3v5">推新品 SOP<span data-page-node-id="yK1B6FyPFGHd4wfhd3ybwr">25 个节点 · 按上架日自动排期</span></h1>
+  <p class="desc" data-page-node-id="7YCx2Fm2HDW2fb5KP8iP0q">新品从备货到放量的完整节奏。建一个产品计划、填上架日，清单会自动换算成具体日期；每完成一项勾一下，支持备注（负责人/链接/坑）。数据可云同步，跨设备共用。</p>
 
-  <div class="card">
-    <h2>① 推品计划
-      <span class="btnrow">
-        <button class="btn ghost" onclick="openSync()">☁ 云同步<span id="syncDot" class="dot"></span></button>
+  <div class="card" data-page-node-id="SjkGILOy4hFAxyRKvZLchv">
+    <h2 data-page-node-id="lQkk9Yea8EAj3SUFrkSBI3">① 推品计划
+      <span class="btnrow" data-page-node-id="JOiCTgxsx6sWuqVyOmznGA">
+        <button class="btn ghost" onclick="openSync()" data-page-node-id="i7HcKOtgTUJ5KXMmQhKezn">☁ 云同步<span id="syncDot" class="dot" data-page-node-id="2cVzLxtQPt9SXqNXmruTI0"></span></button>
       </span>
     </h2>
-    <div class="planbar">
-      <div><label>产品名（如：泳镜 白+粉）</label><input type="text" id="npName" placeholder="新计划名称"></div>
-      <div style="flex:0 0 170px"><label>预计上架日</label><input type="date" id="npDate"></div>
-      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="addBtn" onclick="addPlan()">＋ 建计划</button></div>
-      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="startEdit()">✏️ 编辑当前</button></div>
-      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="cancelEdit()">取消编辑</button></div>
-      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="delPlan()">删除当前</button></div>
+    <div class="planbar" data-page-node-id="Ad597Ao18Jum7qHQ5BJAOd">
+      <div data-page-node-id="bHFybq4VfK3UpdSC9poRzJ"><label data-page-node-id="is7SQPVT2npIyG7z0DbBFd">产品名（如：泳镜 白+粉）</label><input type="text" id="npName" placeholder="新计划名称" data-page-node-id="enBt619juhiV1HBzYrxVFC"></div>
+      <div style="flex:0 0 170px" data-page-node-id="QOkiiAYTERic5FSRSJ2dk7"><label data-page-node-id="Uo1riJzBnUG6mkEo4b0UBU">预计上架日</label><input type="date" id="npDate" data-page-node-id="P5GscpmQ6ytfp0jxVh5ZH2"></div>
+      <div style="flex:0 0 auto" data-page-node-id="v6JPRElK9mMEkh98bJDkGl"><label data-page-node-id="NowcCfIFI16zDHmg8T43ag">&nbsp;</label><button class="btn" id="addBtn" onclick="addPlan()" data-page-node-id="qQId3oQqPjKRc2Hh0yFCqs">＋ 建计划</button></div>
+      <div style="flex:0 0 auto" data-page-node-id="0vFOSHXGEUAMUktEC47R9K"><label data-page-node-id="pfNo4e4EIIGZoy6gAxG9AV">&nbsp;</label><button class="btn ghost" onclick="startEdit()" data-page-node-id="p1ZzQISdmqGCaqw83XuTQA">✏️ 编辑当前</button></div>
+      <div style="flex:0 0 auto" data-page-node-id="ksNeunYLGpXCh3GTzk9TtO"><label data-page-node-id="GHQ8zMrRwCGGf8KtQavww1">&nbsp;</label><button class="btn ghost" onclick="cancelEdit()" data-page-node-id="GH5E6EqbQB0COb0wQKpmM7">取消编辑</button></div>
+      <div style="flex:0 0 auto" data-page-node-id="YlydmW5JoZtyJoTvuK0heE"><label data-page-node-id="icljoDa35tb2kFKnLS3GY3">&nbsp;</label><button class="btn ghost" onclick="delPlan()" data-page-node-id="9vvsQVHA2ffuNzBDmzcEDw">删除当前</button></div>
     </div>
-    <div class="plans" id="plans"></div>
-    <p class="sum" style="margin-top:8px">💡 计划卡片里的 <b>名字</b> 和 <b>日期</b> 可以直接点开改，改完点外面空白处或按回车即生效。</p>
+    <div class="plans" id="plans" data-page-node-id="mWFoH6Jt3EA9XLBemTQZVI"></div>
+    <p class="sum" style="margin-top:8px" data-page-node-id="00TjKcUgKGTOn8Zof92UBy">💡 计划卡片里的 <b data-page-node-id="osDuKrBcsoZw9iO275V3DW">名字</b> 和 <b data-page-node-id="orUFJoPHMJz2HGt4rHCBxh">日期</b> 可以直接点开改，改完点外面空白处或按回车即生效。</p>
   </div>
 
-  <div class="card" id="boardCard" style="display:none">
-    <h2>② 执行清单 <span id="dday" class="dday"></span></h2>
-    <div class="pbar"><i id="pbarFill" style="width:0"></i></div>
-    <div class="plabel" id="pbarLabel"></div>
-    <div id="board" style="margin-top:14px"></div>
-    <p class="sum" id="boardSum"></p>
+  <div class="card" id="boardCard" style="display:none" data-page-node-id="DFUQvgVk4uiR0TheQiK1g1">
+    <h2 data-page-node-id="GXylqhwPpTtMCMlD4vTEAA">② 执行清单 <span id="dday" class="dday" data-page-node-id="7l8EmclhUoSAirNXZHu9Vk"></span></h2>
+    <div class="pbar" data-page-node-id="vd1zhCzXU83mUYLRITEuJB"><i id="pbarFill" style="width:0" data-page-node-id="MqExTSkKNYaoNCqg40sfIx"></i></div>
+    <div class="plabel" id="pbarLabel" data-page-node-id="xPYcoI0y2RrKG1VHnXDtmD"></div>
+    <div id="board" style="margin-top:14px" data-page-node-id="DPQPyEx6R8gVaOt07yxaRE"></div>
+    <p class="sum" id="boardSum" data-page-node-id="LBKNWBcI2CHo9EuK9A2xDN"></p>
   </div>
 </div>
 
-<div id="undoBar">
-  <span id="undoTxt"></span>
-  <button id="undoBtn" onclick="doUndo()">撤销</button>
-  <button id="undoX" onclick="closeUndo()" title="关掉">✕</button>
+<div id="undoBar" data-page-node-id="hzzqTujbxCwYdbLYYxcLD3">
+  <span id="undoTxt" data-page-node-id="uNj2AQF2ErGXTwfzBAe5Ns"></span>
+  <button id="undoBtn" onclick="doUndo()" data-page-node-id="qe3t3zFopXBUR8UXcF6UuC">撤销 <b id="undoSec">5</b>s</button>
 </div>
 
-<div class="mask" id="syncMask">
-  <div class="modal">
-    <h3>☁ 云同步</h3>
-    <p class="bkmsg">与 FBA 工具、补货看板共用同一把令牌，存进同一个私有仓库，文件为 <b>sop.json</b>。令牌只保存在本机浏览器。</p>
-    <div class="syncrow"><label>仓库</label><input id="syRepo" spellcheck="false" placeholder="用户名/仓库名"></div>
-    <div class="syncrow"><label>分支 / 文件</label><input id="syBranch" spellcheck="false" style="flex:0 0 96px"><input id="syFile" spellcheck="false"></div>
-    <div class="syncrow"><label>令牌</label><input id="syToken" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_..."></div>
-    <p class="bkmsg" style="font-size:11px;color:#a33;background:#fdf0ee;border-left:2px solid #e8a99b;border-radius:0 4px 4px 0;padding:6px 9px;margin:8px 0">🔒 令牌只存在你这台电脑的浏览器里，别贴到聊天/群里，也别分享给别人。别人打开这个工具是干净的，看不到你的数据。</p>
-    <div class="syncmsg" id="syncMsg">未连接。</div>
-    <p class="helpw">📌 换新电脑 / 新浏览器记住三步：<b>① 填仓库名 ② 粘令牌 ③ 点「合并同步」</b>——别的按钮都不用碰。日常只点「合并同步」；两个「仅」是覆盖式急救按钮。</p>
-    <div class="modal-act" style="justify-content:space-between">
-      <button class="btn ghost" onclick="disconnectSync()">断开并清除令牌</button>
-      <span style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn ghost" onclick="manualSync('pull')">仅下载云端</button>
-        <button class="btn ghost" onclick="manualSync('push')">仅上传本地</button>
-        <button class="btn" onclick="manualSync('merge')">合并同步</button>
-        <button class="btn ghost" onclick="closeSync()">关闭</button>
+<div class="mask" id="syncMask" data-page-node-id="diLqR9slq9tai6wOd0xVQF">
+  <div class="modal" data-page-node-id="aZgIY64JsLvVOXbf3NSDrk">
+    <h3 data-page-node-id="k1NDewec790BR3qSrzgGCE">☁ 云同步</h3>
+    <p class="bkmsg" data-page-node-id="rEI0SZyiJiUqThESYZ3ys0">与 FBA 工具、补货看板共用同一把令牌，存进同一个私有仓库，文件为 <b data-page-node-id="4HWXf6GHGo7psr2CjBYejh">sop.json</b>。令牌只保存在本机浏览器。</p>
+    <div class="syncrow" data-page-node-id="AFZk8pAqf0Pl1CpNkACHAP"><label data-page-node-id="zAxWUpkntiFebMwDYB7bUQ">仓库</label><input id="syRepo" spellcheck="false" placeholder="用户名/仓库名" data-page-node-id="ySLOaFnov8oNaHGzRSw0zW"></div>
+    <div class="syncrow" data-page-node-id="yVrl4dY07BhqFT4Dm4Bjjn"><label data-page-node-id="i499efuBHxECiEnRZVSumX">分支 / 文件</label><input id="syBranch" spellcheck="false" style="flex:0 0 96px" data-page-node-id="Q77u1uMhmKDyYsgccqgiIZ"><input id="syFile" spellcheck="false" data-page-node-id="HPbdfKPnmK5ZbozN0fOPMY"></div>
+    <div class="syncrow" data-page-node-id="DnVEAFryLeaqGriedSoePi"><label data-page-node-id="Vs2we7OirEy9EB4h2HyWex">令牌</label><input id="syToken" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_..." data-page-node-id="iOFlMXeamvQgQDZunBioFz"></div>
+    <p class="bkmsg" style="font-size:11px;color:#a33;background:#fdf0ee;border-left:2px solid #e8a99b;border-radius:0 4px 4px 0;padding:6px 9px;margin:8px 0" data-page-node-id="B7b3wfe39Qz0RQpoVw5z8T">🔒 令牌只存在你这台电脑的浏览器里，别贴到聊天/群里，也别分享给别人。别人打开这个工具是干净的，看不到你的数据。</p>
+    <div class="syncmsg" id="syncMsg" data-page-node-id="o1FLHNXmWhAI6VHzrE8DCh">未连接。</div>
+    <p class="helpw" data-page-node-id="S0XIkb6VNHFVSi4vFineBY">📌 换新电脑 / 新浏览器记住三步：<b data-page-node-id="hOUwaAcR2JKBrg5mSrBrGa">① 填仓库名 ② 粘令牌 ③ 点「合并同步」</b>——别的按钮都不用碰。日常只点「合并同步」；两个「仅」是覆盖式急救按钮。</p>
+    <div class="modal-act" style="justify-content:space-between" data-page-node-id="vGBbE5HNhH9Lk0A9MIgVdH">
+      <button class="btn ghost" onclick="disconnectSync()" data-page-node-id="yUkMeM4zM3nkyq9E7cwWcD">断开并清除令牌</button>
+      <span style="display:flex;gap:8px;flex-wrap:wrap" data-page-node-id="vTZdOGyKaozlzNF6w2WCVb">
+        <button class="btn ghost" onclick="manualSync('pull')" data-page-node-id="DWBLUG8VLZjzDSkcQq7lBK">仅下载云端</button>
+        <button class="btn ghost" onclick="manualSync('push')" data-page-node-id="3GMTDXehqxkXSqFMBfgDBm">仅上传本地</button>
+        <button class="btn" onclick="manualSync('merge')" data-page-node-id="KT7DL9Cu8eHwJEPZ30sD3Z">合并同步</button>
+        <button class="btn ghost" onclick="closeSync()" data-page-node-id="mNHmCrGgm1TSiGvIg3WDzJ">关闭</button>
       </span>
     </div>
   </div>
@@ -259,41 +262,67 @@ function toggleTask(tid){
   p.ts=now;persist();renderBoard();renderPlans();
 }
 /* 撤销：取消勾选后 8 秒内可点撤回，恢复为勾选 */
-let undoState=null,undoTimer=null;
+let undoState=null,undoTimer=null,undoTick=null;
+const UNDO_SEC=5;
 function armUndo(tid){
   const p=cur();if(!p)return;
   const rec=p.tasks[tid]||{};
-  undoState={pid:p.id,tid,undoTs:rec.undoTs||0};
+  undoState={pid:p.id,tid,undoTs:rec.undoTs||0,left:UNDO_SEC};
   const bar=$('undoBar');
   if(bar){
     const t=TASKS.find(x=>x.id===tid);
     $('undoTxt').textContent='已取消勾选：'+shortT(t?t.t:tid);
     bar.style.display='flex';
-    bar.classList.remove('in');
+    bar.classList.remove('in','out');
     requestAnimationFrame(()=>bar.classList.add('in'));
+    // 进度条动画重跑：先移除再强制回流，否则第二次不触发
+    const btn=$('undoBtn');
+    if(btn){btn.classList.remove('ticking');void btn.offsetWidth;btn.classList.add('ticking');}
+    paintUndoSec(UNDO_SEC);
   }
-  clearTimeout(undoTimer);
-  undoTimer=setTimeout(closeUndo,8000);
+  clearTimeout(undoTimer);clearInterval(undoTick);
+  // 秒数倒计时（UI 用）
+  undoTick=setInterval(()=>{
+    if(!undoState){clearInterval(undoTick);return;}
+    undoState.left--;
+    paintUndoSec(Math.max(undoState.left,0));
+    if(undoState.left<=0){clearInterval(undoTick);}
+  },1000);
+  // 到点自动收起，默认不撤销
+  undoTimer=setTimeout(expireUndo,UNDO_SEC*1000);
 }
-function closeUndo(){
-  clearTimeout(undoTimer);undoState=null;
+function paintUndoSec(n){const el=$('undoSec');if(el)el.textContent=String(n)}
+/* 倒计时走完：静默消失，什么都不改 */
+function expireUndo(){
+  clearTimeout(undoTimer);clearInterval(undoTick);
+  undoState=null;
+  paintUndoSec(0);
+  hideUndoBar();
+}
+function closeUndo(){expireUndo()}
+function hideUndoBar(){
   const bar=$('undoBar');
-  if(bar){
-    bar.classList.remove('in');
-    clearTimeout(closeUndo._t);
-    closeUndo._t=setTimeout(()=>{if(!undoState)bar.style.display='none'},180);
-  }
+  if(!bar)return;
+  bar.classList.remove('in');
+  bar.classList.add('out');
+  clearTimeout(hideUndoBar._t);
+  hideUndoBar._t=setTimeout(()=>{
+    if(!undoState){bar.style.display='none';bar.classList.remove('out');}
+  },200);
 }
 function doUndo(){
   if(!undoState)return;
   const {pid,tid,undoTs}=undoState;
   const p=plans.find(x=>x.id===pid);
-  if(!p||!p.tasks||!p.tasks[tid]){closeUndo();return;}
+  // 撤销前先清掉倒计时，避免动画还没落地就被 expire 抢走
+  clearTimeout(undoTimer);clearInterval(undoTick);
+  undoState=null;
+  if(!p||!p.tasks||!p.tasks[tid]){hideUndoBar();return;}
   const now=Date.now();
   // 关键：ts 用现在，保证这次"恢复"比云端那条取消记录新，合并时才不会又被取消掉
   p.tasks[tid]={done:true,note:p.tasks[tid].note||'',ts:now,undoTs};
   p.ts=now;
-  closeUndo();persist();renderBoard();renderPlans();
+  hideUndoBar();persist();renderBoard();renderPlans();
 }
 /* 键盘：Ctrl/⌘+Z 也能撤销 */
 document.addEventListener('keydown',function(e){
@@ -588,6 +617,6 @@ loadLocal();loadCfg();
 curId=plans.length?plans[0].id:null;
 renderPlans();renderBoard();autoSync();
 </script>
-<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 新品 SOP / 推新品 SOP</span><a href="../index.html#sop">打开完整工具台 ↗</a></div>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar" data-page-node-id="FO7y4fONPJbAjg8COh7jCx">🏝 <b data-page-node-id="MQDTGvNNvU35ykkLqHCPtO">SQ-AMAZON-TOOLBOX</b><span class="cr" data-page-node-id="PU94T3CesH5PXXUJHGG7Zg">· 新品 SOP / 推新品 SOP</span><a href="../index.html#sop" data-page-node-id="tU9lpopQT93Ni9dEmrv0bi">打开完整工具台 ↗</a></div>
 </body>
 </html>
