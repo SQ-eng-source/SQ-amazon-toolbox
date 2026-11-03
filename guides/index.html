@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工具使用说明 · SQ-AMAZON-TOOLBOX</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:30px 24px}
+.wrap{max-width:1040px;margin:0 auto}
+.wrap>h1{font-size:22px;color:var(--deep);margin-bottom:6px}
+.lead{font-size:13px;color:var(--sub);line-height:1.75;margin-bottom:22px;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.doc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;transition:.15s;display:flex;flex-direction:column}
+.doc:hover{border-color:var(--turq);box-shadow:0 4px 16px rgba(34,211,238,.14);transform:translateY(-2px)}
+.doc .no{font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:2px 7px;align-self:flex-start;margin-bottom:9px}
+.doc h2{font-size:15px;color:var(--ink);margin-bottom:6px;line-height:1.4}
+.doc p{font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:12px;flex:1}
+.doc .row{display:flex;gap:8px;flex-wrap:wrap}
+.doc a{font-size:12px;text-decoration:none;border-radius:7px;padding:6px 12px;font-weight:600;white-space:nowrap}
+.doc a.go{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff}
+.doc a.read{background:#fff;color:var(--deep);border:1px solid var(--line)}
+.doc a:hover{filter:brightness(1.06)}
+.note{margin-top:24px;background:#fdf6e3;border-left:3px solid #e8c98a;border-radius:0 8px 8px 0;padding:12px 16px}
+.note b{font-size:12.5px;color:#8a6d1f;display:block;margin-bottom:6px}
+.note li{font-size:12.5px;color:#7a5f18;line-height:1.85;margin-left:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>📖 工具使用说明</h1>
+<p class="lead">每个工具一份说明书，假设你从来没接触过亚马逊后台。讲清楚三件事：这个工具解决什么问题、一步步怎么用、结果该怎么看。<b>建议新人第一天先把这五份看完。</b></p>
+
+<div class="grid">
+  <div class="doc">
+    <span class="no">01</span>
+    <h2>推新品 SOP</h2>
+    <p>从备货到上架后 90 天的 25 个节点。填一次上架日，全表日期自动算好。每天只需要看标红的那几条。</p>
+    <div class="row">
+      <a class="go" href="../tools/sop-launch.html">打开工具 →</a>
+      <a class="read" href="guide-sop-launch.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">02</span>
+    <h2>商探类目平均转化率计算器</h2>
+    <p>亚马逊不给「类目平均转化率」，但用商机探测器下载的两张表能算出来。有了这条参照线，才知道自己 8% 的转化率算好还是差。</p>
+    <div class="row">
+      <a class="go" href="../tools/niche-cvr.html">打开工具 →</a>
+      <a class="read" href="guide-niche-cvr.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">03</span>
+    <h2>FBA 利润计算器 · 四站点</h2>
+    <p>售价用当地货币、采购用人民币。算清楚每卖一件赚多少，以及扣完广告还剩多少 —— 那个数字才是你真正拿到手的钱。</p>
+    <div class="row">
+      <a class="go" href="../tools/fba-profit-sites.html">打开工具 →</a>
+      <a class="read" href="guide-fba-profit-sites.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">04</span>
+    <h2>多站点定价换算器</h2>
+    <p>同一个产品卖到英美德日，价格不能直接乘汇率。按目标净利率倒推，告诉你每个站点该标多少，以及为什么欧洲的价格看着高。</p>
+    <div class="row">
+      <a class="go" href="../tools/multi-site-pricing.html">打开工具 →</a>
+      <a class="read" href="guide-multi-site-pricing.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">05</span>
+    <h2>标题规范与 75+125</h2>
+    <p>2026 新规：主标题 75 字符讲「卖什么、为什么选你」，Highlights 125 字符补材质场景。工具帮你重排信息组，不机械切段。</p>
+    <div class="row">
+      <a class="go" href="../tools/title-case.html">打开工具 →</a>
+      <a class="read" href="guide-title-case.html">读说明</a>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <b>看说明之前，先知道这几件事</b>
+  <ul>
+    <li>所有工具的数据默认存在<b>当前这个浏览器</b>里。换电脑、换浏览器、清缓存会丢，重要数据记得导出或开云同步。</li>
+    <li>工具里的计算结果都是<b>估算和参照</b>，不是亚马逊官方数字。判决性的事（投多少、定什么价）还是你自己拍板。</li>
+    <li>页面看着没更新，先按 <b>Ctrl+F5</b> 强制刷新，多半是浏览器缓存。</li>
+  </ul>
+</div>
+</div>
+</body>
+</html>
