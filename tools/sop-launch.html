@@ -83,7 +83,9 @@ input[type=text],input[type=date]{width:100%}
     <div class="planbar">
       <div><label>产品名（如：泳镜 白+粉）</label><input type="text" id="npName" placeholder="新计划名称"></div>
       <div style="flex:0 0 170px"><label>预计上架日</label><input type="date" id="npDate"></div>
-      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" onclick="addPlan()">＋ 建计划</button></div>
+      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn" id="addBtn" onclick="addPlan()">＋ 建计划</button></div>
+      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="startEdit()">✏️ 编辑当前</button></div>
+      <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="cancelEdit()">取消编辑</button></div>
       <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="delPlan()">删除当前</button></div>
     </div>
     <div class="plans" id="plans"></div>
@@ -170,10 +172,19 @@ function loadLocal(){
 function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(plans));localStorage.setItem(DELKEY,JSON.stringify(dels))}catch(e){}}
 function persist(){persistLocal();schedulePush();}
 function fmtD(ts){const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()}
+let editId=null;
 function addPlan(){
   const name=($('npName').value||'').trim();
   const date=$('npDate').value;
   if(!name||!date){alert('产品名和上架日都要填');return;}
+  if(editId){
+    const p=plans.find(x=>x.id===editId);
+    if(!p){exitEdit();return;}
+    if(plans.some(x=>x.id!==editId&&x.name===name)){alert('已有别的计划叫「'+name+'」，换个名字');return;}
+    if(p.name!==name){dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});} // 旧名字记墓碑，防止其他设备复活成重复计划
+    p.name=name;p.launch=new Date(date+'T00:00:00').getTime();p.ts=Date.now();
+    exitEdit();persist();renderPlans();renderBoard();return;
+  }
   if(plans.some(p=>p.name===name)){if(!confirm('已有同名计划，继续会覆盖它的进度？'))return;}
   const i=plans.findIndex(p=>p.name===name);
   const p={id:i>=0?plans[i].id:Date.now()+''+Math.floor(Math.random()*1000),name,launch:new Date(date+'T00:00:00').getTime(),tasks:{},ts:Date.now()};
@@ -181,12 +192,26 @@ function addPlan(){
   curId=p.id;$('npName').value='';
   persist();renderPlans();renderBoard();
 }
+function startEdit(){
+  const p=cur();
+  if(!p){alert('先在下面点选一个计划，再点编辑');return;}
+  editId=p.id;
+  $('npName').value=p.name;
+  $('npDate').value=new Date(p.launch-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+  $('addBtn').textContent='💾 保存修改';
+  $('npName').focus();
+}
+function exitEdit(){
+  editId=null;$('npName').value='';$('addBtn').textContent='＋ 建计划';
+}
+function cancelEdit(){if(editId){exitEdit();}}
 function delPlan(){
   const p=plans.find(x=>x.id===curId);
   if(!p){alert('先在下面选中一个计划');return;}
   if(!confirm('删除计划「'+p.name+'」及其全部勾选进度？同步设备也会一并删除。'))return;
   dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});
   plans=plans.filter(x=>x.id!==curId);curId=plans.length?plans[0].id:null;
+  if(editId)exitEdit();
   persist();renderPlans();renderBoard();
 }
 function pickPlan(id){curId=id;renderPlans();renderBoard();}
