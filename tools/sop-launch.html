@@ -215,39 +215,48 @@ function renderPlans(){
 function renderBoard(){
   const p=cur();
   const card=$('boardCard');
-  if(!p){card.style.display='none';return;}
-  card.style.display='';
   const today=new Date().setHours(0,0,0,0);
-  const diff=Math.round((p.launch-today)/86400000);
+  let launch,tasks,isTemp=false;
+  if(p){launch=p.launch;tasks=p.tasks||{};}
+  else{
+    isTemp=true;
+    const d=$('npDate').value;
+    launch=d?new Date(d+'T00:00:00').getTime():today+45*86400000;
+    tasks={};
+  }
+  card.style.display='';
+  const diff=Math.round((launch-today)/86400000);
   const dd=$('dday');
-  if(diff>0){dd.className='dday';dd.textContent='距离上架还有 '+diff+' 天';}
+  if(isTemp){dd.className='dday';dd.textContent='预览排期 · 建「＋ 计划」后才能打卡保存';}
+  else if(diff>0){dd.className='dday';dd.textContent='距离上架还有 '+diff+' 天';}
   else if(diff===0){dd.className='dday';dd.textContent='🎉 今天上架';}
   else{dd.className='dday past';dd.textContent='上架已 '+(-diff)+' 天';}
-  const done=Object.values(p.tasks||{}).filter(t=>t.done).length;
+  const done=Object.values(tasks).filter(t=>t.done).length;
   const pct=Math.round(done/TASKS.length*100);
   $('pbarFill').style.width=pct+'%';
-  $('pbarLabel').textContent='总进度 '+done+' / '+TASKS.length+'（'+pct+'%）';
+  $('pbarLabel').textContent=isTemp?'下面是完整清单预览，日期按你上面填的上架日自动换算':'总进度 '+done+' / '+TASKS.length+'（'+pct+'%）';
   let h='',doneAll=0;
   PHASES.forEach(ph=>{
     const list=TASKS.filter(t=>t.ph===ph.id);
-    const dn=list.filter(t=>{const s=p.tasks&&p.tasks[t.id];return s&&s.done}).length;
+    const dn=list.filter(t=>{const s=tasks[t.id];return s&&s.done}).length;
     h+='<div class="phase"><h3>'+ph.name+'<small>'+dn+'/'+list.length+' 完成</small></h3>';
     list.forEach(t=>{
-      const s=(p.tasks&&p.tasks[t.id])||{};
-      const due=p.launch+t.off*86400000;
+      const s=tasks[t.id]||{};
+      const due=launch+t.off*86400000;
       const dDiff=Math.round((due-today)/86400000);
       let cls='',txt=(t.off<0?'前':'后')+Math.abs(t.off)+' 天 · '+fmtD(due);
       if(!s.done){if(dDiff<0){cls='late';txt='已过期 '+(-dDiff)+' 天 · '+txt}else if(dDiff<=3){cls='today';txt=(dDiff===0?'就在今天':(t.off<0?'剩 ':'剩 ')+dDiff+' 天')+' · '+txt}}
       h+='<div class="task'+(s.done?' done':'')+'">'+
-        '<input type="checkbox" '+(s.done?'checked':'')+' onchange="toggleTask(\''+t.id+'\')">'+
-        '<div class="body"><div class="t" onclick="toggleTask(\''+t.id+'\')">'+esc(t.t)+'</div><div class="d">'+esc(t.d)+'</div>'+
-        '<input class="note" placeholder="备注：负责人 / 链接 / 坑" value="'+esc(s.note||'')+'" onchange="saveNote(\''+t.id+'\',this.value)">'+
+        '<input type="checkbox" '+(s.done?'checked':'')+(isTemp?' disabled title="先建计划再打卡"':'')+' onchange="toggleTask(\''+t.id+'\')">'+
+        '<div class="body"><div class="t" '+(isTemp?'':'onclick="toggleTask(\''+t.id+'\')"')+'>'+esc(t.t)+'</div><div class="d">'+esc(t.d)+'</div>'+
+        '<input class="note" placeholder="备注：负责人 / 链接 / 坑" value="'+esc(s.note||'')+'" '+(isTemp?'disabled':'')+' onchange="saveNote(\''+t.id+'\',this.value)">'+
         '</div><span class="due '+cls+'">'+txt+'</span></div>';
       if(s.done)doneAll++;
     });
     h+='</div>';
   });
   $('board').innerHTML=h;
+  if(isTemp){$('boardSum').innerHTML='💡 这是 <b>25 项完整清单</b>的预览。填好产品名后点上面的 <b>「＋ 建计划」</b>，就能勾选打卡、写备注、云同步。';return;}
   const overdue=TASKS.filter(t=>{const s=p.tasks&&p.tasks[t.id];return !(s&&s.done)&&p.launch+t.off*86400000<today}).length;
   const next=TASKS.filter(t=>{const s=p.tasks&&p.tasks[t.id];return !(s&&s.done)&&p.launch+t.off*86400000>=today}).sort((a,b)=>(p.launch+a.off*86400000)-(p.launch+b.off*86400000))[0];
   $('boardSum').innerHTML='已过期未完成 <b style="color:var(--bad)">'+overdue+'</b> 项'+(next?'；下一项：<b>'+esc(next.t)+'</b>（'+(next.off<0?'上架前':'上架后')+Math.abs(next.off)+' 天）':'；全部完成 🎉');
