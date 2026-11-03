@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="p1I0DMOmTc8srxEq0SZNIA">
-<head data-page-node-id="696qKsvyRhJh6Wrdiswuz5">
-<meta charset="UTF-8" data-page-node-id="cAZH1rxVDst731QvoGNQXe">
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AMAZON-TOOLBOX</title>
 <style>
 :root{
@@ -11,88 +12,97 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
 html,body{height:100%}
 body{display:flex;background:var(--bg);color:var(--ink)}
-aside{width:252px;flex-shrink:0;overflow-y:auto;color:var(--ink);
+aside{width:258px;flex-shrink:0;overflow-y:auto;color:var(--ink);
   background:linear-gradient(180deg,#e6fafc 0%,#d2f3f9 60%,#c8eef7 100%);
   border-right:1px solid #bfe7f2}
-.brand{padding:22px 18px 18px;border-bottom:1px solid #b3e2ef}
+.brand{padding:22px 18px 16px;border-bottom:1px solid #b3e2ef}
 .brand h1{font-size:17px;letter-spacing:.5px;color:#0e7490}
 .brand h1 span{color:#0891b2}
 .brand p{font-size:11px;color:#6b93a3;margin-top:4px}
-.group{margin-top:16px;padding:0 10px}
-.group-title{font-size:11px;font-weight:700;color:#0e7490;letter-spacing:1.5px;padding:0 8px 6px;display:flex;align-items:center;gap:6px}
+.group{margin-top:14px;padding:0 10px}
+.group-title{font-size:11px;font-weight:700;color:#0e7490;letter-spacing:1.2px;padding:0 8px 6px;display:flex;align-items:center;gap:6px}
 .group-title::after{content:"";flex:1;height:1px;background:#b3e2ef}
 .nav-item{display:block;width:100%;text-align:left;padding:9px 12px;border:none;background:none;border-radius:10px;font-size:13.5px;color:#155e75;cursor:pointer;margin-bottom:3px;line-height:1.35;transition:.15s}
 .nav-item:hover{background:rgba(255,255,255,.75)}
 .nav-item.active{background:linear-gradient(90deg,#22d3ee33,#ffffffcc);color:#0e7490;font-weight:700;box-shadow:inset 3px 0 0 #22d3ee,0 2px 6px rgba(34,211,238,.15)}
 .nav-item small{display:block;font-size:11px;color:#6b93a3;font-weight:400;margin-top:2px}
 .nav-item.active small{color:#0891b2}
+.nav-item .cnt{float:right;font-size:10px;color:#94b8c6;font-weight:400;padding-top:2px}
 main{flex:1;display:flex;flex-direction:column;height:100%}
 header{padding:14px 24px;background:linear-gradient(90deg,#ffffff,#f2fbfd);border-bottom:1px solid #d9f0f6;display:flex;align-items:center;gap:10px}
 header .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#67e8f9,#0891b2)}
 header span{font-size:15px;font-weight:700;color:#0e7490}
+header .crumb{font-size:12px;color:#6b93a3;font-weight:400}
+header a{font-size:11.5px;color:#0891b2;margin-left:auto;text-decoration:none;border:1px solid #bfe7f2;background:#fff;padding:5px 10px;border-radius:7px}
+header a:hover{background:#e6fafc}
 iframe{flex:1;border:none;width:100%}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#a5dfeb;border-radius:4px}
 </style>
 </head>
-<body data-page-node-id="bPZBEO1TjrTWKdD87vWWI1">
-<aside data-page-node-id="0TadZBjxVuRiCxv5hBYD3F">
-  <div class="brand" data-page-node-id="Ec1lFqeQxSDUeIZvDWm2kB">
-    <h1 data-page-node-id="pJwgLBsUZ5DG6Ni1aGSvcR">🏝 AMAZON<span data-page-node-id="sAeNXZuoNpvTocWMPG1RvH">-TOOLBOX</span></h1>
-    <p data-page-node-id="veb14jZNykJ507EU8LmXjA">17 个实用小工具 · 离线可用</p>
+<body>
+<aside>
+  <div class="brand">
+    <h1>🏝 AMAZON<span>-TOOLBOX</span></h1>
+    <p>7 大板块 · 按运营工作流组织</p>
   </div>
-  <div id="nav" data-page-node-id="eeQbcrD8xYsTsQfOxq0H5Z"></div>
+  <div id="nav"></div>
 </aside>
-<main data-page-node-id="O0u5uqJ1MNRRdjvQm1EL45">
-  <header data-page-node-id="UDdawqo8qf998nBWAYIMe9"><div class="dot" data-page-node-id="FXzqtEgx6zHAgeA7NceeZq"></div><span id="head" data-page-node-id="XPl4ica5AjRXDr9xibjduA">盈亏平衡 ACoS 计算器</span></header>
-  <iframe id="frame" src="tools/acos-calculator.html" data-page-node-id="D64Y2QIm3yeZ1MSrldW8pz"></iframe>
+<main>
+  <header>
+    <div class="dot"></div><span id="head">新品 SOP</span><span class="crumb" id="crumb"></span>
+    <a id="back" href="#" onclick="return backHub()" style="display:none">← 返回板块</a>
+    <a id="raw" href="tools/_hub-sop.html" target="_blank">单独打开 ↗</a>
+  </header>
+  <iframe id="frame" src="tools/_hub-sop.html"></iframe>
 </main>
 <script>
-const GROUPS=[
- ['💰 算钱',[
-  ['acos-calculator','盈亏平衡 ACoS 计算器','广告保本线，低于它才赚钱'],
-  ['fba-profit-sites','FBA 利润计算器 · 四站点','英德美加，含VAT/汇率/退货/Excel导入导出'],
-  ['payout','月度回款计算器','报表利润 ≠ 回款'],
-  ['return-erosion','退货率利润侵蚀','退货吞掉多少利润'],
-  ['promo','促销折扣计算器','打折前先算划不划算'],
- ]],
- ['📊 广告',[
-  ['bid','广告出价计算器','从毛利倒推最高 CPC'],
-  ['ppc-budget','PPC 预算分配器','按各活动表现分预算'],
- ]],
- ['📈 Listing 与选品',[
-  ['sop-launch','推新品 SOP','25 节点清单 · 按上架日排期'],
-  ['sqp-cvr','SQP 类目转化率计算器 · 导入版','品牌分析真实数据，拖入表格直接算'],
-  ['niche-cvr','商探类目平均转化率计算器','商探两份表算类目CVR，可保存记录'],
-  ['competitor-finder','AI 竞品挖掘器','相似度打分 + 关键词重合度'],
-  ['funnel','Listing 转化漏斗','曝光→点击→下单掉在哪层'],
-  ['listing-checker','Listing 字符合规检查','字符数 + 违禁词扫描'],
-  ['bsr-estimator','BSR 销量估算器','摸竞品的量和上架年龄'],
-  ['multi-site-pricing','多站点定价换算','各站点目标净利率定价'],
- ]],
- ['📦 供应链与合规',[
-  ['restock','FBA 补货计算器','SKU 看板 · 按可售天数排序'],
-  ['review-cost','种子评论成本','折扣获评成本 vs Vine'],
- ]],
+const STRUCT=[
+ {id:'sop',name:'🧭 新品 SOP',desc:'25 节点排期 · 上架后复盘'},
+ {id:'market',name:'🔭 市场洞察',desc:'流量趋势 · 需求 · 类目 · 选品'},
+ {id:'comp',name:'🎯 竞品分析',desc:'Listing · 关键词 · 广告 · 监控'},
+ {id:'supply',name:'💰 备货与算钱',desc:'补货 · 成本核算 · 各类算钱'},
+ {id:'listing',name:'📝 Listing 物料',desc:'关键词 · 文案 · 图片 · A+ · 检查'},
+ {id:'ads',name:'📊 广告',desc:'词库 · 架构 · 分析优化'},
+ {id:'risk',name:'🛡 风险体检',desc:'合规 · 账号 · 侵权'}
 ];
+let curHub='sop',curHubName='新品 SOP';
 const nav=document.getElementById('nav');
-let first=true;
-GROUPS.forEach(([title,tools])=>{
+STRUCT.forEach((s,i)=>{
   const g=document.createElement('div');g.className='group';
-  g.innerHTML='<div class="group-title">'+title+'</div>';
-  tools.forEach(([f,name,desc])=>{
-    const b=document.createElement('button');
-    b.className='nav-item'+(first?' active':'');
-    b.innerHTML=name+'<small>'+desc+'</small>';
-    b.onclick=()=>{
-      document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      document.getElementById('head').textContent=name;
-      document.getElementById('frame').src='tools/'+f+'.html';
-    };
-    g.appendChild(b);first=false;
-  });
-  nav.appendChild(g);
+  g.innerHTML='<div class="group-title">板块 '+String(i+1).padStart(2,'0')+'</div>';
+  const b=document.createElement('button');
+  b.className='nav-item'+(i===0?' active':'');
+  b.dataset.id=s.id;
+  b.innerHTML='<span class="cnt">'+String(i+1).padStart(2,'0')+'</span>'+s.name+'<small>'+s.desc+'</small>';
+  b.onclick=()=>go(s.id,s.name);
+  g.appendChild(b);nav.appendChild(g);
 });
+function go(id,name){
+  curHub=id;curHubName=name;
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  const btn=document.querySelector('.nav-item[data-id="'+id+'"]');
+  if(btn)btn.classList.add('active');
+  setHead(name,'');
+  document.getElementById('frame').src='tools/_hub-'+id+'.html';
+  document.getElementById('raw').href='tools/_hub-'+id+'.html';
+  document.getElementById('back').style.display='none';
+  location.hash=id;
+}
+function openTool(fid,name){
+  setHead(name,curHubName);
+  document.getElementById('frame').src='tools/'+fid+'.html';
+  document.getElementById('raw').href='tools/'+fid+'.html';
+  document.getElementById('back').style.display='';
+}
+function backHub(){go(curHub,curHubName);return false;}
+function setHead(t,crumb){
+  document.getElementById('head').textContent=t;
+  document.getElementById('crumb').textContent=crumb?('— '+crumb):'';
+}
+const start=location.hash.replace('#','');
+if(start&&STRUCT.some(s=>s.id===start)){
+  const s=STRUCT.find(x=>x.id===start);go(s.id,s.name);
+}
 </script>
 </body>
 </html>
