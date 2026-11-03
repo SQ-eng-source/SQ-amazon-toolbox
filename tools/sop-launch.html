@@ -159,10 +159,15 @@ const TASKS=[
 ];
 
 /* ================= 数据 ================= */
-const KEY='sop_plans_v1';
-let plans=[],curId=null;
-function loadLocal(){try{plans=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){plans=[]}if(!Array.isArray(plans))plans=[]}
-function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(plans))}catch(e){}}
+const KEY='sop_plans_v1',DELKEY='sop_del_v1';
+let plans=[],dels=[],curId=null;
+function loadLocal(){
+  try{plans=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){plans=[]}
+  if(!Array.isArray(plans))plans=[];
+  try{dels=JSON.parse(localStorage.getItem(DELKEY)||'[]')}catch(e){dels=[]}
+  if(!Array.isArray(dels))dels=[];
+}
+function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(plans));localStorage.setItem(DELKEY,JSON.stringify(dels))}catch(e){}}
 function persist(){persistLocal();schedulePush();}
 function fmtD(ts){const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()}
 function addPlan(){
@@ -179,7 +184,8 @@ function addPlan(){
 function delPlan(){
   const p=plans.find(x=>x.id===curId);
   if(!p){alert('先在下面选中一个计划');return;}
-  if(!confirm('删除计划「'+p.name+'」及其全部勾选进度？云端同步过的记录不受其他设备影响。'))return;
+  if(!confirm('删除计划「'+p.name+'」及其全部勾选进度？同步设备也会一并删除。'))return;
+  dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});
   plans=plans.filter(x=>x.id!==curId);curId=plans.length?plans[0].id:null;
   persist();renderPlans();renderBoard();
 }
@@ -317,26 +323,42 @@ async function ghCheck(){
 }
 async function ghRead(){
   const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(cfg.branch)+'&_='+Date.now(),{headers:hdr(),cache:'no-store'});
-  if(r.status===404)return {sha:null,list:[]};
+  if(r.status===404)return {sha:null,list:[],dels:[]};
   if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
   const j=await r.json();
-  let list=[];
-  try{list=JSON.parse(b64dec(j.content)||'[]')}catch(e){throw new Error('仓库里的 '+cfg.file+' 不是有效 JSON')}
-  return {sha:j.sha,list:Array.isArray(list)?list:[]};
+  let obj=null;
+  try{obj=JSON.parse(b64dec(j.content)||'null')}catch(e){throw new Error('仓库里的 '+cfg.file+' 不是有效 JSON')}
+  let list=[],rdels=[];
+  if(Array.isArray(obj))list=obj;                       // 旧格式：纯数组
+  else if(obj&&typeof obj==='object'){list=obj.plans||[];rdels=obj.dels||[]}
+  if(!Array.isArray(list))list=[];if(!Array.isArray(rdels))rdels=[];
+  return {sha:j.sha,list,dels:rdels};
 }
-async function ghWrite(list,sha,msg){
-  const body={message:(msg||'推品 SOP 同步')+' · '+new Date().toISOString().slice(0,16).replace('T',' '),content:b64enc(JSON.stringify(list,null,2)),branch:cfg.branch};
+async function ghWrite(list,sha,msg,delsList){
+  const body={message:(msg||'推品 SOP 同步')+' · '+new Date().toISOString().slice(0,16).replace('T',' '),
+    content:b64enc(JSON.stringify({plans:list,dels:delsList||dels},null,2)),branch:cfg.branch};
   if(sha)body.sha=sha;
   const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},hdr()),body:JSON.stringify(body)});
   if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
   const j=await r.json();return j&&j.content?j.content.sha:null;
 }
-function merge(local,remote){
+function merge(local,remote,remoteDels){
   const k=p=>p.name;
+  // 合并墓碑：同名取时间较新的删除记录
+  const dm=new Map();
+  (dels||[]).forEach(d=>{if(d&&d.name)dm.set(d.name,d.ts||0)});
+  (remoteDels||[]).forEach(d=>{if(d&&d.name){const o=dm.get(d.name)||0;if((d.ts||0)>o)dm.set(d.name,d.ts||0)}});
+  dels=[...dm.entries()].map(([name,ts])=>({name,ts}));
   const m=new Map();let add=0,upd=0;
-  (local||[]).forEach(p=>{if(p&&p.name)m.set(k(p),p)});
+  (local||[]).forEach(p=>{
+    if(!p||!p.name)return;
+    const dt=dm.get(p.name)||0;
+    if((p.ts||0)>dt)m.set(k(p),p);          // 比墓碑新才保留（删后重建的场景）
+  });
   (remote||[]).forEach(p=>{
     if(!p||!p.name)return;
+    const dt=dm.get(p.name)||0;
+    if((p.ts||0)<=dt){upd++;return}          // 云端计划比墓碑旧 → 尊重删除，不合回
     const old=m.get(k(p));
     if(!old){m.set(k(p),p);add++;}
     else{
@@ -378,9 +400,13 @@ async function manualSync(mode){
   try{
     await ghCheck();
     const r=await ghRead();let out='';
-    if(mode==='pull'){plans=r.list.slice();if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;persistLocal();renderPlans();renderBoard();out='已下载 <b>'+plans.length+'</b> 个计划';}
+    if(mode==='pull'){
+      const dm=new Map();(dels||[]).forEach(d=>dm.set(d.name,d.ts||0));(r.dels||[]).forEach(d=>{const o=dm.get(d.name)||0;if((d.ts||0)>o)dm.set(d.name,d.ts||0)});
+      plans=r.list.filter(p=>!p||!p.name||(p.ts||0)>(dm.get(p.name)||0));
+      if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;persistLocal();renderPlans();renderBoard();out='已下载 <b>'+plans.length+'</b> 个计划';
+    }
     else if(mode==='push'){await ghWrite(plans,r.sha,'覆盖上传');out='已上传 <b>'+plans.length+'</b> 个计划';}
-    else{const m=merge(plans,r.list);plans=m.list;if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;persistLocal();renderPlans();renderBoard();await ghWrite(plans,r.sha,'合并同步');out='合并完成：新增 <b>'+m.add+'</b>，更新 <b>'+m.upd+'</b>，现共 <b>'+plans.length+'</b> 个计划';}
+    else{const m=merge(plans,r.list,r.dels);plans=m.list;if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;persistLocal();renderPlans();renderBoard();await ghWrite(plans,r.sha,'合并同步');out='合并完成：新增 <b>'+m.add+'</b>，更新 <b>'+m.upd+'</b>，现共 <b>'+plans.length+'</b> 个计划';}
     cfg.lastSync=Date.now();persistOwn();setDot('on');syncStatus(out);
   }catch(e){setDot('err');syncStatus('同步失败：'+esc(e.message||e),true);}
   finally{syncing=false;}
@@ -394,7 +420,7 @@ async function pushQuiet(){
   syncing=true;setDot('busy');
   try{
     await ghCheck();const r=await ghRead();
-    const m=merge(plans,r.list);plans=m.list;persistLocal();renderPlans();renderBoard();
+    const m=merge(plans,r.list,r.dels);plans=m.list;persistLocal();renderPlans();renderBoard();
     await ghWrite(plans,r.sha,'自动同步');
     cfg.lastSync=Date.now();persistOwn();setDot('on');
   }catch(e){setDot('err');console.warn('[云同步]',e);}
@@ -405,7 +431,7 @@ async function autoSync(){
   syncing=true;setDot('busy');
   try{
     await ghCheck();const r=await ghRead();
-    const m=merge(plans,r.list);
+    const m=merge(plans,r.list,r.dels);
     const need=!r.sha||m.add+m.upd>0||m.list.length!==r.list.length||m.list.length!==plans.length;
     plans=m.list;if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;
     persistLocal();renderPlans();renderBoard();
