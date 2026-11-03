@@ -1,4 +1,4 @@
-# AMAZON-TOOLBOX
+# SQ-AMAZON-TOOLBOX
 
 亚马逊运营工具台 · 纯静态网页，离线可用，无需后端。
 
