@@ -32,6 +32,13 @@ input[type=text],input[type=date]{width:100%}
 .plans{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .plan{border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12.5px;background:#fff;line-height:1.5}
 .plan b{color:var(--deep)}
+.plan .pn{width:auto;min-width:80px;max-width:190px;font-size:12.5px;font-weight:700;color:var(--deep);padding:3px 6px;border:1px solid transparent;border-radius:5px;background:transparent}
+.plan .pn:hover{border-color:var(--line);background:#fff}
+.plan .pn:focus{border-color:var(--turq);background:#fff;outline:none}
+.plan .pd{width:auto;font-size:11.5px;color:var(--sub);padding:2px 4px;border:1px solid transparent;border-radius:5px;background:transparent;margin-left:2px}
+.plan .pd:hover{border-color:var(--line);background:#fff}
+.plan .pd:focus{border-color:var(--turq);background:#fff;outline:none}
+.plan.active .pn,.plan.active .pd{background:#fff}
 .plan.active{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
 .plan small{color:var(--sub);display:block}
 .dday{font-size:13px;background:var(--soft);border-radius:8px;padding:8px 14px;color:var(--deep);font-weight:600;white-space:nowrap}
@@ -89,6 +96,7 @@ input[type=text],input[type=date]{width:100%}
       <div style="flex:0 0 auto"><label>&nbsp;</label><button class="btn ghost" onclick="delPlan()">删除当前</button></div>
     </div>
     <div class="plans" id="plans"></div>
+    <p class="sum" style="margin-top:8px">💡 计划卡片里的 <b>名字</b> 和 <b>日期</b> 可以直接点开改，改完点外面空白处或按回车即生效。</p>
   </div>
 
   <div class="card" id="boardCard" style="display:none">
@@ -239,9 +247,31 @@ function renderPlans(){
     const done=Object.values(p.tasks||{}).filter(t=>t.done).length;
     const d=Math.round((p.launch-new Date().setHours(0,0,0,0))/86400000);
     const dtxt=d>0?'D-'+d:(d===0?'今天上架':'上架+'+(-d)+' 天');
+    const ym=new Date(p.launch-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
     return '<div class="plan'+(p.id===curId?' active':'')+'" onclick="pickPlan(\''+p.id+'\')">'+
-      '<b>'+esc(p.name)+'</b> · '+dtxt+'<small>进度 '+done+'/'+TASKS.length+' · 上架日 '+fmtD(p.launch)+'</small></div>';
+      '<input class="pn" value="'+esc(p.name)+'" title="点这里直接改名字，改完点旁边空白或按回车" '+
+        'onclick="event.stopPropagation()" onfocus="pickPlan(\''+p.id+'\')" '+
+        'onchange="renamePlan(\''+p.id+'\',this.value,this)" onkeydown="if(event.key===\'Enter\')this.blur()">'+
+      '<input class="pd" type="date" value="'+ym+'" title="直接改上架日，清单日期会跟着重算" '+
+        'onclick="event.stopPropagation()" onfocus="pickPlan(\''+p.id+'\')" '+
+        'onchange="reDatePlan(\''+p.id+'\',this.value)">'+
+      '<small>'+dtxt+' · 进度 '+done+'/'+TASKS.length+'</small></div>';
   }).join('');
+}
+function renamePlan(id,name,el){
+  const p=plans.find(x=>x.id===id);if(!p)return;
+  name=(name||'').trim();
+  if(!name){alert('名字不能为空');el.value=p.name;return;}
+  if(name===p.name)return;
+  if(plans.some(x=>x.id!==id&&x.name===name)){alert('已有别的计划叫「'+name+'」，换个名字');el.value=p.name;return;}
+  dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});
+  p.name=name;p.ts=Date.now();
+  persist();renderPlans();renderBoard();
+}
+function reDatePlan(id,date){
+  const p=plans.find(x=>x.id===id);if(!p||!date)return;
+  p.launch=new Date(date+'T00:00:00').getTime();p.ts=Date.now();
+  persist();renderPlans();renderBoard();
 }
 function renderBoard(){
   const p=cur();
