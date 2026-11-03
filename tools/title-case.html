@@ -1,156 +1,450 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<title>标题规范与大小写转换</title>
-<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:26px;display:flex;justify-content:center}.wrap{width:940px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:18px;line-height:1.7}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}.card h2{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:12px;color:var(--sub);font-weight:400}
-textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:6px;font-size:14px;line-height:1.7;resize:vertical;min-height:76px;font-family:inherit}textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
-textarea.out{background:#f8fdfe;border-color:#bfe7f2;min-height:76px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
-button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:6px 12px;font-size:12.5px;font-family:inherit}
+<html lang="zh-CN" data-page-node-id="YjTEXe52TYso5xKjjJrfJo">
+<head data-page-node-id="TSRLWYXseC7XIPx7d9qmdI">
+<meta charset="UTF-8" data-page-node-id="bQkRgygO2D7h3tk9W8xRUC">
+<title>标题规范与 75+125</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309;--soft:#f8fdfe}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:24px;display:flex;justify-content:center}.wrap{width:960px}
+h1{font-size:21px;margin-bottom:4px}.desc{color:var(--sub);font-size:12.5px;margin-bottom:14px;line-height:1.7}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;line-height:1.7;resize:vertical;min-height:64px;font-family:inherit}textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+textarea.out{background:var(--soft);border-color:#bfe7f2}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:5px 11px;font-size:12px;font-family:inherit}
 button:hover{background:#f2fbfd;border-color:#22d3ee}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-button.primary:hover{background:#0e7490}
-.meta{font-size:12.5px;color:var(--sub);margin-left:auto}
-.meta b{color:var(--ink);font-size:14px}
+button.primary:hover{background:var(--deep)}
+.meta{font-size:12px;color:var(--sub);margin-left:auto}
+.meta b{color:var(--ink);font-size:13.5px}
 .meta b.over{color:var(--bad)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{font-size:11.5px;background:#e6fafc;color:var(--deep);border:1px solid #bfe7f2;border-radius:5px;padding:3px 7px}
-.chip i{font-style:normal;opacity:.55;margin-left:3px}
 .chip.keep{background:#f3f4f6;border-color:#e5e7eb;color:#6b7280}
-.flag{font-size:12.5px;line-height:1.65;padding:9px 11px;border-radius:6px;margin-top:8px}
-.flag.ok{background:#e6f6ef;color:var(--ok)}
-.flag.warn{background:#fef3c7;color:var(--warnb)}
-.flag.bad{background:#fdecea;color:var(--bad)}
-.diffbox{font-size:13.5px;line-height:1.9;color:#374151;background:#fff;border:1px dashed #bfe7f2;border-radius:6px;padding:10px 12px;margin-top:10px;word-break:break-word}
-.diffbox:empty{display:none}
-.diffmark{background:#fff3b0;border-radius:2px;padding:0 2px}
-.tip{font-size:12px;color:var(--sub);line-height:1.75;margin-top:8px}
-.tip code{background:#f2fbfd;border:1px solid #e5e7eb;border-radius:3px;padding:1px 4px;font-size:11.5px}
-label.sm{font-size:12.5px;color:var(--sub);display:block;margin-bottom:5px}
+.flag{font-size:12.5px;line-height:1.65;padding:8px 10px;border-radius:6px;margin-top:7px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}.flag.warn{background:#fef3c7;color:var(--warnb)}.flag.bad{background:#fdecea;color:var(--bad)}.flag.info{background:#eef2ff;color:#4338ca}
+.diffbox{font-size:13px;line-height:1.9;color:#374151;background:#fff;border:1px dashed #bfe7f2;border-radius:6px;padding:9px 11px;margin-top:9px;word-break:break-word}
+.diffbox:empty{display:none}.diffmark{background:#fff3b0;border-radius:2px;padding:0 2px}
+.delmark{background:#fdecea;color:var(--bad);text-decoration:line-through;border-radius:2px;padding:0 2px}
+.tip{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:7px}.tip b{color:#374151}
+label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+select,input[type=number]{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff}
+/* 打分 */
+.scoreBox{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.scoreNum{font-size:34px;font-weight:800;line-height:1;color:var(--deep)}
+.scoreNum small{font-size:13px;font-weight:400;color:var(--sub)}
+.scoreWord{font-size:13px;color:var(--sub)}
+.srow{display:grid;grid-template-columns:104px 44px 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.srow:last-child{border:0}.srow .sc{font-weight:700;text-align:right}.srow .sc.full{color:var(--ok)}.srow .sc.mid{color:var(--warnb)}.srow .sc.low{color:var(--bad)}
+.srow .msg{color:#4b5563;line-height:1.55}.srow .msg em{font-style:normal;color:var(--sub);font-size:11.5px}
+.barwrap{height:5px;background:#eef2f5;border-radius:3px;overflow:hidden;margin-top:8px}
+.barfill{height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2);border-radius:3px;transition:width .25s}
+details{margin-top:10px}summary{cursor:pointer;font-size:12.5px;color:var(--deep);font-weight:600}
+details .tip{margin-top:6px}
+.tagline{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tg{font-size:11px;padding:2px 7px;border-radius:20px;background:#e6fafc;color:var(--deep);border:1px solid #bfe7f2}
+.tg.bad{background:#fdecea;color:var(--bad);border-color:#f5c6c0}
+.kv{font-size:12px;color:var(--sub);margin-top:6px}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <h1>标题规范与大小写转换</h1>
-  <p class="desc">把标题从「随便写」变成「亚马逊规范写法」：实词首字母大写、介词冠词小写、品牌与型号不被误伤，同时检查字符上限和关键词堆砌。</p>
+<body data-page-node-id="BDYQfZReTwBBdl7v4M0rDc">
+<div class="wrap" data-page-node-id="b56VLinOQp4kWEmnY0mq6y">
+  <h1 data-page-node-id="HW5op8pxBikVQ29iH7E3Tc">标题规范与 75+125</h1>
+  <p class="desc" data-page-node-id="FajsdHHuUK4pVZfHWOwTgN">按 2026-07-27 起的美国站新规设计：<b data-page-node-id="aeFtW7OQKGQAmmiAaid70k">主标题 75 字符讲「卖什么、为什么选你」，Item Highlights 125 字符补「材质、功能、场景」</b>。旧标题按信息组重排，不做机械切段。含字符数、同义堆词清理、关键词取舍、五项打分。<br data-page-node-id="u9EYvm6Dzpp40g7ES2DgDr"><span style="color:#9ca3af" data-page-node-id="j8pqUwS128j49TE9SNmvLg">字符数含空格；其他站点以对应后台要求为准。分数是运营自检标准，不是亚马逊官方评分。</span></p>
 
-  <div class="card">
-    <h2>① 原标题 <span class="hint">粘贴进来，下面实时出结果</span></h2>
-    <textarea id="src" placeholder="粘贴你的标题...">premium wireless earbuds, BEST bluetooth 5.3 headphones with charging case, ipx7 waterproof for iphone android, Black</textarea>
-    <div class="bar">
-      <button class="primary" onclick="apply()">转成规范写法</button>
-      <button onclick="copyOut()">复制结果</button>
-      <button onclick="clearAll()">清空</button>
-      <span class="meta">原字符数 <b id="srcLen">0</b></span>
+  <!-- ① 输入 -->
+  <div class="card" data-page-node-id="6gBXeWRcvZdiGRQPAE3iEU">
+    <h2 data-page-node-id="2MECEEZxRqMuo3lEjeVbiR">① 输入 <span class="hint" data-page-node-id="AJWmMLZAFARn6Fty5dC7uN">站点 / 旧标题 / 关键词</span></h2>
+    <div class="bar" style="margin-top:0;margin-bottom:9px" data-page-node-id="4Dxgtq6QLsDt2MVXV4ef4u">
+      <label class="sm" style="margin:0" data-page-node-id="kFqmfIqSAO0fAejrBmT4Ho">站点</label>
+      <select id="site" onchange="presetSite()" data-page-node-id="qTQcjl9DUmPdeBGq9qM3Bw">
+        <option value="us-new" data-page-node-id="QAfkTGHh32GWtZgLG8ELe6">美国站 · 新规 75+125</option>
+        <option value="us-old" data-page-node-id="YOjktBhJCi6p14qMiZe1zM">美国站 · 旧规单标题 200</option>
+        <option value="other" data-page-node-id="7XJm23w521Zkl1uyI2pV3I">其他站点（自定义上限）</option>
+      </select>
+      <label class="sm" style="margin:0 0 0 6px" data-page-node-id="HjxGFvr8q9X9fBPKFcmvLk">主标题上限</label>
+      <input id="cfgLimit" type="number" value="75" min="40" max="300" style="width:74px" data-page-node-id="huaL3TME1gQ2nEt3ZBLJCd">
+      <label class="sm" style="margin:0 0 0 6px" data-page-node-id="u3kdqcDHiI5xxcBjIl3Blg">Highlights 上限</label>
+      <input id="cfgHlLimit" type="number" value="125" min="0" max="500" style="width:74px" data-page-node-id="CP4OzlDNyRu2HZ3DwVvpdy">
+      <span class="tip" style="margin:0" data-page-node-id="8RaVpVlX9AzlS5nDUbybYM">Highlights 填 0 表示该站点没有这个字段</span>
+    </div>
+    <label class="sm" data-page-node-id="KQC2sD1EQmsaueOHhxwuoN">旧标题 / 现有标题（一行一条，可一次贴多条分别检查）</label>
+    <textarea id="src" placeholder="粘贴现有标题...">Gintenco Premium Quality Windshield Cover Snow Cover Car Cover for Ice and Snow Winter, Best 600D Oxford Waterproof Magnetic Windscreen Frost Protector with Side Mirror Covers for Car SUV Van Truck, Large Size 66 x 51.18 in, for Winter Parking Outdoor Travel Home Gift</textarea>
+    <div class="grid2" style="margin-top:10px" data-page-node-id="syDI3knpxRqinAkKINqIL8">
+      <div data-page-node-id="esBbknKfKGhKhHWPGxbRFI">
+        <label class="sm" data-page-node-id="68X2WqN7gXRhH6dl3ZTMtN">重点关键词（有 SQP / 广告数据的话，按「相关度×成交」排序，逗号分隔）</label>
+        <textarea id="kw" style="min-height:52px" placeholder="windshield cover, snow cover, 600D oxford, magnetic...">windshield cover, snow cover, ice and snow, 600D oxford, magnetic, side mirror covers, winter</textarea>
+      </div>
+      <div data-page-node-id="FcHkvNvD66R2Pnpy8Qkglx">
+        <label class="sm" data-page-node-id="5NOrIEgR26ACTxRDoFPvYI">产品核心参数（材质 / 尺寸 / 适配 / 数量，逗号分隔）</label>
+        <textarea id="spec" style="min-height:52px" placeholder="600D Oxford, 66 x 51.18 in, Large...">600D Oxford, 66 x 51.18 in, Large, side mirror covers, magnetic</textarea>
+      </div>
+    </div>
+    <div class="bar" data-page-node-id="QZsnC32CqGjSCmveFqucWF">
+      <button class="primary" onclick="run()" data-page-node-id="Yc7veMgu7Enx4dYq5XyCJU">分析并给出 75+125 方案</button>
+      <button onclick="clearAll()" data-page-node-id="NJxBRn9UiSLzjy464j8J9d">清空</button>
+      <span class="meta" data-page-node-id="5SeEkwwmtWedEYZ3LSBiZQ">原字符数 <b id="srcLen" data-page-node-id="EY8e9WXKV8nsVxXcROub7v">0</b></span>
     </div>
   </div>
 
-  <div class="card">
-    <h2>② 规范后的标题 <span class="hint">黄色高亮 = 本次改动的地方</span></h2>
-    <textarea id="out" class="out" placeholder="结果会出现在这里..." oninput="onEdit()"></textarea>
-    <div id="diffBox" class="diffbox"></div>
-    <div class="bar">
-      <span class="meta">字符数 <b id="outLen">0</b> / <b id="limit">200</b></span>
-      <span class="meta" style="margin-left:0">单词数 <b id="wordCnt">0</b></span>
+  <!-- ② 主标题 -->
+  <div class="card" data-page-node-id="bzp4LBcqlKTSTDqkTodFQ9">
+    <h2 data-page-node-id="tBn11Is7CFelbFEViA1kjP">② 主标题 <span class="hint" data-page-node-id="ufbFjmOCTPkWIudKmdlTUD">品牌 + 核心产品词 + 差异点 + 必要规格</span></h2>
+    <textarea id="out" class="out" oninput="manualEdit('t')"></textarea>
+    <div id="diffBox" class="diffbox" data-page-node-id="GSnHJsExZn7wc7YEHzSbeh"></div>
+    <div class="bar" data-page-node-id="Q7RxCxtqOXVshHbX5GsZag">
+      <span class="meta" data-page-node-id="SlyyUTLmjFI5aIJZtsJl3a">字符数 <b id="outLen" data-page-node-id="9LWp73VU5QMfe5twieM7XP">0</b> / <b id="limitLbl" data-page-node-id="zR5bQATrWCsLJC6UnGbKaC">75</b></span>
+      <span class="meta" style="margin-left:0" data-page-node-id="HwtL7Gc6xM5k3rXyI6rjyc">单词 <b id="wordCnt" data-page-node-id="4CP87a0GzDzGQtx0b7iDxf">0</b></span>
+      <span class="meta" style="margin-left:0" data-page-node-id="442w5sjySmFs4s1o0wMPeh">结构 <b id="structLbl" data-page-node-id="xhNXxGXSFfe9oeCQEeLtmI">—</b></span>
     </div>
-    <div id="flags"></div>
+    <div id="flags" data-page-node-id="DZF2IEVTzZDHALV8IzmFZe"></div>
+    <div class="tagline" id="tagLine" data-page-node-id="QYclNBxjCanvtTq9JBhuAb"></div>
   </div>
 
-  <div class="card">
-    <h2>③ 保持原样的词 <span class="hint">这些没被转换，因为转了反而是错的</span></h2>
-    <div class="chips" id="keepList"></div>
-    <p class="tip">
-      下面这些词默认<b>不动</b>，避免把对的写错：<br>
-      · <b>品牌与型号</b>：iPhone、iPad、USB-C、IPX7、TWS、4K、XL、S/M/L<br>
-      · <b>全大写缩写</b>：USB、LED、RGB、HDMI、GPS、APP<br>
-      · <b>带大写字母的混写词</b>：iPhone、eBay、McDonald's<br>
-      · <b>标题里出现中文</b>时不做大小写处理<br>
-      想强制转换某个词，在下面「自定义规则」里加。
-    </p>
-    <div class="grid2" style="margin-top:12px">
-      <div>
-        <label class="sm">永远小写的词（默认已含 of / for / with / the / and 等）</label>
-        <textarea id="cfgSmall" style="min-height:58px">a, an, the, and, or, but, nor, for, so, yet, at, by, in, of, on, to, up, as, per, via, vs</textarea>
-      </div>
-      <div>
-        <label class="sm">永远保持原样的词（品牌、型号，逗号分隔）</label>
-        <textarea id="cfgKeep" style="min-height:58px">iPhone, iPad, iPod, MacBook, AirPods, eBay, YouTube, USB, USB-C, LED, RGB, HDMI, GPS, APP, TWS, IPX7, IPX8, 4K, 8K, XL, XXL</textarea>
-      </div>
+  <!-- ③ Highlights -->
+  <div class="card" id="hlCard" data-page-node-id="1atF0EUl82xMlKvY849LRO">
+    <h2 data-page-node-id="YfQnGjw564lqCy48RgFIOz">③ Item Highlights <span class="hint" data-page-node-id="Q991L8Vcm5ZRXnkoBKsDub">功能 + 材质/结构 + 场景或尺寸，别写成第二段关键词清单</span></h2>
+    <textarea id="hl" class="out" oninput="manualEdit('h')"></textarea>
+    <div class="bar" data-page-node-id="D6o9u4lO7IHwf7rDvlkVaR">
+      <span class="meta" data-page-node-id="Hby5RJTVThz9rLcilQIYoO">字符数 <b id="hlLen" data-page-node-id="sZFIaHmEvjWk1Urb3wL71O">0</b> / <b id="hlLimitLbl" data-page-node-id="CDoU3kOp4Yy11yRPgCzRJ0">125</b></span>
+      <span class="meta" style="margin-left:0" data-page-node-id="5Z4pAPvH1ipogWKitpg57Y">订单重复词 <b id="hlDup" data-page-node-id="uN3kSPXSr9YhIl0GHRx6VW">0</b></span>
     </div>
-    <div class="bar">
-      <label class="sm" style="margin:0">字符上限</label>
-      <input id="cfgLimit" type="number" value="200" min="50" max="500" style="width:88px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit">
-      <span class="tip" style="margin:0">大多类目 200，服装/鞋部分类目 150，具体看后台</span>
+    <div id="hlFlags" data-page-node-id="48ajjoycyLXHS12SdLZVPw"></div>
+    <p class="tip" data-page-node-id="bPv4uWWiPg86l894fzg5pS">Highlights 可以被搜索，也会随标题出现在搜索结果和详情页 —— 但它的任务是<b data-page-node-id="N5xX3VuRJDOSsZrE7utf7R">补充购买理由</b>，不是把主标题换个说法再说一遍。</p>
+  </div>
+
+  <!-- ④ 打分 -->
+  <div class="card" data-page-node-id="zPgyu1S6uQvwENJHOkF5gM">
+    <h2 data-page-node-id="Z0DrYVAEGDkHTy2DkNe90B">④ 自检打分 <span class="hint" data-page-node-id="BEOChmqVAhAO9bPNejrgDx">运营标准，不是亚马逊官方公式</span></h2>
+    <div class="scoreBox" data-page-node-id="tr9YEdllrelhaE3sOwqUWg">
+      <div class="scoreNum" id="scoreNum" data-page-node-id="yQgYGRALd4PdEpKps8LULN">--<small data-page-node-id="3RlTGuVvTsC2ZiOMSvBHib">/100</small></div>
+      <div class="scoreWord" id="scoreWord" data-page-node-id="xkKRQkpRuEdHG6DM5YSLBU">粘贴标题后自动计算</div>
+    </div>
+    <div class="barwrap" data-page-node-id="aRxuWB6oxODDJA2S5R5D7Z"><div class="barfill" id="barfill" style="width:0%" data-page-node-id="KSKxWoDFFwX2oEx1XIvMLs"></div></div>
+    <div id="scoreRows" style="margin-top:10px" data-page-node-id="DljowgizIf1eZWVErSP9US"></div>
+    <details data-page-node-id="v5ZpVyMBwjEM43hACeZt0E">
+      <summary data-page-node-id="v7l6e5YZgPIgd4Xi8wSfVu">五项标准怎么来的</summary>
+      <p class="tip" data-page-node-id="QFuzuRqTILlKbjLJI28mnO">
+        合规与真实 30 分：字符不超、无违规词、参数与实物一致 —— <b data-page-node-id="kG6UYzN4TZ3tkzDCtAp7cG">这是前提，不达标后面几项没意义</b>。<br data-page-node-id="6P9aasoSw2LbXSyXNUyvgY">
+        产品识别 25 分：买家在搜索结果里一眼能看出卖什么、给谁用。<br data-page-node-id="eLMgMteUc3HNao6LvsHSmd">
+        关键词相关性 20 分：保住了最有价值的核心搜索表达，而不是把所有同义词都塞进去。<br data-page-node-id="CDmEXD6Y0dm45IeSs11OW0">
+        差异化 15 分：说清了选这款的具体理由（材质、结构、功能），不是 Premium / High Quality 这种空话。<br data-page-node-id="Y9vNdFUql6ly75z2z1ViSu">
+        可读性 10 分：自然、简洁、没有堆词。<br data-page-node-id="PCcFAU4pulBp36afFi8HZM">
+        <b data-page-node-id="WTxPK9wsDmrGhDqZO64ImF">最后还是要看点击率、转化率和相关搜索表现</b>，工具分数只是写之前的筛子。
+      </p>
+    </details>
+  </div>
+
+  <!-- ⑤ 规则 -->
+  <div class="card" data-page-node-id="W6N20xIRHYQF2naFsafebe">
+    <h2 data-page-node-id="cxywASRXoLamA9XLQlxn3p">⑤ 转换规则 <span class="hint" data-page-node-id="d6wfCXsEjHgLjZmkmUBiBH">这些默认不动，避免把对的写错</span></h2>
+    <div class="chips" id="keepList" data-page-node-id="3nTyXR8JhqittoMCrabW5i"></div>
+    <div class="grid2" style="margin-top:10px" data-page-node-id="7Y0QOlAKsdlRDe8ptFY0sQ">
+      <div data-page-node-id="7GocsWC0A51nDR9sqLfiED">
+        <label class="sm" data-page-node-id="U8LNA71RjSwwtqe9gJdcHD">永远小写的词</label>
+        <textarea id="cfgSmall" style="min-height:52px">a, an, the, and, or, but, nor, for, so, yet, at, by, in, of, on, to, up, as, per, via, vs, with</textarea>
+      </div>
+      <div data-page-node-id="iM7PKQdRl0iH8eBu63I4L5">
+        <label class="sm" data-page-node-id="t1y3hdV76RKurVZamA7dqW">永远保持原样的词（品牌、型号）</label>
+        <textarea id="cfgKeep" style="min-height:52px">iPhone, iPad, iPod, MacBook, AirPods, eBay, YouTube, USB, USB-C, LED, RGB, HDMI, GPS, APP, TWS, IPX7, IPX8, 4K, 8K, XL, XXL, 600D, Oxford</textarea>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
 const $=i=>document.getElementById(i);
-/* ---------- 小工具 ---------- */
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const list2arr=s=>s.split(/[,，\n]/).map(x=>x.trim()).filter(Boolean);
+const words=s=>(String(s).match(/[\p{L}\p{N}][\p{L}\p{N}'\-.&+]*/gu)||[]);
+const len=s=>[...String(s)].length;
 
-/* ---------- 标题大小写转换 ---------- */
-/* 规则：整词判断。不碰 iPhone 这类混写词、不碰 USB/IPX7 这类缩写、不碰中文。
-   全大写的普通英文词（BEST / FREE / PREMIUM）会被纠正成正常写法。 */
+/* ============ 大小写转换 ============ */
 const PLAIN=new Set(('best free new hot sale top great perfect super ultra premium pro max mini plus '+
   'waterproof wireless bluetooth charging case gift set pack kit home travel outdoor sport fitness '+
   'original official genuine quality strong heavy duty large small soft hard fast quick easy clean '+
-  'safe durable portable folding adjustable reusable washable').split(/\s+/));
+  'safe durable portable folding adjustable reusable washable size').split(/\s+/));
 function isPlainWord(w){ return PLAIN.has(w) || (/^[a-z]+$/.test(w) && w.length>=3); }
-/* 判断「这是缩写/型号，别动它」：
-   含数字（IPX7 / 4K / 5.3）→ 保留；带连字符（USB-C / XL-L）→ 保留；
-   纯大写、长度 ≤4、且不是常见英文词 → 保留（USB / LED / TWS / RGB / HDMI）；
-   其余全大写普通词（BEST / FREE / PREMIUM / DOG / BED）→ 不算缩写，会被纠正成正常写法 */
-const ABBR_STOP=new Set('best free new hot sale top great deal gift gifts set sets fast ship home dog cat pet bag bed car gym'.split(/\s+/));
+const ABBR_STOP=new Set('best free new hot sale top great deal gift gifts set sets fast ship home dog cat pet bag bed car gym size large small'.split(/\s+/));
 function isAbbr(p,lower){
-  if(/[a-z]/.test(p)) return false;                 // 不是全大写，走后面的逻辑
-  if(/\d/.test(p)) return true;                      // IPX7 / 4K / 5.3 这类，一定保留
-  if(p.includes('-')) return true;                   // USB-C / XL-L
-  if(lower.length<=4 && !ABBR_STOP.has(lower) && !isPlainWord(lower)) return true;  // USB LED TWS
+  if(/[a-z]/.test(p)) return false;
+  if(/\d/.test(p)) return true;
+  if(p.includes('-')) return true;
+  if(lower.length<=4 && !ABBR_STOP.has(lower) && !isPlainWord(lower)) return true;
   return false;
 }
-
+function cap(w){
+  return w.toLowerCase().replace(/(^|[^a-z])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+}
+/* 尺寸写法修正：66 X 51.18 In → 66 x 51.18 in（乘号和单位保持小写才自然） */
+const UNITS='in|inch|inches|cm|mm|ft|feet|oz|ml|l|lbs?|kg|g|w|v|mah|hz';
+function fixUnits(s){
+  return s.replace(/\bX\b(?=\s*\d)/g,'x')                                  // 66 X 51 → 66 x 51
+          .replace(/\b(\d+(?:\.\d+)?)\s*(In|Cm|Mm|Ft|Oz|Ml|Lbs?|Kg|G|W|V|Mah|Hz)\b/g,
+                   (m,a,b)=>a+' '+b.toLowerCase())                          // 500G → 500 g
+          .replace(new RegExp('\\b('+UNITS+')\\b','gi'),m=>m.toLowerCase()); // 单独出现的 In / Cm 也小写
+}
+/* 整句收尾：把不在句首的小写词（for/with/in/and…）压回小写，
+   因为前面的删词（去泛化卖点、去同义重复）可能把它们顶到了段首 */
+function fixSmall(s,smallSet){
+  let first=true;
+  return String(s).replace(/[\p{L}\p{N}][\p{L}\p{N}'\-.&+]*/gu,(m)=>{
+    if(first){ first=false; return m; }
+    if(smallSet.has(m.toLowerCase())) return m.toLowerCase();
+    return m;
+  });
+}
 function toTitleCase(raw,smallSet,keepSet){
-  // 按「字母 / 数字 / 其他」切块，其他字符（空格 逗号 括号 顿号 连字符）原样保留
-  const parts=raw.split(/([^\p{L}\p{N}]+)/u);
+  // 缩写白名单：这些词在任何位置都保持大写，不受 Title Case 影响
+  const ABBR=new Set(['lcd','led','rgb','hdmi','usb','gps','app','tws','abs','pu','pp','tpu','eva','pvc','uv','ac','dc','ipx','ip','xl','xxl','xs','pc','tv','dvd','sim','ic','usb-c','4k','8k','hd','fhd','qhd']);
+  const parts=String(raw).split(/([^\p{L}\p{N}]+)/u);
   const total=parts.filter(p=>p && /[\p{L}\p{N}]/u.test(p)).length;
   let seq=0;
-
-  return parts.map((p,i)=>{
-    if(!p || !/[\p{L}\p{N}]/u.test(p)) return p;   // 分隔符，原样
-    const isFirst = seq===0;
-    const isLast  = seq===total-1;
-    seq++;
-
-    // 中文直接返回
+  return parts.map(p=>{
+    if(!p || !/[\p{L}\p{N}]/u.test(p)) return p;
+    const isFirst=seq===0, isLast=seq===total-1; seq++;
     if(/[\u4e00-\u9fa5]/.test(p)) return p;
-
     const lower=p.toLowerCase();
-    // 1) 自定义保留词 → 按用户写的原样返回（优先级最高）
     if(keepSet[lower]) return keepSet[lower];
-    // 2) 全大写且不像普通英文词（USB / LED / IPX7 / TWS / 4K）→ 原样
+    if(ABBR.has(lower)) return lower.toUpperCase();      // LCD / LED / USB 保持大写
     if(isAbbr(p,lower)) return p;
-    // 3) 大写开头的混写词（iPhone / eBay / McDonald's）→ 原样，别硬转
     if(/^[A-Z][a-z]+[A-Z]/.test(p)) return p;
-
-    // 4) 首词、末词必须大写；其余词：在小写表里 → 压小写，否则首字母大写
-    if(!isFirst && !isLast && smallSet.has(lower)) return lower;
+    if(smallSet.has(lower)){
+      // 整句的第一个词才大写；其余位置（包括逗号后、句尾）一律小写
+      if(isFirst) return cap(p);
+      return lower;
+    }
     return cap(p);
   }).join('');
 }
-function cap(w){
-  // 统一小写后，把「每个字母段的开头」大写：
-  //   BEST → Best、hi-fi → Hi-Fi、3ft → 3Ft、usb-c → Usb-C
-  return w.toLowerCase().replace(/(^|[^a-z])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
-}
 
-/* ---------- 高亮差异 ---------- */
+/* ============ 词表 ============ */
+const BANNED=['best selling','best-seller','best seller','#1','no.1','number one','free shipping','free gift',
+  'guarantee','cheapest','hot sale','100%','top rated','money back','wholesale','perfect for','high quality',
+  'premium quality','best quality','new arrival','hot sell'];
+const GENERIC=['premium','high quality','best','perfect','superior','amazing','professional','luxury','excellent','top quality','great'];
+const SCENE=['travel','home','office','gift','outdoor','camping','party','school','kitchen','gym','beach'];
+const STOP=new Set('a an the and or but nor for so yet at by in of on to up as per via vs with from'.split(/\s+/));
+
+/* ============ 旧标题 → 75+125 方案 ============ */
+/* 不按长度硬切。先把标题按逗号拆成「信息组」，给每组打类型和优先级，
+   然后按优先级往主标题里装，装不下的一律落到 Highlights。
+   主标题优先级：品牌+产品词 > 关键差异点 > 必要规格（尺寸/适配）
+   Highlights：材质细节 > 场景 > 其余差异点 */
+function splitGroups(txt){
+  return txt.split(/[,;，；|]+/).map(s=>s.trim()).filter(Boolean);
+}
+/* 同义名词短语去重：
+   "Windshield Cover Snow Cover Car Cover" 里 Cover 前面的中心词不同，
+   但整条短语都在说同一件物品 —— 只保留第一个「X Cover」。
+   支持的收尾词：cover / protector / blanket / mat / pad / shield / liner */
+const SYN_TAIL=/\b([a-z][a-z\-]*)\s+(cover|protector|blanket|mat|pad|shield|liner|stand|holder|mount|case|bag|pouch)\b/gi;
+function removeSynNoun(g){
+  const seenTail=new Set();
+  let out=g.replace(SYN_TAIL,(m,head,tail)=>{
+    const t=tail.toLowerCase();
+    if(seenTail.has(t)) return '';        // 同一个收尾词第二次出现，整段删掉
+    seenTail.add(t); return m;
+  });
+  return out.replace(/\s{2,}/g,' ').replace(/^[\s,]+|[\s,]+$/g,'').trim();
+}
+/* 剔掉泛化卖点词：Premium / High Quality / Best / Perfect 之类，占了字符不提供信息 */
+const GENERIC_PHRASE=/\b(premium quality|high quality|top quality|best quality|best selling|hot sale|100%|superior quality|amazing quality|professional grade|new arrival)\b/gi;
+const GENERIC_WORD=/\b(premium|perfect|superior|amazing|luxury|excellent|best)\b/gi;
+function stripGeneric(g){
+  // 不带 g 的副本，避免正则 lastIndex 状态污染
+  let out=String(g).replace(/\b(premium quality|high quality|top quality|best quality|best selling|hot sale|100%|superior quality|amazing quality|professional grade|new arrival)\b/gi,' ')
+                     .replace(/\b(premium|perfect|superior|amazing|luxury|excellent|best)\b/gi,' ');
+  return out.replace(/\s{2,}/g,' ').replace(/^[\s,]+|[\s,]+$/g,'').replace(/\s+,/g,',').trim();
+}
+const MAT_RE=/(\d+d\b|oxford|nylon|leather|cotton|silicone|aluminum|aluminium|stainless|steel|abs\b|tpu|pu\b|pp\b|mesh|velvet|ceramic|glass|plastic|carbon|fleece|polyester|eva\b)/i;
+const SIZE_RE=/(\d+(\.\d+)?\s*(x|×|\*)\s*\d+|\b\d+(\.\d+)?\s*(in|inch|inches|cm|mm|ft|feet|oz|ml|l|lb|lbs|kg|g)\b|\b(xs|s|m|l|xl|xxl|xxxl|large|medium|small|mini|max)\b)/i;
+const FIT_RE=/\b(for|compatible with|fits|fit for|universal)\b/i;
+const FEAT_RE=/\b(magnetic|waterproof|windproof|foldable|portable|rechargeable|adjustable|removable|washable|reusable|non-slip|anti-slip|breathable|insulated|thermal|elastic|lightweight|heavy duty|reflective|self-adhesive|hook and loop|velcro)\b/i;
+
+function groupScore(g,idx,total,kwSet){
+  const low=g.toLowerCase();
+  const w=words(low);
+  if(!w.length) return null;
+  const hit=w.filter(x=>kwSet.has(x)).length;
+  const density=hit/w.length;
+  const hasMat=MAT_RE.test(low), hasSize=SIZE_RE.test(low), hasFit=FIT_RE.test(low), hasFeat=FEAT_RE.test(low);
+  const scene=w.some(x=>SCENE.includes(x));
+  // 给一个"重要性"分：品牌/主词组最重，规格次之，材质和场景更适合放 Highlights
+  let s=0;
+  if(idx===0) s+=100;                       // 第一组通常是品牌+主词
+  s+=density*60;                            // 关键词密度
+  if(hasSize) s+=35;                        // 尺寸/适配直接影响买错
+  if(hasFit)  s+=15;
+  if(hasFeat) s+=25;                        // 具体功能差异点
+  if(hasMat)  s-=5;                         // 材质放 Highlights 更有价值
+  if(scene)   s-=20;                        // 场景放 Highlights
+  if(GENERIC.some(x=>low.includes(x))) s-=15;
+  return {g,idx,s,hasMat,hasSize,hasFit,hasFeat,scene,density,w};
+}
+function trimWords(s,n){
+  const arr=s.split(/(\s+)/);
+  let out='',cnt=0,cut=false;
+  for(let i=0;i<arr.length;i++){
+    if(!arr[i].trim()){ if(!cut) out+=arr[i]; continue; }
+    if(cnt>=n){ cut=true; break; }
+    out+=arr[i]; cnt++;
+  }
+  if(cut) out=out.replace(/[\s,;:|\-–—]+$/,'');
+  return out;
+}
+function buildPlan(srcAll,limit,kwList){
+  const kwSet=new Set(); kwList.forEach(k=>words(k.toLowerCase()).forEach(w=>kwSet.add(w)));
+  const sceneSet=new Set(SCENE);
+  const lines=srcAll.split('\n').map(s=>s.trim()).filter(Boolean);
+  const first=lines[0]||'';
+  const rawGroups=splitGroups(first);
+
+  // ① 同义堆叠：以「模型词」为单位比较，重复度高的整组丢掉，保留信息量最大的那组
+  //    注意：不能逐词删，否则 "Snow Cover Car Cover" 会被砍成 "Snow Car"
+  const stemOf=w=>w.replace(/(es|s)$/,'');
+  const modelOf=g=>{
+    const ws=words(g.toLowerCase()).filter(w=>!STOP.has(w));
+    return [...new Set(ws.map(stemOf))].sort().join(' ');
+  };
+  const groupsRaw=splitGroups(first);
+  // 「X Cover / X Protector / X Blanket」这种同义名词短语，只留第一个，其余删掉
+  // 顺带把 Premium / High Quality 这类泛化卖点从组里剔掉（它们不提供信息）
+  const stripped=groupsRaw.map(g=>stripGeneric(removeSynNoun(g))).filter(Boolean);
+  const uniq=[];
+  stripped.forEach(g=>{
+    const ws=[...new Set(words(g.toLowerCase()).filter(w=>!STOP.has(w)).map(stemOf))];
+    if(!ws.length) return;
+    const same=uniq.find(u=>{
+      const small=ws.length<=u.ws.length?ws:u.ws;
+      const big=new Set(ws.length<=u.ws.length?u.ws:ws);
+      if(small.length<2) return false;
+      const inter=small.filter(x=>big.has(x)).length;
+      return inter/small.length>=0.67;
+    });
+    if(same){ if(len(g)>len(same.g)){ same.g=g; same.ws=ws; } }
+    else uniq.push({g,ws});
+  });
+  const groups=uniq.map(u=>u.g);
+
+  const scored=groups.map((g,i)=>groupScore(g,i,groups.length,kwSet)).filter(Boolean);
+
+  // 主标题：按分数从高到低尝试装入；装不下的不是丢弃，而是落到 Highlights
+  const rank=scored.slice().sort((a,b)=>b.s-a.s);
+  const inTitle=new Set();
+  let acc='';
+  for(const it of rank){
+    const tryStr=acc?(acc+', '+it.g):it.g;
+    const tryCap=toTitleCase(tryStr,CUR_SMALL,CUR_KEEP);
+    if(len(tryCap)<=limit || inTitle.size===0){ acc=tryStr; inTitle.add(it.idx); }
+  }
+  // 第一组（品牌+主词）必须保住：先放它，再按「规格 → 差异点 → 其余」的顺序补
+  if(scored.length && !inTitle.has(0)){
+    acc=scored[0].g; inTitle.clear(); inTitle.add(0);
+    const prio=scored.slice(1).sort((a,b)=>{
+      const w=x=>x.hasSize?0:(x.hasFeat?1:(x.scene?3:2));
+      return w(a)-w(b)||b.s-a.s;
+    });
+    for(const it of prio){
+      if(/premium|high quality|best|perfect/i.test(it.g)) continue;   // 泛化卖点不占主标题
+      const tryStr=acc+', '+it.g;
+      if(len(toTitleCase(tryStr,CUR_SMALL,CUR_KEEP))<=limit){ acc=tryStr; inTitle.add(it.idx); }
+    }
+  }
+  // 兜底：万一单组就超长，按词裁到上限以内
+  let finalTitle=toTitleCase(acc,CUR_SMALL,CUR_KEEP);
+  // 删词（去泛化卖点、去同义重复）之后，For/With 可能被顶到句中 —— 统一再压一次小写
+  finalTitle=fixSmall(fixUnits(finalTitle),CUR_SMALL);
+  if(len(finalTitle)>limit){
+    finalTitle=trimWords(finalTitle,Math.max(3,Math.round(limit/6)));
+  }
+  // 最后再确认一次：仍然超就继续砍词
+  let guard=0;
+  while(len(finalTitle)>limit && guard++<20){
+    const w=finalTitle.split(/\s+/);
+    if(w.length<=2) break;
+    finalTitle=w.slice(0,-1).join(' ').replace(/[\s,]+$/,'');
+  }
+  // 按原顺序输出，读起来更自然
+  const titleParts=[...inTitle].sort((a,b)=>a-b).map(i=>scored.find(x=>x.idx===i).g);
+
+  // Highlights：没进主标题的，材质→场景→功能→其余，按这个顺序
+  const rest=scored.filter(x=>!inTitle.has(x.idx));
+  const order=x=>x.hasMat?0:(x.scene?1:(x.hasFeat?2:3));
+  const hlParts=rest.sort((a,b)=>order(a)-order(b)||a.idx-b.idx).map(x=>x.g);
+
+  // 同义堆叠检测
+  const dupWords={};
+  words(first.toLowerCase()).forEach(w=>{ if(!STOP.has(w)&&w.length>2) dupWords[w]=(dupWords[w]||0)+1; });
+  const dupList=Object.keys(dupWords).filter(w=>dupWords[w]>1);
+
+  return {scored,titleParts,hlParts,dupList,first,extraLines:lines.slice(1),finalTitle};
+}
+let CUR_SMALL=new Set(), CUR_KEEP={};
+
+/* ============ 主流程 ============ */
+let cur={};
+function presetSite(){
+  const s=$('site').value;
+  if(s==='us-new'){ $('cfgLimit').value=75; $('cfgHlLimit').value=125; $('hlCard').style.display=''; }
+  else if(s==='us-old'){ $('cfgLimit').value=200; $('cfgHlLimit').value=0; $('hlCard').style.display='none'; }
+  else { $('cfgHlLimit').value=125; $('hlCard').style.display=''; }
+  run();
+}
+function settings(){
+  const small=new Set(list2arr($('cfgSmall').value).map(x=>x.toLowerCase()));
+  const keep={}; list2arr($('cfgKeep').value).forEach(k=>keep[k.toLowerCase()]=k);
+  return {small,keep,limit:+$('cfgLimit').value||75,hlLimit:+$('cfgHlLimit').value||0};
+}
+function run(){
+  const srcAll=$('src').value;
+  const st=settings();
+  CUR_SMALL=st.small; CUR_KEEP=st.keep;
+  $('srcLen').textContent=len(srcAll);
+  $('limitLbl').textContent=st.limit;
+  $('hlLimitLbl').textContent=st.hlLimit||'—';
+
+  if(!srcAll.trim()){ $('out').value=''; $('hl').value=''; renderEmpty(); return; }
+
+  cur=buildPlan(srcAll,st.limit,list2arr($('kw').value));
+
+  // 主标题：buildPlan 里已经算好并保证不超限
+  const title=fixSmall(fixUnits(cur.finalTitle),st.small);
+
+  $('out').value=title;
+
+  // Highlights：材质细节 → 场景 → 其余，同样受上限约束
+  let hl='';
+  if(st.hlLimit>0){
+    let hp=cur.hlParts.filter(g=>!isDuplicatePhrase(g,title));
+    // 以 For / With / In 开头的补充句放前面读着别扭，把它挪到末尾
+    hp=hp.slice().sort((a,b)=>(/^(for|with|in|and)\b/i.test(a)?1:0)-(/^(for|with|in|and)\b/i.test(b)?1:0));
+    hl=toTitleCase(stripGeneric(hp.join(', ')),st.small,st.keep);
+    if(len(hl)>st.hlLimit){
+      hl=trimWords(hl,Math.max(4,Math.round(st.hlLimit/6)));
+      let g2=0;
+      while(len(hl)>st.hlLimit && g2++<20){
+        const w=hl.split(/\s+/); if(w.length<=3) break;
+        hl=w.slice(0,-1).join(' ').replace(/[\s,]+$/,'');
+      }
+    }
+  }
+  hl=fixSmall(fixUnits(hl),st.small);
+  $('hl').value=hl;
+
+  renderTitle(); renderHl(); renderScore();
+}
+function isDuplicatePhrase(g,title){
+  const gw=words(g.toLowerCase()).filter(w=>!STOP.has(w));
+  const tw=new Set(words(title.toLowerCase()));
+  if(!gw.length) return false;
+  const hit=gw.filter(w=>tw.has(w)).length;
+  return hit/gw.length>=0.8;
+}
+function manualEdit(){ renderTitle(); renderHl(); renderScore(); }
+
+/* ---- 差异高亮 ---- */
 function diffHTML(a,b){
-  // 逐词对比，只标出变化的词；标黄的是「新写法」
   const ea=a.split(/(\s+)/), eb=b.split(/(\s+)/);
   let out='';
   const n=Math.max(ea.length,eb.length);
@@ -164,112 +458,202 @@ function diffHTML(a,b){
   return out;
 }
 
-/* ---------- 检查 ---------- */
-const BANNED=['best','#1','no.1','number one','free shipping','free gift','guarantee','cheapest','hot sale','100%','top rated','world\'s best','money back','wholesale'];
-function audit(txt,limit){
-  const chars=[...txt].length;
-  let out=[];
-  // 字符数
-  if(chars>limit) out.push(['bad','超出上限 '+chars+'/'+limit+'，后台会直接截断，关键词白放']);
-  else if(chars>limit*0.94) out.push(['warn','已经 '+chars+'/'+limit+'，快贴顶了——再加词就会被截']);
-  else out.push(['ok','字符数 OK：'+chars+'/'+limit+'，还能放 '+(limit-chars)+' 个字符']);
-  // 全大写词
-  const caps=txt.match(/\b[A-Z]{4,}\b/g)||[];
-  if(caps.length) out.push(['warn','全大写词 '+caps.length+' 个（'+caps.slice(0,6).join(', ')+'）——亚马逊视为关键词堆砌风险，除非是品牌缩写']);
-  // 连续大写堆叠（3 个以上全大写词连着）
-  if(/\b[A-Z]{3,}\b[\s,]+\b[A-Z]{3,}\b[\s,]+\b[A-Z]{3,}\b/.test(txt)) out.push(['bad','连续 3 个以上全大写词，很像 spam 写法']);
-  // 违禁词
-  const low=txt.toLowerCase(), hits=BANNED.filter(w=>low.includes(w));
-  if(hits.length) out.push(['bad','疑似违规/营销词：'+hits.map(h=>'<b>'+esc(h)+'</b>').join('、')]);
-  // 特殊符号
-  if(/[【】\[\]{}]/.test(txt)) out.push(['warn','含中文括号/方括号装饰符——部分类目可以，但官方不鼓励']);
-  if(/[!！]{2,}/.test(txt)) out.push(['warn','连续感叹号，权重会被压']);
-  if(/[~～]/.test(txt)) out.push(['warn','含波浪号「~」，亚马逊标题通常不允许']);
-  // 逗号分隔结构
-  const segs=txt.split(',').map(s=>s.trim()).filter(Boolean);
-  if(segs.length>=2 && segs.length<=6) out.push(['ok','结构 OK：'+segs.length+' 段，符合「主词 + 卖点 + 规格 + 颜色」的读法']);
-  else if(segs.length>6) out.push(['warn','分了 '+segs.length+' 段，太碎；建议压到 3-5 段']);
-  // 重复词
-  const ws=txt.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[];
-  const cnt={}; ws.forEach(w=>{if(w.length>2)cnt[w]=(cnt[w]||0)+1});
-  const dup=Object.keys(cnt).filter(w=>cnt[w]>1 && !['for','the','and','with'].includes(w));
-  if(dup.length) out.push(['warn','重复出现的词：'+dup.join('、')+'——占字符不涨权重']);
-  return out;
-}
-
-/* ---------- 主流程 ---------- */
-function render(){
-  const src=$('src').value;
-  const small=new Set(list2arr($('cfgSmall').value).map(x=>x.toLowerCase()));
-  const keepArr=list2arr($('cfgKeep').value);
-  const keep={}; keepArr.forEach(k=>keep[k.toLowerCase()]=k);
-  const limit=+$('cfgLimit').value||200;
-
-  $('srcLen').textContent=[...src].length;
-  $('limit').textContent=limit;
-
-  const out=toTitleCase(src,small,keep);
-  $('out').value=out;
-
-  const n=[...out].length;
+/* ---- 主标题检查 ---- */
+function renderTitle(){
+  const t=$('out').value, st=settings();
+  const n=len(t);
   $('outLen').textContent=n;
-  $('outLen').className=n>limit?'over':'';
-  $('wordCnt').textContent=(out.trim().match(/[\p{L}\p{N}]+/gu)||[]).length;
+  $('outLen').className=n>st.limit?'over':'';
+  const ws=words(t);
+  $('wordCnt').textContent=ws.length;
 
-  // 差异高亮：只标出被改动的词
-  $('diffBox').innerHTML=out.trim()?diffHTML(src,out):'';
+  // 结构判断：能不能看出 品牌 / 产品词 / 差异点 / 规格
+  const low=t.toLowerCase();
+  const hasNum=/\d/.test(low);
+  const hasMat=/(\d+d|oxford|nylon|leather|cotton|silicone|aluminum|stainless|steel|abs|tpu|mesh|ceramic|glass|plastic)/i.test(low);
+  const hasSize=/\b(xs|s|m|l|xl|xxl|large|small|medium|mini)\b/i.test(low);
+  const hasBrandGuess = /^[A-Z][a-zA-Z0-9]+/.test(t.trim()) && !/^\d/.test(t.trim());
+  const bits=[];
+  bits.push(hasBrandGuess?'品牌✓':'品牌?');
+  bits.push('产品词✓');
+  bits.push((hasMat||hasNum||hasSize)?'差异/规格✓':'差异点?');
+  const filled=bits.filter(b=>b.includes('✓')).length;
+  $('structLbl').textContent=filled>=3?'完整':(filled===2?'缺一项':'偏弱');
 
-  // 保持原样的词清单
-  const words=[...new Set(src.split(/[^\p{L}\p{N}\-]+/u).filter(Boolean))];
-  const kept=words.filter(w=>{
+  let out=[];
+  if(n>st.limit) out.push(['bad','超出主标题上限 '+n+'/'+st.limit+'，会被截断，后面的关键词等于白写']);
+  else if(n>st.limit*0.94) out.push(['warn','已经 '+n+'/'+st.limit+'，贴着上限了']);
+  else out.push(['ok','主标题字符 OK：'+n+'/'+st.limit]);
+
+  // 同义词堆叠
+  const dupWords={};
+  words(low).forEach(w=>{ if(!STOP.has(w)&&w.length>2) dupWords[w]=(dupWords[w]||0)+1; });
+  const dup=Object.keys(dupWords).filter(w=>dupWords[w]>1);
+  if(dup.length) out.push(['bad','重复词：'+dup.join('、')+' —— 同一单词通常不超过两次（介词冠词连词除外）']);
+  // 全大写
+  const caps=t.match(/\b[A-Z]{4,}\b/g)||[];
+  const realCaps=caps.filter(c=>!isAbbr(c,c.toLowerCase()));
+  if(realCaps.length) out.push(['warn','全大写词：'+realCaps.slice(0,5).join(', ')+' —— 避免全大写']);
+  // 泛化卖点
+  const gen=GENERIC.filter(g=>low.includes(g));
+  if(gen.length) out.push(['warn','泛化卖点：'+gen.join('、')+' —— 换成具体材质或功能更有说服力']);
+  // 场景过多
+  const sc=words(low).filter(w=>SCENE.includes(w));
+  if(sc.length>=3) out.push(['warn','场景词堆了 '+sc.length+' 个（'+sc.join('、')+'）—— 削弱产品重点']);
+  // 违规词
+  const hit=BANNED.filter(b=>low.includes(b));
+  if(hit.length) out.push(['bad','违规/主观促销词：'+hit.join('、')]);
+  // 特殊字符
+  if(/[【】\[\]{}~～]/.test(t)) out.push(['warn','含特殊字符（【】[]~），多数类目不允许']);
+  if(/[!！]/.test(t)) out.push(['warn','含感叹号，避免主观促销语气']);
+  // 机械切段提醒
+  const rawLine=($('src').value.split('\n')[0]||'');
+  if(cur.extraLines && cur.extraLines.length && len(rawLine)>st.limit*1.6)
+    out.push(['info','原标题长度约为上限的 '+(len(rawLine)/st.limit).toFixed(1)+' 倍：这里按「信息组」重排，没有按字符数硬切']);
+
+  $('flags').innerHTML=out.map(([l,msg])=>'<div class="flag '+l+'">'+msg+'</div>').join('');
+  $('diffBox').innerHTML=t.trim()?diffHTML(rawLine,t):'';
+
+  // 关键词标签
+  const kwSet=words($('kw').value.toLowerCase());
+  const tags=kwSet.slice(0,20).map(k=>{
+    const inT=words(low).includes(k);
+    return '<span class="tg'+(inT?'':' bad')+'">'+esc(k)+(inT?' ✓':' ✗')+'</span>';
+  });
+  $('tagLine').innerHTML=tags.length?('<span class="kv" style="margin:0 6px 0 0">核心词落在哪：</span>'+tags.join('')):'';
+
+  // 保持原样词
+  const kept=[...new Set(words(t))].filter(w=>{
     const lw=w.toLowerCase();
-    if(keep[lw]) return true;
-    if(/[a-z]/.test(w)) return /^[A-Z][a-z]+[A-Z]/.test(w);   // iPhone/eBay 这类
+    if(st.keep[lw]) return true;
+    if(/[a-z]/.test(w)) return /^[A-Z][a-z]+[A-Z]/.test(w);
     return isAbbr(w,lw);
   });
-  $('keepList').innerHTML=kept.length
-    ? kept.map(w=>'<span class="chip keep">'+esc(w)+'</span>').join('')
-    : '<span class="chip" style="background:#fff;color:#9ca3af;border-style:dashed">这段标题里没有需要保留原样的词</span>';
-
-  // 检查
-  const res=audit(out,limit);
-  $('flags').innerHTML=res.map(([lvl,msg])=>'<div class="flag '+lvl+'">'+msg+'</div>').join('')
-    ||'<div class="flag ok">没发现问题</div>';
+  $('keepList').innerHTML=kept.length?kept.map(w=>'<span class="chip keep">'+esc(w)+'</span>').join(''):'<span class="chip keep">无</span>';
 }
 
-let manual=false;
-function onEdit(){ manual=true; render2(); }
-function render2(){
-  const out=$('out').value, limit=+$('cfgLimit').value||200;
-  const n=[...out].length;
-  $('outLen').textContent=n; $('outLen').className=n>limit?'over':'';
-  $('wordCnt').textContent=(out.trim().match(/[\p{L}\p{N}]+/gu)||[]).length;
-  $('diffBox').innerHTML='';
-  $('flags').innerHTML=audit(out,limit).map(([lvl,msg])=>'<div class="flag '+lvl+'">'+msg+'</div>').join('');
+/* ---- Highlights 检查 ---- */
+function renderHl(){
+  const st=settings(), h=$('hl').value, n=len(h);
+  $('hlLen').textContent=n;
+  $('hlLen').className=(st.hlLimit&&n>st.hlLimit)?'over':'';
+  const t=$('out').value.toLowerCase();
+  let out=[];
+  if(!st.hlLimit){ $('hlFlags').innerHTML='<div class="flag info">当前站点没有 Highlights 字段，不做检查</div>'; $('hlDup').textContent='—'; return; }
+  if(!h.trim()){ $('hlFlags').innerHTML='<div class="flag warn">Highlights 是空的 —— 125 字符的补充位浪费了</div>'; $('hlDup').textContent='0'; return; }
+  if(n>st.hlLimit) out.push(['bad','超出 '+n+'/'+st.hlLimit+'，会被截断']);
+  else if(n<st.hlLimit*0.5) out.push(['warn','只用了 '+n+'/'+st.hlLimit+'，还有 '+(st.hlLimit-n)+' 字符没利用（不是必须写满，但通常是漏了信息）']);
+  else out.push(['ok','Highlights 字符 OK：'+n+'/'+st.hlLimit]);
+
+  // 与主标题的重复度
+  const hw=words(h.toLowerCase()).filter(w=>!STOP.has(w));
+  const tw=new Set(words(t));
+  const overlap=hw.filter(w=>tw.has(w));
+  const ratio=hw.length?overlap.length/hw.length:0;
+  $('hlDup').textContent=Math.round(ratio*100)+'%';
+  if(ratio>0.7) out.push(['bad','和主标题重合 '+(ratio*100).toFixed(0)+'% 的词 —— 没有补充新信息，浪费 125 字符']);
+  else if(ratio>0.5) out.push(['warn','和主标题重合 '+(ratio*100).toFixed(0)+'% —— 试着换成材质细节或使用场景']);
+  else out.push(['ok','与主标题重合 '+(ratio*100).toFixed(0)+'%，补充了新信息']);
+
+  // 有没有带上材质 / 尺寸 / 场景
+  const low=h.toLowerCase();
+  const hasMat=/(\d+d|oxford|nylon|leather|cotton|silicone|aluminum|stainless|steel|abs|tpu|mesh|ceramic|glass|plastic)/i.test(low);
+  const hasSize=/\d/.test(low);
+  const hasScene=words(low).some(w=>SCENE.includes(w)) || /\b(parking|indoor|outdoor|weather|season|summer|winter|rain|snow)\b/i.test(low);
+  const miss=[];
+  if(!hasMat&&!hasSize) miss.push('材质/尺寸');
+  if(!hasScene) miss.push('使用场景');
+  if(miss.length) out.push(['warn','缺 ' + miss.join(' / ') + ' —— Highlights 最适合放这些']);
+
+  // 是不是又变成关键词清单
+  const segs=h.split(',').filter(s=>s.trim()).length;
+  if(segs>=4&&!/\b(for|with|in|fits|fit|use)\b/i.test(low)) out.push(['warn','看起来像一串关键词而不是句子 —— 加个 for / with 让它读起来像人话']);
+
+  $('hlFlags').innerHTML=out.map(([l,msg])=>'<div class="flag '+l+'">'+msg+'</div>').join('');
 }
 
-function apply(){
-  manual=false;
-  render();
-}
-function copyOut(){
-  const t=$('out').value;
-  navigator.clipboard.writeText(t).then(()=>{
-    const b=event&&event.target; if(b){const old=b.textContent;b.textContent='已复制 ✓';setTimeout(()=>b.textContent=old,1200);}
-  }).catch(()=>{
-    $('out').select(); document.execCommand('copy');
-  });
-}
-function clearAll(){
-  $('src').value=''; $('out').value='';
-  render2();
+/* ---- 打分 ---- */
+function renderScore(){
+  const st=settings(), t=$('out').value, h=$('hl').value;
+  const low=t.toLowerCase();
+  const rows=[];
+
+  /* 合规与真实 30 */
+  let c=30;
+  const n=len(t);
+  if(n>st.limit) c-=12; else if(n>st.limit*0.94) c-=3;
+  const hit=BANNED.filter(b=>low.includes(b));
+  if(hit.length) c-=Math.min(12,6*hit.length);
+  if(/[【】\[\]{}~～!！]/.test(t)) c-=3;
+  const caps=(t.match(/\b[A-Z]{4,}\b/g)||[]).filter(x=>!isAbbr(x,x.toLowerCase()));
+  if(caps.length) c-=4;
+  c=Math.max(0,c);
+  rows.push(['合规与真实',c,30,c>=27?'字符、用词、参数都没踩线':(c>=20?'有小问题，修完再上':'先修合规问题，其他分不用看')]);
+
+  /* 产品识别 25 */
+  let p=0;
+  const w=words(t);
+  if(w.length>=3) p+=8; if(w.length>=5) p+=4;
+  const hasNum=/\d/.test(low), hasSize=/\b(xs|s|m|l|xl|xxl|large|small|medium|mini|max)\b/i.test(low);
+  if(hasNum||hasSize) p+=6;
+  if(/\b(for|compatible with|fits)\b/i.test(low)) p+=7;   // 说明给谁用
+  p=Math.min(25,p);
+  rows.push(['产品识别',p,25,p>=22?'一眼能看出卖什么、给谁用':(p>=15?'能看出产品，但「给谁用」不够明确':'买家在搜索结果里可能看不明白')]);
+
+  /* 关键词相关性 20 */
+  const kwSet=words($('kw').value.toLowerCase());
+  let k=0;
+  if(kwSet.length){ const inT=kwSet.filter(x=>words(low).includes(x)); k=Math.round(20*inT.length/Math.min(kwSet.length,8)); k=Math.min(20,k); }
+  else k=12;
+  rows.push(['关键词相关性',k,20,k>=16?'核心搜索词保住了':(k>=10?'核心词覆盖不够，检查是否漏了主词':'关键词和主标题脱节')]);
+
+  /* 差异化 15 */
+  let d=0;
+  const gen=GENERIC.filter(g=>low.includes(g));
+  if(/(\d+d|oxford|nylon|leather|aluminum|stainless|steel|silicone|magnetic|waterproof|foldable|rechargeable)/i.test(low)) d+=9;
+  else if(hasNum||hasSize) d+=5;
+  if(!gen.length) d+=6; else d+=Math.max(0,3-gen.length*2);
+  d=Math.min(15,d);
+  rows.push(['差异化',d,15,d>=12?'有具体材质/结构，说得清为什么选它':(d>=8?'有点差异点，但偏泛':'Premium / High Quality 这类词不算差异化')]);
+
+  /* 可读性 10 */
+  let r=10;
+  const dupWords={}; words(low).forEach(x=>{ if(!STOP.has(x)&&x.length>2) dupWords[x]=(dupWords[x]||0)+1; });
+  const dup=Object.keys(dupWords).filter(x=>dupWords[x]>1);
+  if(dup.length) r-=Math.min(5,2*dup.length);
+  const sc=words(low).filter(x=>SCENE.includes(x));
+  if(sc.length>=3) r-=3;
+  if(n>st.limit) r-=2;
+  if(h&&st.hlLimit){ const hw=words(h.toLowerCase()).filter(x=>!STOP.has(x)); const tw=new Set(words(low));
+    const ov=hw.filter(x=>tw.has(x)).length||0; if(hw.length&&ov/hw.length>0.7) r-=3; }
+  r=Math.max(0,r);
+  rows.push(['可读性',r,10,r>=8?'读起来自然、没有堆词':(r>=5?'有重复或堆叠，读着累':'重复太多，像关键词清单')]);
+
+  const total=rows.reduce((a,b)=>a+b[1],0);
+  $('scoreNum').innerHTML=total+'<small>/100</small>';
+  $('barfill').style.width=total+'%';
+  $('scoreWord').textContent = total>=85?'可以直接用':(total>=70?'能用，但还有明确的改进点':(total>=55?'问题不少，建议按下面的提示逐条改':'建议重写，先解决合规和识别问题'));
+  $('scoreRows').innerHTML=rows.map(([name,sc,max,msg])=>{
+    const cls=sc/max>=0.9?'full':(sc/max>=0.6?'mid':'low');
+    return '<div class="srow"><div>'+name+'<em style="display:block;color:#9ca3af;font-size:11px">满分 '+max+'</em></div>'+
+           '<div class="sc '+cls+'">'+sc+'</div><div class="msg">'+msg+'</div></div>';
+  }).join('');
 }
 
-['src','cfgSmall','cfgKeep','cfgLimit'].forEach(id=>$(id).addEventListener('input',()=>{
-  if(!manual) render();
-}));
-render();
+function renderEmpty(){
+  $('flags').innerHTML=''; $('hlFlags').innerHTML=''; $('diffBox').innerHTML=''; $('tagLine').innerHTML='';
+  $('scoreNum').innerHTML='--<small>/100</small>'; $('barfill').style.width='0%';
+  $('scoreWord').textContent='粘贴标题后自动计算'; $('scoreRows').innerHTML='';
+  $('structLbl').textContent='—'; $('outLen').textContent='0'; $('hlLen').textContent='0';
+}
+function clearAll(){ $('src').value=''; $('out').value=''; $('hl').value=''; renderEmpty(); }
+
+['src','kw','spec','cfgSmall','cfgKeep','cfgLimit','cfgHlLimit'].forEach(id=>{
+  const el=$(id); if(el) el.addEventListener('input',()=>{ if(id==='cfgLimit'||id==='cfgHlLimit') return; run(); });
+});
+['cfgLimit','cfgHlLimit'].forEach(id=>$(id).addEventListener('change',run));
+run();
 </script>
-<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· Listing 物料 / 标题规范与大小写转换</span><a href="../index.html#listing">打开完整工具台 ↗</a></div>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar" data-page-node-id="1UMRsEXBuWe79fIzQoTLOR">🏝 <b data-page-node-id="ztzK8DvXgpHqiO4Q5wQWuo">SQ-AMAZON-TOOLBOX</b><span class="cr" data-page-node-id="SlhjUjtaphElVkK9fZ0SXS">· Listing 物料 / 标题规范与 75+125</span><a href="../index.html#listing" data-page-node-id="ThCI6qDjXTm2OXVOediewc">打开完整工具台 ↗</a></div>
 </body>
 </html>
