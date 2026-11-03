@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>多站点定价换算器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← 全部说明</a></div>
+<div class="wrap">
+<h1>多站点定价换算器 · 使用说明</h1>
+<blockquote>同一个产品要卖到美国、英国、德国、日本，价格<strong>不能直接用汇率乘</strong>。这个工具按「我想要的净利率」倒推，告诉你每个站点该卖多少。</blockquote>
+<hr>
+<h2>为什么不能直接乘汇率</h2>
+<p>假设一个产品成本 $8，你打算在美国卖 $20，赚 $12，觉得不错。</p>
+<p>现在想卖到英国。汇率 0.79，$20 × 0.79 ≈ £15.8。看起来一样赚钱？</p>
+<p><strong>完全不一样。</strong> 因为英国：</p>
+<ul><li>售价里有 <strong>20% 的 VAT</strong> 要先交掉（£15.8 里 £2.6 不是你的）</li><li>英国 FBA 配送费比美国贵</li><li>退货率通常更高</li></ul>
+<p>结果你卖 £15.8，实际赚的可能只有 £3。而美国能赚 $12（约 £9.5）。</p>
+<p><strong>差了 3 倍。</strong></p>
+<p>这个工具就是帮你算清楚：<strong>要在英国赚到同样的利润率，应该标多少价。</strong></p>
+<hr>
+<h2>和「FBA 利润计算器」的区别</h2>
+<p>两个工具都能算利润，用途不一样：</p>
+<div class="tw"><table><thead><tr><th></th><th>多站点定价换算器</th><th>FBA 利润计算器</th></tr></thead><tbody><tr><td><strong>什么时候用</strong></td><td>还没定价，想知道「该卖多少」</td><td>已经想好价格，想知道「能赚多少」</td></tr><tr><td><strong>输入</strong></td><td>目标净利率</td><td>售价</td></tr><tr><td><strong>输出</strong></td><td>各站点建议售价</td><td>每件利润</td></tr><tr><td><strong>适合</strong></td><td>上架前，一次性铺多国</td><td>上架前/后，算单品细账</td></tr></tbody></table></div>
+<p><strong>推荐顺序</strong>：先用这个算出大概价位，再用 FBA 利润计算器逐个站点验算细账。</p>
+<hr>
+<h2>怎么用</h2>
+<h3>① 基础数据（四格，一次填好）</h3>
+<div class="tw"><table><thead><tr><th>填什么</th><th>说明</th></tr></thead><tbody><tr><td><strong>产品成本+头程（USD/件）</strong></td><td>采购价 + 运费，<strong>统一折成美元</strong>。这是全表的基础。</td></tr><tr><td><strong>目标净利率（%）</strong></td><td>你想赚多少。一般填 <strong>15–25%</strong>。填太高的结果是建议售价高得没人买。</td></tr><tr><td><strong>其他固定费（USD/件）</strong></td><td>打包、贴标这些。没有就填 0。</td></tr><tr><td><strong>广告费占比（% of 售价）</strong></td><td>新品期 20–30%，成熟期 10–15%。<strong>这个别漏。</strong></td></tr></tbody></table></div>
+<blockquote><strong>为什么统一用美元？</strong> 因为你的采购成本本来就是人民币结算，折成美元最好对比。工具内部会自动换算到各站点货币。</blockquote>
+<h3>② 各站点参数（已经填好默认值，可以改）</h3>
+<p>四个站点横排，每个站点需要四个参数：</p>
+<div class="tw"><table><thead><tr><th>参数</th><th>美国 US</th><th>英国 UK</th><th>德国 DE</th><th>日本 JP</th></tr></thead><tbody><tr><td><strong>汇率</strong>（本地币→USD）</td><td>1.00</td><td>按实时</td><td>按实时</td><td>按实时</td></tr><tr><td><strong>VAT/消费税（%）</strong></td><td>0</td><td>20</td><td>19</td><td>10</td></tr><tr><td><strong>平台佣金（%）</strong></td><td>15</td><td>15</td><td>15</td><td>15</td></tr><tr><td><strong>FBA 配送费</strong>（本地币）</td><td>5.60</td><td>需填</td><td>需填</td><td>需填</td></tr></tbody></table></div>
+<p><strong>只有「FBA 配送费」需要你自己填</strong>，其余默认值多数情况适用。</p>
+<p>FBA 配送费怎么查：卖家后台 → 帮助 → 搜「配送费用」，或者用亚马逊官方的「FBA 收入计算器」，输入你的尺寸重量就能查到各站点的费用。</p>
+<blockquote>填的时候注意：<strong>每个站点的配送费用当地货币</strong>。英国填 £，德国填 €，日本填 ¥。不要折成美元。</blockquote>
+<h3>③ 看结果</h3>
+<p>算出来的是<strong>每个站点的建议售价</strong>，单位是该站点的当地货币。</p>
+<p>比如可能算出：美国 $24.99 / 英国 £21.99 / 德国 €24.99 / 日本 ¥3,480。</p>
+<p><strong>为什么欧洲的价格数字看起来比美国高？</strong></p>
+<p>因为欧洲售价含 VAT。£21.99 里有 £3.66 是税，不是你的钱。扣掉税之后，实际收入和美国的 $24.99 是相当的。</p>
+<p><strong>看到欧洲价格高，不要觉得「外国人傻钱多」，也不要觉得算错了。这是正常的。</strong></p>
+<hr>
+<h2>定价公式（想懂原理可以看）</h2>
+<pre><code>售价 = （成本 + 其他固定费 + FBA费折USD）÷（1 − VAT% − 佣金% − 广告% − 目标净利率）</code></pre>
+<p>这个公式的意思是：<strong>先把所有按比例抽成的项目加起来，再从 1 里减掉，剩下的才是「分母」。</strong></p>
+<p>举个实际例子：</p>
+<p>假设成本 $8，FBA 费折 $6，VAT 20%，佣金 15%，广告 20%，想赚 20%：</p>
+<pre><code>分母 = 1 − 0.20 − 0.15 − 0.20 − 0.20 = 0.25
+售价 = (8 + 0 + 6) ÷ 0.25 = $56</code></pre>
+<p><strong>注意这个结果对你的直觉可能是个冲击</strong>：成本只有 $14，却要卖 $56。</p>
+<p>这说明什么？说明<strong>当各项抽成加起来到 75% 的时候，你需要 4 倍的价格才能留下 20% 的利润。</strong></p>
+<p>如果你算出来觉得「这也太贵了，卖不动」，那说明这个产品<strong>在目标佣金 + 目标广告费下本来就不成立</strong>，不是工具算错了。你需要做的是：降成本、降广告费，或者换品类。</p>
+<blockquote><strong>心理价位取整</strong>：工具会自动把结果取整到 <code>.99</code> 结尾（比如 $24.99），因为这是消费者的心理习惯。</blockquote>
+<hr>
+<h2>新手最容易犯的五个错</h2>
+<p><strong>① 目标净利率填太高</strong></p>
+<p>填 40%，算出来售价吓人，然后放弃这个品。</p>
+<p>实际上亚马逊卖家 Net Margin 能做到 20% 已经不错，15% 是很多成熟卖家的常态。<strong>先填 15% 看看现实价位，再往上试。</strong></p>
+<p><strong>② 忘了广告费</strong></p>
+<p>广告费在这个公式里是<strong>按售价比例</strong>扣的，权重很大。填 0 会让建议售价明显偏低，你真按那个价卖会亏。</p>
+<p><strong>③ 各站点 FBA 费没改</strong></p>
+<p>默认的 $5.60 是美国的值。英国、德国、日本都不一样的<strong>货币</strong>和<strong>数值</strong>。不改就一直按美国算，欧洲会算错。</p>
+<p><strong>④ 用人民币填成本</strong></p>
+<p>这个工具的基础数据全部是 <strong>USD</strong>。你要是填成 ¥80，结果会离谱到你自己都发现不对。填之前先把人民币按汇率折成美元。</p>
+<p><strong>⑤ 算出价格就直接用了</strong></p>
+<p>这个工具给的是「达到目标利润率所需的理论价格」。</p>
+<p><strong>实际定价还要看</strong>：竞品卖多少、这个价格有没有竞争力、是不是 .99 结尾更好看。</p>
+<p>如果算出来的价格比竞品贵一倍，那不是定价工具的问题，是这个产品/这个成本结构不适合这个市场。</p>
+<hr>
+<h2>常见问题</h2>
+<p><strong>Q：日本站的消费税是 10%，为什么和欧洲 20% 差这么多？</strong></p>
+<p>日本消费税确实只有 10%，这是真实的。所以日本站的价格看起来会比欧洲低不少，这是对的。</p>
+<p><strong>Q：加拿大呢？</strong></p>
+<p>这个工具的四个站点是美国、英国、德国、日本。加拿大算北美，成本和 FBA 费结构跟美国接近，可以参考美国的结果，或者用「FBA 利润计算器 · 四站点」单独算（它包含加拿大）。</p>
+<p><strong>Q：汇率多久更新一次？</strong></p>
+<p>每次打开页面会拉一次实时汇率。算完关掉，过几天再算会重新拉。</p>
+<p><strong>Q：能不能只算一个站点？</strong></p>
+<p>可以。其他站点留着不管，只看你需要的那一列。</p>
+<p><strong>Q：算出来的价格带小数点很怪，能改吗？</strong></p>
+<p>可以，这只是建议值。实际定价你自己定，$-1 或者 $-5 结尾都是常见做法，只要在建议值附近就行。</p>
+<hr>
+<h2>一句话总结</h2>
+<p><strong>填成本（美元）+ 目标利润率 + 广告占比 → 填各站点的 FBA 费 → 看建议售价 → 觉得太贵就是不成立，回去降成本。</strong></p>
+</div>
+</body>
+</html>
