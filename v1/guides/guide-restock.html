@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FBA 补货计算器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← 全部说明</a></div>
+<div class="wrap">
+<h1>FBA 补货计算器 · 使用说明</h1>
+<h2>它是干嘛的</h2>
+<p>回答一个问题：<strong>现在我该不该补货？补多少？</strong></p>
+<p>算的是"补货点"——库存掉到这个数，就必须下单了，否则等货到的这段时间会断货。</p>
+<p>断货的代价比压货大得多：排名掉下去，回来要重新推。</p>
+<h2>三步用起来</h2>
+<ol><li>打开工具：<a href="../tools/restock.html">FBA 补货计算器</a></li><li>填单款数据（左边"① 单款试算"）：</li></ol>
+<div class="tw"><table><thead><tr><th>字段</th><th>填什么</th></tr></thead><tbody><tr><td>SKU / 产品名</td><td>一眼能认出来的名字，如 <code>B0DK13MV1R 泳镜 白+粉</code></td></tr><tr><td>站点</td><td>UK / DE / US / CA</td></tr><tr><td>日均销量（件/天）</td><td>最近 30 天日均，<strong>别用大促那几天</strong></td></tr><tr><td>FBA 在库 / 在途</td><td>后台库存页的"可售"和"在途/入库中"</td></tr><tr><td>生产周期（天）</td><td>工厂做完要几天</td></tr><tr><td>头程+上架（天）</td><td>海运或空运到能卖，一共几天</td></tr><tr><td>安全库存天数</td><td>建议 15–30，怕断货就往上加</td></tr></tbody></table></div>
+<ol><li>点「💾 保存到看板」，这款就进了下面的「③ SKU 补货看板」，可以一路看全部 SKU。</li></ol>
+<h2>结果怎么看</h2>
+<p>补货点公式是：</p>
+<blockquote><strong>补货点 = 日均销量 ×（生产 + 头程 + 上架天数）+ 安全库存天数 × 日均销量</strong></blockquote>
+<p>换算成人话：<strong>从现在下单到能卖，这段时间会卖掉多少，再加一点安全垫。</strong></p>
+<p>判断标准看"可售天数"：</p>
+<div class="tw"><table><thead><tr><th>可售天数</th><th>该做什么</th></tr></thead><tbody><tr><td>低于（生产 + 头程）</td><td><strong>危险</strong>，已经来不及了，赶紧空运或调货</td></tr><tr><td>刚过补货点</td><td>马上安排下单</td></tr><tr><td>明显高于补货点</td><td>还够，观察即可</td></tr></tbody></table></div>
+<h2>云同步（换电脑 / 换浏览器必看）</h2>
+<p>数据默认存在浏览器本地，换设备就看不到。点「☁ 云同步」，填仓库、分支/文件、GitHub 令牌，就能存到云端。</p>
+<p><strong>三个按钮的区别</strong>：</p>
+<ul><li><strong>仅下载云端</strong> / <strong>仅上传本地</strong>：覆盖式，点之前会弹确认框，<strong>会把对方的数据盖掉</strong></li><li><strong>合并同步</strong>：只新增和更新，<strong>永远不会减少记录</strong> ← 不确定时一律用它</li></ul>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>日均销量用错，全盘都错</strong>。旺季、大促、断货那几天的数据要剔掉，用平稳期的 14–30 天平均。</li><li><strong>头程时间宁多勿少</strong>。报关、清关、排柜都容易卡，多算 5 天比少算 5 天安全。</li></ul>
+<h2>常见问题</h2>
+<p><strong>Q：在途算不算库存？</strong></p>
+<p>算，所以有单独一栏。工具看的是"在库 + 在途"能不能撑到下一批货到。</p>
+<p><strong>Q：多个 SKU 怎么管？</strong></p>
+<p>每款单独填一次、点保存，看板会累积。导出 CSV 可以发给采购。</p>
+<hr>
+<p><strong>一句话</strong>：补货点 = 到货这段时间会卖掉的量 + 安全垫，低于它就该下单。</p>
+</div>
+</body>
+</html>
