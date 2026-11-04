@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="R0fuuA0vBU3posmEYhwCw8">
+<head data-page-node-id="EjMP65px02S9kKgRxEJzaq">
+<meta charset="UTF-8" data-page-node-id="JbXzbPRJMk4TCtL2V13oaH">
+<meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="xUMSlPo3PKvPtIx1ltpGxC">
+<title>推新品 SOP · 上架排期清单</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--ok:#0a8f5b;--bad:#c0392b;--warn:#b7791f;--soft:#e0f2fe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:28px 20px;display:flex;justify-content:center}
+.wrap{width:900px;max-width:100%}
+h1{font-size:22px;color:var(--deep);margin-bottom:6px}
+h1 span{font-size:12px;color:var(--sub);font-weight:400;margin-left:6px}
+.desc{color:var(--sub);font-size:13px;line-height:1.7;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:18px}
+.card h2{font-size:15px;color:var(--deep);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.grp{font-size:11px;color:var(--sub);font-weight:400}
+label{display:block;font-size:12.5px;color:var(--sub);margin:8px 0 4px}
+input,select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;color:var(--ink);background:#fff}
+input:focus,select:focus{outline:none;border-color:var(--turq)}
+input[type=text],input[type=date]{width:100%}
+.btn{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--deep);border:1px solid var(--line);font-weight:600}
+.btn:hover{filter:brightness(1.05)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;vertical-align:middle;background:#c3d8e2}
+.dot.on{background:var(--ok)}.dot.busy{background:var(--accent);animation:dp 1s infinite}.dot.err{background:var(--bad)}
+@keyframes dp{0%,100%{opacity:.3}50%{opacity:1}}
+.planbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.planbar>div{flex:1;min-width:160px}
+.plans{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.plan{border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12.5px;background:#fff;line-height:1.5}
+.plan b{color:var(--deep)}
+.plan .pn{width:auto;min-width:80px;max-width:190px;font-size:12.5px;font-weight:700;color:var(--deep);padding:3px 6px;border:1px solid transparent;border-radius:5px;background:transparent}
+.plan .pn:hover{border-color:var(--line);background:#fff}
+.plan .pn:focus{border-color:var(--turq);background:#fff;outline:none}
+.plan .pd{width:auto;font-size:11.5px;color:var(--sub);padding:2px 4px;border:1px solid transparent;border-radius:5px;background:transparent;margin-left:2px}
+.plan .pd:hover{border-color:var(--line);background:#fff}
+.plan .pd:focus{border-color:var(--turq);background:#fff;outline:none}
+.plan.active .pn,.plan.active .pd{background:#fff}
+.plan.active{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.plan small{color:var(--sub);display:block}
+.dday{font-size:13px;background:var(--soft);border-radius:8px;padding:8px 14px;color:var(--deep);font-weight:600;white-space:nowrap}
+.dday.past{background:#fdecea;color:var(--bad)}
+.pbar{height:10px;background:#e8f6fa;border-radius:6px;overflow:hidden;margin:8px 0 4px}
+.pbar>i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2);border-radius:6px;transition:width .3s}
+.plabel{font-size:12px;color:var(--sub)}
+.phase{margin-bottom:14px}
+.phase>h3{font-size:13px;color:var(--ink);background:#f6fcfe;border-left:3px solid var(--accent);border-radius:0 4px 4px 0;padding:7px 10px;display:flex;justify-content:space-between}
+.phase>h3 small{color:var(--sub);font-weight:400}
+.task{display:flex;gap:10px;align-items:flex-start;padding:9px 6px;border-bottom:1px dashed var(--line);border-radius:6px}
+.task:hover{background:#f9fdfe}
+.task:last-child{border-bottom:none}
+.task input[type=checkbox]{width:17px;height:17px;flex:none;margin-top:2px;cursor:pointer;accent-color:var(--accent)}
+.task .body{flex:1;min-width:0}
+.task .t{font-size:13.5px;font-weight:600;cursor:pointer}
+.task.done .t{color:var(--sub);text-decoration:line-through;font-weight:400}
+.task .d{font-size:12px;color:var(--sub);margin-top:2px;line-height:1.6}
+.task .due{flex:none;font-size:11.5px;color:var(--deep);background:var(--soft);border-radius:4px;padding:2px 7px;margin-top:2px;white-space:nowrap}
+.task .due.late{background:#fdecea;color:var(--bad)}
+.task .due.today{background:#fdf6e3;color:var(--warn)}
+.task .note{width:100%;margin-top:6px;padding:5px 8px;font-size:12px;border:1px dashed var(--line);border-radius:6px;color:var(--ink);background:#fbfeff}
+.task .note:focus{border-color:var(--turq);border-style:solid;outline:none}
+.empty{padding:26px 0;text-align:center;color:var(--sub);font-size:13px}
+.sum{font-size:12.5px;color:var(--sub);line-height:1.7;margin-top:6px}
+#undoBar{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);display:none;align-items:center;gap:10px;
+  background:#12333f;color:#e8f7fb;border-radius:10px;padding:10px 12px 10px 16px;font-size:13px;
+  box-shadow:0 8px 24px rgba(18,51,63,.28);z-index:200;opacity:0;transition:opacity .18s,transform .18s;max-width:92vw}
+#undoBar.in{opacity:1;transform:translate(-50%,0)}
+#undoBar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#undoBtn{position:relative;overflow:hidden;background:var(--turq);color:#062a33;border:none;border-radius:7px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px}
+#undoBtn:hover{filter:brightness(1.08)}
+#undoBtn b{font-variant-numeric:tabular-nums;font-size:12px;background:rgba(6,42,51,.16);border-radius:4px;padding:1px 5px;font-weight:700}
+/* 按钮内的倒计时进度条，从满到空 */
+#undoBtn::before{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:#0e7490;opacity:.45;transform-origin:left center}
+#undoBtn.ticking::before{animation:undoShrink 5s linear forwards}
+@keyframes undoShrink{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+#undoBar.out{opacity:0;transform:translate(-50%,14px)}
+@media print{#undoBar{display:none !important}}
+.mask{position:fixed;inset:0;background:rgba(18,51,63,.38);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
+.modal{width:560px;max-width:100%;max-height:86vh;overflow:auto;background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 18px 50px rgba(6,50,66,.28)}
+.modal h3{font-size:15px;color:var(--deep);margin-bottom:8px}
+.bkmsg{font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:10px}
+.syncrow{display:flex;gap:8px;align-items:center;margin-bottom:9px}
+.syncrow label{width:92px;flex:none;margin:0}
+.syncmsg{font-size:12px;line-height:1.7;background:#f6fcfe;border-left:2px solid #a5dfeb;border-radius:0 4px 4px 0;padding:8px 10px;margin:10px 0;color:var(--ink);word-break:break-all}
+.syncmsg.err{background:#fdf0ee;border-left-color:#e8a99b;color:#8c2f1d}
+.modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.helpw{font-size:11.5px;color:var(--warn);line-height:1.65;background:#fdf6e3;border-left:2px solid #e8c98a;border-radius:0 4px 4px 0;padding:7px 9px;margin:0 0 10px}
+</style>
+</head>
+<body data-page-node-id="KR2XiSaf3ByUSB2GDghLcI">
+<div class="wrap" data-page-node-id="cqFD94dk4Kl4phyUTIvBB8">
+  <h1 data-page-node-id="OReJDGhQHgHJOPUbd9Y3v5">推新品 SOP<span data-page-node-id="yK1B6FyPFGHd4wfhd3ybwr">25 个节点 · 按上架日自动排期</span></h1>
+  <p class="desc" data-page-node-id="7YCx2Fm2HDW2fb5KP8iP0q">新品从备货到放量的完整节奏。建一个产品计划、填上架日，清单会自动换算成具体日期；每完成一项勾一下，支持备注（负责人/链接/坑）。数据可云同步，跨设备共用。</p>
+
+  <div class="card" data-page-node-id="SjkGILOy4hFAxyRKvZLchv">
+    <h2 data-page-node-id="lQkk9Yea8EAj3SUFrkSBI3">① 推品计划
+      <span class="btnrow" data-page-node-id="JOiCTgxsx6sWuqVyOmznGA">
+        <button class="btn ghost" onclick="openSync()" data-page-node-id="i7HcKOtgTUJ5KXMmQhKezn">☁ 云同步<span id="syncDot" class="dot" data-page-node-id="2cVzLxtQPt9SXqNXmruTI0"></span></button>
+      </span>
+    </h2>
+    <div class="planbar" data-page-node-id="Ad597Ao18Jum7qHQ5BJAOd">
+      <div data-page-node-id="bHFybq4VfK3UpdSC9poRzJ"><label data-page-node-id="is7SQPVT2npIyG7z0DbBFd">产品名（如：泳镜 白+粉）</label><input type="text" id="npName" placeholder="新计划名称" data-page-node-id="enBt619juhiV1HBzYrxVFC"></div>
+      <div style="flex:0 0 170px" data-page-node-id="QOkiiAYTERic5FSRSJ2dk7"><label data-page-node-id="Uo1riJzBnUG6mkEo4b0UBU">预计上架日</label><input type="date" id="npDate" data-page-node-id="P5GscpmQ6ytfp0jxVh5ZH2"></div>
+      <div style="flex:0 0 auto" data-page-node-id="v6JPRElK9mMEkh98bJDkGl"><label data-page-node-id="NowcCfIFI16zDHmg8T43ag">&nbsp;</label><button class="btn" id="addBtn" onclick="addPlan()" data-page-node-id="qQId3oQqPjKRc2Hh0yFCqs">＋ 建计划</button></div>
+      <div style="flex:0 0 auto" data-page-node-id="0vFOSHXGEUAMUktEC47R9K"><label data-page-node-id="pfNo4e4EIIGZoy6gAxG9AV">&nbsp;</label><button class="btn ghost" onclick="startEdit()" data-page-node-id="p1ZzQISdmqGCaqw83XuTQA">✏️ 编辑当前</button></div>
+      <div style="flex:0 0 auto" data-page-node-id="ksNeunYLGpXCh3GTzk9TtO"><label data-page-node-id="GHQ8zMrRwCGGf8KtQavww1">&nbsp;</label><button class="btn ghost" onclick="cancelEdit()" data-page-node-id="GH5E6EqbQB0COb0wQKpmM7">取消编辑</button></div>
+      <div style="flex:0 0 auto" data-page-node-id="YlydmW5JoZtyJoTvuK0heE"><label data-page-node-id="icljoDa35tb2kFKnLS3GY3">&nbsp;</label><button class="btn ghost" onclick="delPlan()" data-page-node-id="9vvsQVHA2ffuNzBDmzcEDw">删除当前</button></div>
+    </div>
+    <div class="plans" id="plans" data-page-node-id="mWFoH6Jt3EA9XLBemTQZVI"></div>
+    <p class="sum" style="margin-top:8px" data-page-node-id="00TjKcUgKGTOn8Zof92UBy">💡 计划卡片里的 <b data-page-node-id="osDuKrBcsoZw9iO275V3DW">名字</b> 和 <b data-page-node-id="orUFJoPHMJz2HGt4rHCBxh">日期</b> 可以直接点开改，改完点外面空白处或按回车即生效。</p>
+  </div>
+
+  <div class="card" id="boardCard" style="display:none" data-page-node-id="DFUQvgVk4uiR0TheQiK1g1">
+    <h2 data-page-node-id="GXylqhwPpTtMCMlD4vTEAA">② 执行清单 <span id="dday" class="dday" data-page-node-id="7l8EmclhUoSAirNXZHu9Vk"></span></h2>
+    <div class="pbar" data-page-node-id="vd1zhCzXU83mUYLRITEuJB"><i id="pbarFill" style="width:0" data-page-node-id="MqExTSkKNYaoNCqg40sfIx"></i></div>
+    <div class="plabel" id="pbarLabel" data-page-node-id="xPYcoI0y2RrKG1VHnXDtmD"></div>
+    <div id="board" style="margin-top:14px" data-page-node-id="DPQPyEx6R8gVaOt07yxaRE"></div>
+    <p class="sum" id="boardSum" data-page-node-id="LBKNWBcI2CHo9EuK9A2xDN"></p>
+  </div>
+</div>
+
+<div id="undoBar" data-page-node-id="hzzqTujbxCwYdbLYYxcLD3">
+  <span id="undoTxt" data-page-node-id="uNj2AQF2ErGXTwfzBAe5Ns"></span>
+  <button id="undoBtn" onclick="doUndo()" data-page-node-id="qe3t3zFopXBUR8UXcF6UuC">撤销 <b id="undoSec">5</b>s</button>
+</div>
+
+<div class="mask" id="syncMask" data-page-node-id="diLqR9slq9tai6wOd0xVQF">
+  <div class="modal" data-page-node-id="aZgIY64JsLvVOXbf3NSDrk">
+    <h3 data-page-node-id="k1NDewec790BR3qSrzgGCE">☁ 云同步</h3>
+    <p class="bkmsg" data-page-node-id="rEI0SZyiJiUqThESYZ3ys0">与 FBA 工具、补货看板共用同一把令牌，存进同一个私有仓库，文件为 <b data-page-node-id="4HWXf6GHGo7psr2CjBYejh">sop.json</b>。令牌只保存在本机浏览器。</p>
+    <div class="syncrow" data-page-node-id="AFZk8pAqf0Pl1CpNkACHAP"><label data-page-node-id="zAxWUpkntiFebMwDYB7bUQ">仓库</label><input id="syRepo" spellcheck="false" placeholder="用户名/仓库名" data-page-node-id="ySLOaFnov8oNaHGzRSw0zW"></div>
+    <div class="syncrow" data-page-node-id="yVrl4dY07BhqFT4Dm4Bjjn"><label data-page-node-id="i499efuBHxECiEnRZVSumX">分支 / 文件</label><input id="syBranch" spellcheck="false" style="flex:0 0 96px" data-page-node-id="Q77u1uMhmKDyYsgccqgiIZ"><input id="syFile" spellcheck="false" data-page-node-id="HPbdfKPnmK5ZbozN0fOPMY"></div>
+    <div class="syncrow" data-page-node-id="DnVEAFryLeaqGriedSoePi"><label data-page-node-id="Vs2we7OirEy9EB4h2HyWex">令牌</label><input id="syToken" type="password" spellcheck="false" autocomplete="off" placeholder="github_pat_..." data-page-node-id="iOFlMXeamvQgQDZunBioFz"></div>
+    <p class="bkmsg" style="font-size:11px;color:#a33;background:#fdf0ee;border-left:2px solid #e8a99b;border-radius:0 4px 4px 0;padding:6px 9px;margin:8px 0" data-page-node-id="B7b3wfe39Qz0RQpoVw5z8T">🔒 令牌只存在你这台电脑的浏览器里，别贴到聊天/群里，也别分享给别人。别人打开这个工具是干净的，看不到你的数据。</p>
+    <div class="syncmsg" id="syncMsg" data-page-node-id="o1FLHNXmWhAI6VHzrE8DCh">未连接。</div>
+    <p class="helpw" data-page-node-id="S0XIkb6VNHFVSi4vFineBY">📌 换新电脑 / 新浏览器记住三步：<b data-page-node-id="hOUwaAcR2JKBrg5mSrBrGa">① 填仓库名 ② 粘令牌 ③ 点「合并同步」</b>——别的按钮都不用碰。日常只点「合并同步」；两个「仅」是覆盖式急救按钮。</p>
+    <div class="modal-act" style="justify-content:space-between" data-page-node-id="vGBbE5HNhH9Lk0A9MIgVdH">
+      <button class="btn ghost" onclick="disconnectSync()" data-page-node-id="yUkMeM4zM3nkyq9E7cwWcD">断开并清除令牌</button>
+      <span style="display:flex;gap:8px;flex-wrap:wrap" data-page-node-id="vTZdOGyKaozlzNF6w2WCVb">
+        <button class="btn ghost" onclick="manualSync('pull')" data-page-node-id="DWBLUG8VLZjzDSkcQq7lBK">仅下载云端</button>
+        <button class="btn ghost" onclick="manualSync('push')" data-page-node-id="3GMTDXehqxkXSqFMBfgDBm">仅上传本地</button>
+        <button class="btn" onclick="manualSync('merge')" data-page-node-id="KT7DL9Cu8eHwJEPZ30sD3Z">合并同步</button>
+        <button class="btn ghost" onclick="closeSync()" data-page-node-id="mNHmCrGgm1TSiGvIg3WDzJ">关闭</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+function $(i){return document.getElementById(i)}
+
+/* ================= SOP 任务定义 ================= */
+const PHASES=[
+ {id:'prep',name:'🧱 备货与定价（上架前 60–30 天）'},
+ {id:'asset',name:'📝 Listing 物料（上架前 30–7 天）'},
+ {id:'launch',name:'🚀 上架准备与首日（前 7 天 – 当天）'},
+ {id:'ramp',name:'📈 上架后 0–30 天（起量期）'},
+ {id:'scale',name:'🏁 30–90 天（放量与复盘）'}
+];
+const TASKS=[
+ {id:'t01',ph:'prep',off:-55,t:'竞品与定价调研',d:'找 10 个对标 ASIN：价格带、评论数、卖点差评点；定自己的价格与差异点'},
+ {id:'t02',ph:'prep',off:-50,t:'成本核算与目标毛利',d:'用「FBA 利润计算器 · 四站点」算清保本 ACoS 和目标利润率，写进计划'},
+ {id:'t03',ph:'prep',off:-45,t:'首单下单 + 备货计划',d:'首单建议小批量试销（300–500 件），同步在补货看板建档'},
+ {id:'t04',ph:'prep',off:-40,t:'品牌备案 / 商标状态确认',d:'没有备案做不了 A+ 和品牌广告，时间最长提前确认'},
+ {id:'t05',ph:'asset',off:-30,t:'核心关键词表',d:'主词 + 长尾 30 个，来源：ABA、竞品标题、自动广告跑词；记录搜索量级'},
+ {id:'t06',ph:'asset',off:-25,t:'标题 / 五点 / 描述撰写',d:'写完丢进「Listing 字符与合规检查」过一遍，别到大促才发现违禁词'},
+ {id:'t07',ph:'asset',off:-22,t:'主图 + 副图 + 场景图',d:'主图白底占 85%；副图打卖点；场景图给使用画面；对比图放第 6-7 张'},
+ {id:'t08',ph:'asset',off:-18,t:'A+ 页面设计',d:'品牌备案后才有；没备案的先跳过，备案后补'},
+ {id:'t09',ph:'asset',off:-15,t:'视频 + QA 准备',d:'主图视频 30s 内；QA 自己先铺 5–8 个常见问题'},
+ {id:'t10',ph:'asset',off:-12,t:'类目节点与变体规划',d:'选流量大的准确类目；变体（颜色/尺寸）一次建齐，后期加变体权重低'},
+ {id:'t11',ph:'asset',off:-10,t:'价格与促销计划',d:'上架价建议比目标价低 5–10% 起步；优惠券 5–10%；首月秒杀资格先查'},
+ {id:'t12',ph:'launch',off:-7,t:'Listing 上架检查',d:'先建草稿：图片顺序、变体、关键词埋位、配送模板、分类审核状态'},
+ {id:'t13',ph:'launch',off:-5,t:'Vine 报名',d:'最多 30 个名额，上架后尽快报；Vine 不算违规测评'},
+ {id:'t14',ph:'launch',off:-3,t:'广告活动搭建',d:'自动 1 组 + 手动精准/词组/广泛各 1 组；新品期预算按毛利 30–50% 给'},
+ {id:'t15',ph:'launch',off:0,t:'开售首日全检',d:'BuyBox、配送时效、评价入口、优惠券生效、广告在跑、关键词能搜到'},
+ {id:'t16',ph:'ramp',off:3,t:'广告跑词第一次调价',d:'看搜索词报告：出单词提 bid 打精准，烧钱不出单的否定掉'},
+ {id:'t17',ph:'ramp',off:5,t:'首批评论跟进',d:'Vine 进度 + 合规索评（Request a Review 按钮）；别碰测评中介'},
+ {id:'t18',ph:'ramp',off:7,t:'差评 / 退货归因',d:'每条差评和退货都要归因：产品问题改货，页面问题改 Listing'},
+ {id:'t19',ph:'ramp',off:10,t:'按真实日均更新补货看板',d:'新品日均用近 7 天数据；防止首批卖爆后断货断权'},
+ {id:'t20',ph:'ramp',off:14,t:'首场秒杀 / 促销',d:'第 2–3 周报一次秒杀；秒杀前 3 天开始加广告预算蓄水'},
+ {id:'t21',ph:'ramp',off:21,t:'竞品监控与调价',d:'盯 3 个最接近竞品的价格和评论变化；有量之后逐步把价格拉回目标价'},
+ {id:'t22',ph:'scale',off:30,t:'广告结构升级',d:'表现好的词拆出来单独打；加 SB 品牌广告 / SD 展示；ACoS 达标组再加预算'},
+ {id:'t23',ph:'scale',off:45,t:'大促报名与库存预估',d:'PD / 黑五网一报名看资格；按大促 3–5 倍日均备货'},
+ {id:'t24',ph:'scale',off:60,t:'60 天复盘',d:'毛利、ACoS、TACoS、退货率四指标对着计划表打分；不达标列改造清单'},
+ {id:'t25',ph:'scale',off:75,t:'第二批备货与利润重算',d:'运费/汇率/佣金可能变了，重算利润再下单；更新补货看板'}
+];
+
+/* ================= 数据 ================= */
+const KEY='sop_plans_v1',DELKEY='sop_del_v1';
+let plans=[],dels=[],curId=null;
+function loadLocal(){
+  try{plans=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){plans=[]}
+  if(!Array.isArray(plans))plans=[];
+  try{dels=JSON.parse(localStorage.getItem(DELKEY)||'[]')}catch(e){dels=[]}
+  if(!Array.isArray(dels))dels=[];
+}
+function persistLocal(){try{localStorage.setItem(KEY,JSON.stringify(plans));localStorage.setItem(DELKEY,JSON.stringify(dels))}catch(e){}}
+function persist(){persistLocal();schedulePush();}
+function fmtD(ts){const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()}
+let editId=null;
+function addPlan(){
+  const name=($('npName').value||'').trim();
+  const date=$('npDate').value;
+  if(!name||!date){alert('产品名和上架日都要填');return;}
+  if(editId){
+    const p=plans.find(x=>x.id===editId);
+    if(!p){exitEdit();return;}
+    if(plans.some(x=>x.id!==editId&&x.name===name)){alert('已有别的计划叫「'+name+'」，换个名字');return;}
+    if(p.name!==name){dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});} // 旧名字记墓碑，防止其他设备复活成重复计划
+    p.name=name;p.launch=new Date(date+'T00:00:00').getTime();p.ts=Date.now();
+    exitEdit();persist();renderPlans();renderBoard();return;
+  }
+  if(plans.some(p=>p.name===name)){if(!confirm('已有同名计划，继续会覆盖它的进度？'))return;}
+  const i=plans.findIndex(p=>p.name===name);
+  const p={id:i>=0?plans[i].id:Date.now()+''+Math.floor(Math.random()*1000),name,launch:new Date(date+'T00:00:00').getTime(),tasks:{},ts:Date.now()};
+  if(i>=0){p.tasks=plans[i].tasks||{};plans[i]=p;}else plans.unshift(p);
+  curId=p.id;$('npName').value='';
+  persist();renderPlans();renderBoard();
+}
+function startEdit(){
+  const p=cur();
+  if(!p){alert('先在下面点选一个计划，再点编辑');return;}
+  editId=p.id;
+  $('npName').value=p.name;
+  $('npDate').value=new Date(p.launch-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+  $('addBtn').textContent='💾 保存修改';
+  $('npName').focus();
+}
+function exitEdit(){
+  editId=null;$('npName').value='';$('addBtn').textContent='＋ 建计划';
+}
+function cancelEdit(){if(editId){exitEdit();}}
+function delPlan(){
+  const p=plans.find(x=>x.id===curId);
+  if(!p){alert('先在下面选中一个计划');return;}
+  if(!confirm('删除计划「'+p.name+'」及其全部勾选进度？同步设备也会一并删除。'))return;
+  dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});
+  plans=plans.filter(x=>x.id!==curId);curId=plans.length?plans[0].id:null;
+  if(editId)exitEdit();
+  persist();renderPlans();renderBoard();
+}
+function pickPlan(id){curId=id;renderPlans();renderBoard();}
+function cur(){return plans.find(p=>p.id===curId)}
+function toggleTask(tid){
+  const p=cur();if(!p)return;
+  p.tasks=p.tasks||{};
+  const now=Date.now();
+  const prev=p.tasks[tid]||{};
+  if(prev.done){
+    // 取消勾选：留一条 done:false 的墓碑（带时间戳），而不是直接删掉。
+    // 直接删会让云端那条「完成」在下次合并时被当成"更完整"而复活。
+    p.tasks[tid]={done:false,note:prev.note||'',ts:now,cancelTs:now,undoTs:prev.undoTs||prev.ts||0};
+    armUndo(tid);
+  }else{
+    // 勾选：保留备注；undoTs 记住"原本就勾着"的时间点，撤销后能恢复原样。
+    // cancelTs 不再保留——这次勾选就是最新意图，旧取消记录已无意义。
+    p.tasks[tid]={done:true,note:prev.note||'',ts:now,undoTs:prev.cancelTs||prev.undoTs||prev.ts||0};
+  }
+  p.ts=now;persist();renderBoard();renderPlans();
+}
+/* 撤销：取消勾选后 8 秒内可点撤回，恢复为勾选 */
+let undoState=null,undoTimer=null,undoTick=null;
+const UNDO_SEC=5;
+function armUndo(tid){
+  const p=cur();if(!p)return;
+  const rec=p.tasks[tid]||{};
+  undoState={pid:p.id,tid,undoTs:rec.undoTs||0,left:UNDO_SEC};
+  const bar=$('undoBar');
+  if(bar){
+    const t=TASKS.find(x=>x.id===tid);
+    $('undoTxt').textContent='已取消勾选：'+shortT(t?t.t:tid);
+    bar.style.display='flex';
+    bar.classList.remove('in','out');
+    requestAnimationFrame(()=>bar.classList.add('in'));
+    // 进度条动画重跑：先移除再强制回流，否则第二次不触发
+    const btn=$('undoBtn');
+    if(btn){btn.classList.remove('ticking');void btn.offsetWidth;btn.classList.add('ticking');}
+    paintUndoSec(UNDO_SEC);
+  }
+  clearTimeout(undoTimer);clearInterval(undoTick);
+  // 秒数倒计时（UI 用）
+  undoTick=setInterval(()=>{
+    if(!undoState){clearInterval(undoTick);return;}
+    undoState.left--;
+    paintUndoSec(Math.max(undoState.left,0));
+    if(undoState.left<=0){clearInterval(undoTick);}
+  },1000);
+  // 到点自动收起，默认不撤销
+  undoTimer=setTimeout(expireUndo,UNDO_SEC*1000);
+}
+function paintUndoSec(n){const el=$('undoSec');if(el)el.textContent=String(n)}
+/* 倒计时走完：静默消失，什么都不改 */
+function expireUndo(){
+  clearTimeout(undoTimer);clearInterval(undoTick);
+  undoState=null;
+  paintUndoSec(0);
+  hideUndoBar();
+}
+function closeUndo(){expireUndo()}
+function hideUndoBar(){
+  const bar=$('undoBar');
+  if(!bar)return;
+  bar.classList.remove('in');
+  bar.classList.add('out');
+  clearTimeout(hideUndoBar._t);
+  hideUndoBar._t=setTimeout(()=>{
+    if(!undoState){bar.style.display='none';bar.classList.remove('out');}
+  },200);
+}
+function doUndo(){
+  if(!undoState)return;
+  const {pid,tid,undoTs}=undoState;
+  const p=plans.find(x=>x.id===pid);
+  // 撤销前先清掉倒计时，避免动画还没落地就被 expire 抢走
+  clearTimeout(undoTimer);clearInterval(undoTick);
+  undoState=null;
+  if(!p||!p.tasks||!p.tasks[tid]){hideUndoBar();return;}
+  const now=Date.now();
+  // 关键：ts 用现在，保证这次"恢复"比云端那条取消记录新，合并时才不会又被取消掉
+  p.tasks[tid]={done:true,note:p.tasks[tid].note||'',ts:now,undoTs};
+  p.ts=now;
+  hideUndoBar();persist();renderBoard();renderPlans();
+}
+/* 键盘：Ctrl/⌘+Z 也能撤销 */
+document.addEventListener('keydown',function(e){
+  if(!undoState)return;
+  if((e.ctrlKey||e.metaKey)&&String(e.key).toLowerCase()==='z'){
+    const tag=(e.target&&e.target.tagName)||'';
+    if(tag==='INPUT'||tag==='TEXTAREA')return;   // 输入框里交给浏览器自己的撤销
+    e.preventDefault();doUndo();
+  }
+});
+function shortT(s){s=String(s||'');return s.length>22?s.slice(0,22)+'…':s}
+function saveNote(tid,v){
+  const p=cur();if(!p)return;
+  p.tasks=p.tasks||{};
+  const prev=p.tasks[tid]||{};
+  if(!p.tasks[tid])p.tasks[tid]={done:false};
+  p.tasks[tid].note=v;
+  p.tasks[tid].ts=Date.now();          // 备注改动也要带时间戳，否则多端合并会被旧值盖掉
+  p.tasks[tid].done=!!prev.done;
+  p.ts=Date.now();
+  clearTimeout(saveNote._t);saveNote._t=setTimeout(()=>{persist()},1200);
+}
+
+/* ================= 渲染 ================= */
+function renderPlans(){
+  const box=$('plans');
+  if(!plans.length){box.innerHTML='<div class="empty" style="width:100%;padding:10px 0">还没有计划。上面填产品名和上架日，点「＋ 建计划」。</div>';return;}
+  box.innerHTML=plans.map(p=>{
+    const done=Object.values(p.tasks||{}).filter(t=>t.done).length;
+    const d=Math.round((p.launch-new Date().setHours(0,0,0,0))/86400000);
+    const dtxt=d>0?'D-'+d:(d===0?'今天上架':'上架+'+(-d)+' 天');
+    const ym=new Date(p.launch-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+    return '<div class="plan'+(p.id===curId?' active':'')+'" onclick="pickPlan(\''+p.id+'\')">'+
+      '<input class="pn" value="'+esc(p.name)+'" title="点这里直接改名字，改完点旁边空白或按回车" '+
+        'onclick="event.stopPropagation()" onfocus="pickPlan(\''+p.id+'\')" '+
+        'onchange="renamePlan(\''+p.id+'\',this.value,this)" onkeydown="if(event.key===\'Enter\')this.blur()">'+
+      '<input class="pd" type="date" value="'+ym+'" title="直接改上架日，清单日期会跟着重算" '+
+        'onclick="event.stopPropagation()" onfocus="pickPlan(\''+p.id+'\')" '+
+        'onchange="reDatePlan(\''+p.id+'\',this.value)">'+
+      '<small>'+dtxt+' · 进度 '+done+'/'+TASKS.length+'</small></div>';
+  }).join('');
+}
+function renamePlan(id,name,el){
+  const p=plans.find(x=>x.id===id);if(!p)return;
+  name=(name||'').trim();
+  if(!name){alert('名字不能为空');el.value=p.name;return;}
+  if(name===p.name)return;
+  if(plans.some(x=>x.id!==id&&x.name===name)){alert('已有别的计划叫「'+name+'」，换个名字');el.value=p.name;return;}
+  dels=dels.filter(d=>d.name!==p.name);dels.push({name:p.name,ts:Date.now()});
+  p.name=name;p.ts=Date.now();
+  persist();renderPlans();renderBoard();
+}
+function reDatePlan(id,date){
+  const p=plans.find(x=>x.id===id);if(!p||!date)return;
+  p.launch=new Date(date+'T00:00:00').getTime();p.ts=Date.now();
+  persist();renderPlans();renderBoard();
+}
+function renderBoard(){
+  const p=cur();
+  const card=$('boardCard');
+  const today=new Date().setHours(0,0,0,0);
+  let launch,tasks,isTemp=false;
+  if(p){launch=p.launch;tasks=p.tasks||{};}
+  else{
+    isTemp=true;
+    const d=$('npDate').value;
+    launch=d?new Date(d+'T00:00:00').getTime():today+45*86400000;
+    tasks={};
+  }
+  card.style.display='';
+  const diff=Math.round((launch-today)/86400000);
+  const dd=$('dday');
+  if(isTemp){dd.className='dday';dd.textContent='预览排期 · 建「＋ 计划」后才能打卡保存';}
+  else if(diff>0){dd.className='dday';dd.textContent='距离上架还有 '+diff+' 天';}
+  else if(diff===0){dd.className='dday';dd.textContent='🎉 今天上架';}
+  else{dd.className='dday past';dd.textContent='上架已 '+(-diff)+' 天';}
+  const done=Object.values(tasks).filter(t=>t.done).length;
+  const pct=Math.round(done/TASKS.length*100);
+  $('pbarFill').style.width=pct+'%';
+  $('pbarLabel').textContent=isTemp?'下面是完整清单预览，日期按你上面填的上架日自动换算':'总进度 '+done+' / '+TASKS.length+'（'+pct+'%）';
+  let h='',doneAll=0;
+  PHASES.forEach(ph=>{
+    const list=TASKS.filter(t=>t.ph===ph.id);
+    const dn=list.filter(t=>{const s=tasks[t.id];return s&&s.done}).length;
+    h+='<div class="phase"><h3>'+ph.name+'<small>'+dn+'/'+list.length+' 完成</small></h3>';
+    list.forEach(t=>{
+      const s=tasks[t.id]||{};
+      const due=launch+t.off*86400000;
+      const dDiff=Math.round((due-today)/86400000);
+      let cls='',txt=(t.off<0?'前':'后')+Math.abs(t.off)+' 天 · '+fmtD(due);
+      if(!s.done){if(dDiff<0){cls='late';txt='已过期 '+(-dDiff)+' 天 · '+txt}else if(dDiff<=3){cls='today';txt=(dDiff===0?'就在今天':(t.off<0?'剩 ':'剩 ')+dDiff+' 天')+' · '+txt}}
+      h+='<div class="task'+(s.done?' done':'')+'">'+
+        '<input type="checkbox" '+(s.done?'checked':'')+(isTemp?' disabled title="先建计划再打卡"':'')+' onchange="toggleTask(\''+t.id+'\')">'+
+        '<div class="body"><div class="t" '+(isTemp?'':'onclick="toggleTask(\''+t.id+'\')"')+'>'+esc(t.t)+'</div><div class="d">'+esc(t.d)+'</div>'+
+        '<input class="note" placeholder="备注：负责人 / 链接 / 坑" value="'+esc(s.note||'')+'" '+(isTemp?'disabled':'')+' onchange="saveNote(\''+t.id+'\',this.value)">'+
+        '</div><span class="due '+cls+'">'+txt+'</span></div>';
+      if(s.done)doneAll++;
+    });
+    h+='</div>';
+  });
+  $('board').innerHTML=h;
+  if(isTemp){$('boardSum').innerHTML='💡 这是 <b>25 项完整清单</b>的预览。填好产品名后点上面的 <b>「＋ 建计划」</b>，就能勾选打卡、写备注、云同步。';return;}
+  const overdue=TASKS.filter(t=>{const s=p.tasks&&p.tasks[t.id];return !(s&&s.done)&&p.launch+t.off*86400000<today}).length;
+  const next=TASKS.filter(t=>{const s=p.tasks&&p.tasks[t.id];return !(s&&s.done)&&p.launch+t.off*86400000>=today}).sort((a,b)=>(p.launch+a.off*86400000)-(p.launch+b.off*86400000))[0];
+  $('boardSum').innerHTML='已过期未完成 <b style="color:var(--bad)">'+overdue+'</b> 项'+(next?'；下一项：<b>'+esc(next.t)+'</b>（'+(next.off<0?'上架前':'上架后')+Math.abs(next.off)+' 天）':'；全部完成 🎉');
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+/* ================= 云同步（共用令牌，独立 sop.json） ================= */
+const SHARED_CFG='fba_sync_cfg_v1',OWN_CFG='sop_sync_cfg_v1';
+const SYNC_DEFAULT_REPO='SQ-eng-****/SQ-ama****-data';
+let cfg={repo:SYNC_DEFAULT_REPO,branch:'main',file:'sop.json',token:'',lastSync:0};
+let syncing=false,syncTimer=null;
+function syncReady(){return !!(cfg.token&&cfg.repo&&!/[*]/.test(cfg.repo))}
+function loadCfg(){
+  let sh={},own={};
+  try{sh=JSON.parse(localStorage.getItem(SHARED_CFG)||'{}')}catch(e){}
+  try{own=JSON.parse(localStorage.getItem(OWN_CFG)||'{}')}catch(e){}
+  cfg.repo=sh.repo||'';cfg.branch=sh.branch||'main';cfg.token=sh.token||'';
+  cfg.file=own.file||'sop.json';cfg.lastSync=own.lastSync||0;
+  setDot(syncReady()?'on':'');
+}
+function saveCfg(){
+  const repo=($('syRepo').value||'').trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'');
+  if(/[*]/.test(repo))repo='';
+  cfg.repo=repo;cfg.branch=($('syBranch').value||'main').trim()||'main';cfg.file=($('syFile').value||'sop.json').trim()||'sop.json';
+  const tk=($('syToken').value||'').trim();if(tk)cfg.token=tk;
+  try{
+    localStorage.setItem(SHARED_CFG,JSON.stringify({repo:cfg.repo,branch:cfg.branch,token:cfg.token}));
+    localStorage.setItem(OWN_CFG,JSON.stringify({file:cfg.file,lastSync:cfg.lastSync}));
+  }catch(e){}
+  setDot(syncReady()?'on':'');return syncReady();
+}
+function setDot(s){const d=$('syncDot');if(!d)return;d.className='dot'+(s?' '+s:'');d.title=s==='err'?'同步出错':(s==='busy'?'同步中':(s==='on'?'已连接云同步':'未启用云同步'));}
+function persistOwn(){try{localStorage.setItem(OWN_CFG,JSON.stringify({file:cfg.file,lastSync:cfg.lastSync}))}catch(e){}}
+function b64enc(str){
+  const b=new TextEncoder().encode(str);let s='';const C=0x8000;
+  for(let i=0;i<b.length;i+=C)s+=String.fromCharCode.apply(null,b.subarray(i,i+C));
+  return btoa(s);
+}
+function b64dec(x){
+  const bin=atob(String(x||'').replace(/\s/g,''));const b=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(b);
+}
+function hdr(){return {'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}}
+function ghUrl(){return 'https://api.github.com/repos/'+cfg.repo+'/contents/'+cfg.file.split('/').map(encodeURIComponent).join('/')}
+function ghErr(c,t){
+  if(c===401)return '令牌无效或已过期（401）';
+  if(c===403)return '令牌没有这个仓库的写权限（403）';
+  if(c===404)return '仓库或文件不存在（404）——检查仓库名';
+  if(c===409||c===422)return '版本冲突（'+c+'），再点一次合并同步';
+  return 'GitHub HTTP '+c+'：'+String(t||'').slice(0,140);
+}
+async function ghCheck(){
+  const r=await fetch('https://api.github.com/repos/'+cfg.repo,{headers:hdr(),cache:'no-store'});
+  if(r.status===404)throw new Error('仓库不存在或令牌访问不到（404）');
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  if(j.permissions&&j.permissions.push===false)throw new Error('令牌对该仓库只有读权限');
+  return j;
+}
+async function ghRead(){
+  const r=await fetch(ghUrl()+'?ref='+encodeURIComponent(cfg.branch)+'&_='+Date.now(),{headers:hdr(),cache:'no-store'});
+  if(r.status===404)return {sha:null,list:[],dels:[]};
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();
+  let obj=null;
+  try{obj=JSON.parse(b64dec(j.content)||'null')}catch(e){throw new Error('仓库里的 '+cfg.file+' 不是有效 JSON')}
+  let list=[],rdels=[];
+  if(Array.isArray(obj))list=obj;                       // 旧格式：纯数组
+  else if(obj&&typeof obj==='object'){list=obj.plans||[];rdels=obj.dels||[]}
+  if(!Array.isArray(list))list=[];if(!Array.isArray(rdels))rdels=[];
+  return {sha:j.sha,list,dels:rdels};
+}
+async function ghWrite(list,sha,msg,delsList){
+  const body={message:(msg||'推品 SOP 同步')+' · '+new Date().toISOString().slice(0,16).replace('T',' '),
+    content:b64enc(JSON.stringify({plans:list,dels:delsList||dels},null,2)),branch:cfg.branch};
+  if(sha)body.sha=sha;
+  const r=await fetch(ghUrl(),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},hdr()),body:JSON.stringify(body)});
+  if(!r.ok)throw new Error(ghErr(r.status,await r.text()));
+  const j=await r.json();return j&&j.content?j.content.sha:null;
+}
+function merge(local,remote,remoteDels){
+  const k=p=>p.name;
+  // 合并墓碑：同名取时间较新的删除记录
+  const dm=new Map();
+  (dels||[]).forEach(d=>{if(d&&d.name)dm.set(d.name,d.ts||0)});
+  (remoteDels||[]).forEach(d=>{if(d&&d.name){const o=dm.get(d.name)||0;if((d.ts||0)>o)dm.set(d.name,d.ts||0)}});
+  dels=[...dm.entries()].map(([name,ts])=>({name,ts}));
+  const m=new Map();let add=0,upd=0;
+  (local||[]).forEach(p=>{
+    if(!p||!p.name)return;
+    const dt=dm.get(p.name)||0;
+    if((p.ts||0)>dt)m.set(k(p),p);          // 比墓碑新才保留（删后重建的场景）
+  });
+  (remote||[]).forEach(p=>{
+    if(!p||!p.name)return;
+    const dt=dm.get(p.name)||0;
+    if((p.ts||0)<=dt){upd++;return}          // 云端计划比墓碑旧 → 尊重删除，不合回
+    const old=m.get(k(p));
+    if(!old){m.set(k(p),p);add++;}
+    else{
+      const tasks=Object.assign({},old.tasks||{});
+      Object.keys(p.tasks||{}).forEach(tid=>{
+        const a=tasks[tid],b=p.tasks[tid];
+        if(!a) tasks[tid]=b;
+        else if((b.ts||0)>(a.ts||0)) tasks[tid]=b;   // 谁最后动过听谁的（取消也算动作，见 toggleTask）
+        else if((b.ts||0)===(a.ts||0)){
+          // 时间戳打平：取消状态优先，避免"完成"在两边来回复活
+          if(a.done!==b.done) tasks[tid]=a.done?b:a;
+        }
+      });
+      const win=(p.ts||0)>=(old.ts||0)?p:old;
+      m.set(k(p),Object.assign({},win,{tasks,ts:Math.max(old.ts||0,p.ts||0)}));upd++;
+    }
+  });
+  return {list:[...m.values()].sort((a,b)=>(b.ts||0)-(a.ts||0)),add,upd};
+}
+function openSync(){
+  $('syRepo').value=cfg.repo;$('syBranch').value=cfg.branch||'main';$('syFile').value=cfg.file||'sop.json';$('syToken').value=cfg.token||'';
+  syncStatus();$('syncMask').style.display='flex';
+}
+function closeSync(){$('syncMask').style.display='none'}
+function syncStatus(t,err){
+  const b=$('syncMsg');if(!b)return;
+  if(t){b.className='syncmsg'+(err?' err':'');b.innerHTML=t;return;}
+  b.className='syncmsg';
+  if(!syncReady()){b.innerHTML='未连接。若 FBA 工具已配过，仓库名照抄即可，令牌可留空沿用。';return;}
+  b.innerHTML='已连接 <b>'+esc(cfg.repo)+'</b>（'+esc(cfg.branch)+' / '+esc(cfg.file)+'）<br>本机 <b>'+plans.length+'</b> 个计划'+(cfg.lastSync?'；上次同步 '+new Date(cfg.lastSync).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'；尚未同步');
+}
+function disconnectSync(){
+  if(!confirm('断开云同步并清除本机令牌？仓库数据不会删除。'))return;
+  cfg.token='';cfg.repo='';
+  try{localStorage.removeItem(SHARED_CFG);persistOwn();}catch(e){}
+  $('syToken').value='';setDot('');syncStatus();
+}
+async function manualSync(mode){
+  if(!saveCfg()){syncStatus('仓库名和令牌都要有；若 FBA 工具已配过，令牌可留空。',true);return;}
+  if(syncing){syncStatus('正在同步…');return;}
+  if(mode==='pull'&&!confirm('用云端覆盖本机？本机 '+plans.length+' 个计划会被替换。'))return;
+  if(mode==='push'&&!confirm('用本机覆盖云端？'))return;
+  syncing=true;setDot('busy');syncStatus('正在同步…');
+  try{
+    await ghCheck();
+    const r=await ghRead();let out='';
+    if(mode==='pull'){
+      const dm=new Map();(dels||[]).forEach(d=>dm.set(d.name,d.ts||0));(r.dels||[]).forEach(d=>{const o=dm.get(d.name)||0;if((d.ts||0)>o)dm.set(d.name,d.ts||0)});
+      plans=r.list.filter(p=>!p||!p.name||(p.ts||0)>(dm.get(p.name)||0));
+      if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;persistLocal();renderPlans();renderBoard();out='已下载 <b>'+plans.length+'</b> 个计划';
+    }
+    else if(mode==='push'){await ghWrite(plans,r.sha,'覆盖上传');out='已上传 <b>'+plans.length+'</b> 个计划';}
+    else{const m=merge(plans,r.list,r.dels);plans=m.list;if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;persistLocal();renderPlans();renderBoard();await ghWrite(plans,r.sha,'合并同步');out='合并完成：新增 <b>'+m.add+'</b>，更新 <b>'+m.upd+'</b>，现共 <b>'+plans.length+'</b> 个计划';}
+    cfg.lastSync=Date.now();persistOwn();setDot('on');syncStatus(out);
+  }catch(e){setDot('err');syncStatus('同步失败：'+esc(e.message||e),true);}
+  finally{syncing=false;}
+}
+function schedulePush(){
+  if(!syncReady()||syncing)return;
+  clearTimeout(syncTimer);syncTimer=setTimeout(pushQuiet,1500);
+}
+async function pushQuiet(){
+  if(!syncReady()||syncing)return;
+  syncing=true;setDot('busy');
+  try{
+    await ghCheck();const r=await ghRead();
+    const m=merge(plans,r.list,r.dels);plans=m.list;persistLocal();renderPlans();renderBoard();
+    await ghWrite(plans,r.sha,'自动同步');
+    cfg.lastSync=Date.now();persistOwn();setDot('on');
+  }catch(e){setDot('err');console.warn('[云同步]',e);}
+  finally{syncing=false;}
+}
+async function autoSync(){
+  if(!syncReady()||syncing)return;
+  syncing=true;setDot('busy');
+  try{
+    await ghCheck();const r=await ghRead();
+    const m=merge(plans,r.list,r.dels);
+    const need=!r.sha||m.add+m.upd>0||m.list.length!==r.list.length||m.list.length!==plans.length;
+    plans=m.list;if(!plans.some(p=>p.id===curId))curId=plans.length?plans[0].id:null;
+    persistLocal();renderPlans();renderBoard();
+    if(need)await ghWrite(plans,r.sha,'自动同步');
+    cfg.lastSync=Date.now();persistOwn();setDot('on');
+  }catch(e){setDot('err');console.warn('[云同步]',e);}
+  finally{syncing=false;}
+}
+$('syncMask').addEventListener('click',function(e){if(e.target===$('syncMask'))closeSync()});
+
+/* ================= 初始化 ================= */
+$('npDate').value=new Date(Date.now()+45*86400000).toISOString().slice(0,10);
+loadLocal();loadCfg();
+curId=plans.length?plans[0].id:null;
+renderPlans();renderBoard();autoSync();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar" data-page-node-id="FO7y4fONPJbAjg8COh7jCx">🏝 <b data-page-node-id="MQDTGvNNvU35ykkLqHCPtO">SQ-AMAZON-TOOLBOX</b><span class="cr" data-page-node-id="PU94T3CesH5PXXUJHGG7Zg">· 新品 SOP / 推新品 SOP</span><a href="../guides/guide-sop-launch.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#sop" data-page-node-id="tU9lpopQT93Ni9dEmrv0bi">打开完整工具台 ↗</a></div>
+</body>
+</html>
