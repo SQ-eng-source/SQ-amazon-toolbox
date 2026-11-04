@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>促销折扣计算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>促销折扣计算器</h1>
+  <p class="desc">设定秒杀/优惠券折扣后，每单还剩多少利润、需要卖多少单才不亏本。折扣前先算，别冲动上 50% off。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入</h2>
+      <label>日常售价（USD）</label><input type="number" id="price" value="29.99" step="0.01">
+      <label>折扣力度（%）</label><input type="number" id="disc" value="20" step="1">
+      <label>产品成本（USD，含头程）</label><input type="number" id="cogs" value="6.50" step="0.01">
+      <label>FBA 配送费（USD）</label><input type="number" id="fee" value="5.60" step="0.01">
+      <label>平台佣金（%）</label><input type="number" id="ref" value="15" step="0.1">
+      <label>日常日均销量（件）</label><input type="number" id="base" value="20" step="1">
+      <label>预期促销日销量（件）</label><input type="number" id="boost" value="60" step="1">
+      <label>秒杀报名费（USD/次，选填）</label><input type="number" id="feeLD" value="300" step="10">
+    </div>
+    <div class="card">
+      <h2>② 结果</h2>
+      <label>折后售价</label>
+      <div class="big" id="netp" style="color:var(--accent)">--</div>
+      <div class="row"><span>促销单净利润</span><b id="np">--</b></div>
+      <div class="row"><span>净利率（折后）</span><b id="npr">--</b></div>
+      <div class="row"><span>促销期总利润（含报名费）</span><b id="total">--</b></div>
+      <div class="row"><span>相比平时多赚/少赚</span><b id="delta">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="tip">对比基准：平时利润 = 日均销量 × 日常单件利润。促销划算的条件 = 折后单件利润 × 销量增量 &gt; 因降价少赚的部分 + 报名费。</p>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function calc(){
+  const p=+$('price').value||0,d=(+$('disc').value||0)/100,c=+$('cogs').value||0,
+        fee=+$('fee').value||0,rf=(+$('ref').value||0)/100,
+        base=+$('base').value||0,boost=+$('boost').value||0,ld=+$('feeLD').value||0;
+  const sp=p*(1-d), np=sp*(1-rf)-fee-c;
+  $('netp').textContent='$'+sp.toFixed(2);
+  $('np').textContent=(np>=0?'':'-')+'$'+Math.abs(np).toFixed(2);
+  $('npr').textContent=sp>0?(np/sp*100).toFixed(1)+'%':'--';
+  const promoProfit=np*boost-ld, baseUnit=p*(1-rf)-fee-c, baseProfit=baseUnit*base;
+  $('total').textContent='$'+promoProfit.toFixed(2);
+  const diff=promoProfit-baseProfit;
+  $('delta').textContent=(diff>=0?'+':'')+'$'+diff.toFixed(2);
+  const v=$('v');
+  if(np<0){v.className='verdict bad';v.textContent='✗ 折后每单净亏 $'+Math.abs(np).toFixed(2)+'，卖越多亏越多，砍折扣或砍成本';}
+  else if(diff>=0){v.className='verdict ok';v.textContent='✓ 促销划算：多赚 $'+diff.toFixed(2)+'，还能冲排名拉权重';}
+  else{v.className='verdict mid';v.textContent='△ 促销期少赚 $'+Math.abs(diff).toFixed(2)+'——如果目标是清库存/拉排名可以上，纯看利润就不值';}
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 备货与算钱 / 促销折扣计算器</span><a href="../guides/guide-promo.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#supply">打开完整工具台 ↗</a></div>
+</body>
+</html>
