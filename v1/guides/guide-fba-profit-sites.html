@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FBA 利润计算器 · 四站点 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← 全部说明</a></div>
+<div class="wrap">
+<h1>FBA 利润计算器 · 四站点 · 使用说明</h1>
+<blockquote>售价用当地货币（£/$/€），采购用人民币。你填进去，它帮你算<strong>每卖一件到底赚多少</strong>，以及<strong>打完广告还剩多少</strong>。</blockquote>
+<hr>
+<h2>为什么要用这个</h2>
+<p>很多新手以为：卖 £25，进货 ¥80，汇率 9，那成本就是 £8.9，利润 £16。</p>
+<p><strong>这么算是错的</strong>，而且错的离谱。因为它漏掉了：平台佣金、VAT、FBA 配送费、头程运费、仓储费、退货损耗、广告费。</p>
+<p>真实情况往往是：你觉得能赚 £16，实际打完广告只剩 £2，稍微打个折就亏本。</p>
+<p>这个工具的作用就是<strong>把这些藏起来的成本全部算进去</strong>，让你在定价之前就知道这个品能不能做。</p>
+<hr>
+<h2>怎么打开</h2>
+<p>左侧「💰 备货与算钱」板块 → 点「FBA 利润计算器 · 四站点」。</p>
+<hr>
+<h2>先选站点</h2>
+<p>进来之后顶部有四个站点标签：<strong>英国 / 德国 / 美国 / 加拿大</strong>，左右滑动能切换。</p>
+<p><strong>选哪个站点，后面所有金额就变成哪个站点的货币。</strong></p>
+<p>汇率是<strong>实时拉的</strong>（页面顶部显示「汇率加载中…」，好了会变成数字）。每次打开都会重新拉一次。</p>
+<blockquote>如果你算的时候汇率看着不对，点旁边的「↻ 重新拉取」。<br>或者你知道自己的实际结汇汇率，直接在「汇率」那一栏手动改掉。</blockquote>
+<hr>
+<h2>左边：怎么填（① 输入区）</h2>
+<p>一共 14 个格子，看起来多，其实分三类。</p>
+<h3>第一类：基础信息（必填）</h3>
+<div class="tw"><table><thead><tr><th>填什么</th><th>说明</th></tr></thead><tbody><tr><td><strong>售价</strong></td><td>你打算卖多少钱，当地货币。<strong>注意这是含税价</strong>（欧洲标价都是含 VAT 的）。</td></tr><tr><td><strong>产品采购成本（¥/件）</strong></td><td>工厂给你的单价，人民币。</td></tr><tr><td><strong>产品重量（kg）</strong></td><td>带包装的重量，不是净重。</td></tr><tr><td><strong>头程运费单价（¥/kg）</strong></td><td>货运公司给你的报价。<strong>海派一般 30–50 元/kg，空运 60–100 元/kg。</strong> 问货代要。</td></tr></tbody></table></div>
+<h3>第二类：平台费用（有默认值，尽量核实）</h3>
+<div class="tw"><table><thead><tr><th>填什么</th><th>说明</th><th>新手怎么填</th></tr></thead><tbody><tr><td><strong>FBA 配送费</strong></td><td>亚马逊按件收的拣货包装费</td><td>后台搜「FBA 配送费」有计算器，按你的尺寸段填</td></tr><tr><td><strong>仓储+入库配置费</strong></td><td>月度仓储 + 入库配置费</td><td>不确定先填 0.5–1（当地币），误差不大</td></tr><tr><td><strong>佣金比例（%）</strong></td><td>类目佣金，多数类目 <strong>15%</strong></td><td>后台「费用结构」里查。服装 17%，部分类目 8%</td></tr><tr><td><strong>销售税率 VAT/GST（%）</strong></td><td>英国 20%、德国 19%、加拿大 5%（GST）</td><td><strong>美国填 0</strong>（美国没有 VAT 这一项）</td></tr><tr><td><strong>汇率</strong></td><td>已自动填好</td><td>想按自己的结汇价算就手动改</td></tr></tbody></table></div>
+<h3>第三类：损耗和营销（新手最容易漏）</h3>
+<div class="tw"><table><thead><tr><th>填什么</th><th>说明</th><th>怎么估</th></tr></thead><tbody><tr><td><strong>平均退货率（%）</strong></td><td>这个类目大概退多少</td><td>服装 15–25%，3C 5–10%，家居 5% 左右。没数据先填 8%</td></tr><tr><td><strong>退货佣金计提（% of 佣金）</strong></td><td>退货时平台<strong>不退</strong>的那部分佣金</td><td><strong>默认 20</strong>，直接用默认值就行</td></tr><tr><td><strong>弃置费</strong></td><td>退货商品不能二次销售时销毁的费用</td><td>英国一般 £0.20–0.50。不确定<strong>先填 0</strong>（利润会略偏乐观）</td></tr><tr><td><strong>其它成本（% of 售价）</strong></td><td>打包、贴标、人工、汇损等杂项</td><td>一般 1–3%</td></tr><tr><td><strong>广告占比（% of 净售价）</strong></td><td>广告费占销售额的比例</td><td>新品期 20–30%，成熟期 10–15%</td></tr></tbody></table></div>
+<blockquote><strong>退货佣金计提是什么意思？</strong><br>你卖出去一单，平台收了 15% 佣金。后来买家退货了，平台<strong>不会把这 15% 全退给你</strong>，它按原佣金的 20% 留下来当「退货处理费」。<br>也就是说佣金只退你 80%。<br>填 0 = 假设佣金全额退回（偏乐观）；填 20 = 按官方规则（推荐）。</blockquote>
+<hr>
+<h2>右边：怎么读结果（② 单件利润）</h2>
+<h3>最上面那个大数字</h3>
+<p><strong>利润 / 件</strong> —— 每卖一件赚多少当地货币。</p>
+<p>下面还有一行小字：折合人民币多少 + 利润率百分比。</p>
+<h3>中间的成本明细</h3>
+<p>这是这个工具最值钱的地方。<strong>从上往下看，哪一项数字最大，就是你在哪个环节花得最多。</strong></p>
+<p>常见的几种结论：</p>
+<div class="tw"><table><thead><tr><th>发现</th><th>说明什么</th><th>能做什么</th></tr></thead><tbody><tr><td>佣金 + VAT 占大头</td><td>定价太低了</td><td>提价，或换到佣金低的类目</td></tr><tr><td>FBA 配送费特别高</td><td>产品太大或太重</td><td>改小包装，或改用自发货</td></tr><tr><td>头程运费很高</td><td>走空运了，或者体积重太大</td><td>改海运，压缩包装体积</td></tr><tr><td>退货成本很高</td><td>这个类目退货率天然高</td><td>详情页把尺寸写清楚，或者干脆别做</td></tr></tbody></table></div>
+<h3>最下面的「扣除广告后的利润」</h3>
+<p><strong>这个数字才是你真正能拿到手的钱。</strong></p>
+<p>很多新手看着「利润 £8」觉得能做，一扣广告发现只剩 £1.2。这个工具把它单独列出来，就是防止你自欺欺人。</p>
+<blockquote><strong>判断标准（参考）</strong>：<br>- 扣广告后利润率 <strong>&gt; 20%</strong>：健康，可以推<br>- <strong>10–20%</strong>：能做，但抗风险能力弱，一降价就危险<br>- <strong>&lt; 10%</strong>：慎重，除非你有把握把广告费降下来<br>- <strong>负数</strong>：先别做了</blockquote>
+<hr>
+<h2>算完之后：保存和留档</h2>
+<p>填好点「💾 保存到 英国站」，这条记录就存下来了。</p>
+<p>下方「③ 已保存的产品」能看到全部记录，可以：</p>
+<ul><li><strong>只看当前站点 / 全部站点</strong>：切换着比</li><li><strong>⬇ 导出 Excel</strong>：存一份明细到本地电脑</li><li><strong>⬆ 导入表格</strong>：在 Excel 里批量填好再导进来（先下「导入模板」）</li><li><strong>☁ 云同步</strong>：存进你自己的 GitHub 私有仓库，换电脑也能看到</li></ul>
+<blockquote>⚠️ <strong>不点云同步的话，数据只存在当前浏览器里。</strong><br>换电脑、换浏览器、清缓存都会丢。重要的数据记得「导出 Excel」或者开云同步。</blockquote>
+<hr>
+<h2>新手最容易犯的四个错</h2>
+<p><strong>① 售价填成了不含税价</strong></p>
+<p>欧洲站标价都是<strong>含 VAT 的</strong>。你填 £25，工具会自动算成 £20.83 净收入 + £4.17 税。</p>
+<p>如果你填的是不含税价，利润会被严重低估，你会以为这个品不能做。</p>
+<p><strong>② 忘了填广告占比</strong></p>
+<p>不填广告占比，工具算出来的是「毛利」，看起来很美。</p>
+<p><strong>一定要填。</strong> 新品期填 25% 都不夸张。</p>
+<p><strong>③ 退货率填 0</strong></p>
+<p>「我还没卖过，不知道退货率，先填 0 吧。」</p>
+<p>这一填，你的利润会<strong>虚高一截</strong>。这个类目别人退 15%，你不可能 0%。宁可先填个 8% 保守估。</p>
+<p><strong>④ 用错了重量</strong></p>
+<p>头程运费按<strong>体积重</strong>和实际重量里<strong>较大的那个</strong>算。</p>
+<p>泡货（比如枕头、毛绒玩具）体积重远大于实重，你填 0.5kg 实际按 2kg 收费，成本直接差 4 倍。</p>
+<p><strong>拿不准就问货代要「计费重」。</strong></p>
+<hr>
+<h2>常见问题</h2>
+<p><strong>Q：美国站的销售税率填什么？</strong></p>
+<p>填 <strong>0</strong>。美国没有 VAT 这种标价内含的税。美国的销售税（Sales Tax）是结账时另加的，由买家承担，不影响你的利润。</p>
+<p><strong>Q：为什么欧洲站算出来的利润率比美国低那么多？</strong></p>
+<p>因为 VAT。你卖 €25，其中 €4 是给税务局的，不是你的收入。这是正常的，不是算错了。</p>
+<p><strong>Q：汇率要不要自己改？</strong></p>
+<p>默认是实时汇率。但你实际结汇时银行会吃点差价，所以<strong>建议把汇率往低填 1–2%</strong>，更接近真实。</p>
+<p><strong>Q：能不能算自发货（FBM）？</strong></p>
+<p>可以。把「FBA 配送费」填成你自己发货的快递费就行，其他不变。</p>
+<p><strong>Q：多个变体（尺寸/颜色）成本不一样怎么办？</strong></p>
+<p>一个变体建一条记录，名字写清楚（比如「加热垫 · 大号」）。</p>
+<hr>
+<h2>一句话总结</h2>
+<p><strong>填售价 + 采购 + 重量 + 头程，核对佣金和 VAT，广告占比别漏 → 看「扣除广告后的利润」那个数字，低于 10% 就要重新想。</strong></p>
+</div>
+</body>
+</html>
