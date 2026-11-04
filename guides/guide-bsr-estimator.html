@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BSR 销量估算器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← 全部说明</a></div>
+<div class="wrap">
+<h1>BSR 销量估算器 · 使用说明</h1>
+<h2>它是干嘛的</h2>
+<p>你在亚马逊上看到竞品只有排名（BSR），看不到它到底卖多少件。这个工具用排名反推销量：</p>
+<p><strong>BSR 越靠前，销量越高</strong>，而且是"翻倍往下砍"的关系。</p>
+<p>用法就一句话：<strong>选品之前，先摸清对手大概一个月出多少单。</strong></p>
+<h2>三步用起来</h2>
+<ol><li>打开工具：<a href="../tools/bsr-estimator.html">BSR 销量估算器</a></li><li>填三个数： - <strong>大类目</strong>：选最接近的流量级别（家居厨房是最大流量，工具/工业是小流量） - <strong>竞品 BSR 排名</strong>：竞品详情页"Best Sellers Rank"里的数字 - <strong>竞品售价</strong>：用来估月销售额</li><li>右边立刻出结果，不用点按钮。</li></ol>
+<h2>结果怎么看</h2>
+<div class="tw"><table><thead><tr><th>结果</th><th>含义</th></tr></thead><tbody><tr><td>预估日销量 / 月销量</td><td>按类目系数换算的区间值，不是精确数</td></tr><tr><td>预估月销售额</td><td>月销量 × 售价，判断这个坑位值不值得进</td></tr><tr><td>评论系数（评论 ÷ 月销）</td><td>15–40 属于健康；远高于 40 说明老链接靠评论卡位，新卖家难抢</td></tr><tr><td>上架时间粗估</td><td>按 5% 留评率倒推，大概上了多久</td></tr></tbody></table></div>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>类目选择影响很大</strong>。同样排名 5000，家居厨房和工具类目算出来的销量能差好几倍。不确定就选"最接近"的那个，别硬凑。</li><li><strong>只看区间，别当准数</strong>。不同类目系数不一样，建议用卖家精灵 / Helium10 插件交叉看一眼再下决定。差一倍以内都算"同一个量级"。</li></ul>
+<h2>常见问题</h2>
+<p><strong>Q：为什么我填了很大的排名，出来销量还是不为零？</strong></p>
+<p>排名越靠后销量越低，但不会直接归零，因为长尾类目本身单量就少。此时看数量级就够了。</p>
+<p><strong>Q：竞品有两个类目排名怎么办？</strong></p>
+<p>填<strong>大类目</strong>那个（通常是数字更大、范围更广的）。工具按大类目系数换算。</p>
+<hr>
+<p><strong>一句话</strong>：BSR 估算帮你判断"这个市场有多大、这个对手有多强"，但它是估算，交叉验证后再下重注。</p>
+</div>
+</body>
+</html>
