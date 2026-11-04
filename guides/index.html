@@ -22,6 +22,9 @@ body{background:var(--bg);color:var(--ink);padding:30px 24px}
 .doc a.go{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff}
 .doc a.read{background:#fff;color:var(--deep);border:1px solid var(--line)}
 .doc a:hover{filter:brightness(1.06)}
+.sec{margin:26px 0 12px;font-size:13px;font-weight:700;color:var(--deep);padding-left:9px;border-left:3px solid var(--turq);letter-spacing:.3px}
+.sec:first-of-type{margin-top:0}
+.sec span{font-weight:400;color:var(--sub);font-size:11.5px;margin-left:6px}
 .note{margin-top:24px;background:#fdf6e3;border-left:3px solid #e8c98a;border-radius:0 8px 8px 0;padding:12px 16px}
 .note b{font-size:12.5px;color:#8a6d1f;display:block;margin-bottom:6px}
 .note li{font-size:12.5px;color:#7a5f18;line-height:1.85;margin-left:16px}
@@ -30,33 +33,103 @@ body{background:var(--bg);color:var(--ink);padding:30px 24px}
 <body>
 <div class="wrap">
 <h1>📖 工具使用说明</h1>
-<p class="lead">每个工具一份说明书，假设你从来没接触过亚马逊后台。讲清楚三件事：这个工具解决什么问题、一步步怎么用、结果该怎么看。<b>建议新人第一天先把这五份看完。</b></p>
+<p class="lead">每个工具一份说明书，假设你从来没接触过亚马逊后台。讲清楚三件事：这个工具解决什么问题、一步步怎么用、结果该怎么看。<b>共 19 份，按板块分组，建议新人第一天先把「备货与算钱」那 8 份看完。</b></p>
 
+<div class="sec">新品 SOP<span>1 个工具</span></div>
 <div class="grid">
   <div class="doc">
     <span class="no">01</span>
     <h2>推新品 SOP</h2>
-    <p>从备货到上架后 90 天的 25 个节点。填一次上架日，全表日期自动算好。每天只需要看标红的那几条。</p>
+    <p>从备货到上架后 90 天的 25 个节点。填一次上架日，全表日期自动算好。每天只看标红的那几条。</p>
     <div class="row">
       <a class="go" href="../tools/sop-launch.html">打开工具 →</a>
       <a class="read" href="guide-sop-launch.html">读说明</a>
     </div>
   </div>
+</div>
 
+<div class="sec">市场洞察<span>4 个工具</span></div>
+<div class="grid">
   <div class="doc">
     <span class="no">02</span>
-    <h2>商探类目平均转化率计算器</h2>
-    <p>亚马逊不给「类目平均转化率」，但用商机探测器下载的两张表能算出来。有了这条参照线，才知道自己 8% 的转化率算好还是差。</p>
+    <h2>Listing 转化漏斗分析器</h2>
+    <p>曝光→点击→加购→下单，哪层掉人最多就修哪层。带行业基准，直接给诊断。</p>
     <div class="row">
-      <a class="go" href="../tools/niche-cvr.html">打开工具 →</a>
-      <a class="read" href="guide-niche-cvr.html">读说明</a>
+      <a class="go" href="../tools/funnel.html">打开工具 →</a>
+      <a class="read" href="guide-funnel.html">读说明</a>
     </div>
   </div>
 
   <div class="doc">
     <span class="no">03</span>
+    <h2>BSR 销量估算器</h2>
+    <p>只有排名看不到销量？用 BSR 反推竞品月销和月销售额，选品前先摸对手的量。</p>
+    <div class="row">
+      <a class="go" href="../tools/bsr-estimator.html">打开工具 →</a>
+      <a class="read" href="guide-bsr-estimator.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">04</span>
+    <h2>SQP 类目平均转化率计算器</h2>
+    <p>导入后台搜索查询表现报表，算出类目平均转化率，作为你的对标基准。</p>
+    <div class="row">
+      <a class="go" href="../tools/sqp-cvr.html">打开工具 →</a>
+      <a class="read" href="guide-sqp-cvr.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">05</span>
+    <h2>商探类目平均转化率计算器</h2>
+    <p>用商机探测器下载的两张表算类目平均转化率，可保存多次记录对比。</p>
+    <div class="row">
+      <a class="go" href="../tools/niche-cvr.html">打开工具 →</a>
+      <a class="read" href="guide-niche-cvr.html">读说明</a>
+    </div>
+  </div>
+</div>
+
+<div class="sec">竞品分析<span>2 个工具</span></div>
+<div class="grid">
+  <div class="doc">
+    <span class="no">06</span>
+    <h2>AI 竞品挖掘器</h2>
+    <p>价格+关键词+位次加权打分，把候选自动分成直接竞品/间接竞品/威胁款/不相关。</p>
+    <div class="row">
+      <a class="go" href="../tools/competitor-finder.html">打开工具 →</a>
+      <a class="read" href="guide-competitor-finder.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">07</span>
+    <h2>四站点竞品抓取看板</h2>
+    <p>UK/DE/US/CA 四站竞品价格评分评论集中看。需先启动本地抓取服务。</p>
+    <div class="row">
+      <a class="go" href="../tools/comp-scraper.html">打开工具 →</a>
+      <a class="read" href="guide-comp-scraper.html">读说明</a>
+    </div>
+  </div>
+</div>
+
+<div class="sec">备货与算钱<span>8 个工具</span></div>
+<div class="grid">
+  <div class="doc">
+    <span class="no">08</span>
+    <h2>FBA 补货计算器</h2>
+    <p>算出补货点：库存掉到多少必须下单，否则会断货。SKU 看板统一管理。</p>
+    <div class="row">
+      <a class="go" href="../tools/restock.html">打开工具 →</a>
+      <a class="read" href="guide-restock.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">09</span>
     <h2>FBA 利润计算器 · 四站点</h2>
-    <p>售价用当地货币、采购用人民币。算清楚每卖一件赚多少，以及扣完广告还剩多少 —— 那个数字才是你真正拿到手的钱。</p>
+    <p>售价用当地货币、采购用人民币，算清每卖一件真正拿到手多少钱。</p>
     <div class="row">
       <a class="go" href="../tools/fba-profit-sites.html">打开工具 →</a>
       <a class="read" href="guide-fba-profit-sites.html">读说明</a>
@@ -64,9 +137,9 @@ body{background:var(--bg);color:var(--ink);padding:30px 24px}
   </div>
 
   <div class="doc">
-    <span class="no">04</span>
+    <span class="no">10</span>
     <h2>多站点定价换算器</h2>
-    <p>同一个产品卖到英美德日，价格不能直接乘汇率。按目标净利率倒推，告诉你每个站点该标多少，以及为什么欧洲的价格看着高。</p>
+    <p>同一个产品卖到不同站点，按目标净利率倒推该标多少钱。</p>
     <div class="row">
       <a class="go" href="../tools/multi-site-pricing.html">打开工具 →</a>
       <a class="read" href="guide-multi-site-pricing.html">读说明</a>
@@ -74,12 +147,98 @@ body{background:var(--bg);color:var(--ink);padding:30px 24px}
   </div>
 
   <div class="doc">
-    <span class="no">05</span>
+    <span class="no">11</span>
+    <h2>盈亏平衡 ACoS 计算器</h2>
+    <p>算出广告的保本线：ACoS 低于它才赚钱，高于它就是卖一单亏一单。</p>
+    <div class="row">
+      <a class="go" href="../tools/acos-calculator.html">打开工具 →</a>
+      <a class="read" href="guide-acos-calculator.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">12</span>
+    <h2>月度回款计算器</h2>
+    <p>报表利润 ≠ 回款。把佣金、配送、仓储、广告、账期一项项扣清楚，看真实现金流。</p>
+    <div class="row">
+      <a class="go" href="../tools/payout.html">打开工具 →</a>
+      <a class="read" href="guide-payout.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">13</span>
+    <h2>退货率利润侵蚀计算器</h2>
+    <p>退货不只是少赚一单。算清退货率每涨 1% 吞掉多少钱。</p>
+    <div class="row">
+      <a class="go" href="../tools/return-erosion.html">打开工具 →</a>
+      <a class="read" href="guide-return-erosion.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">14</span>
+    <h2>促销折扣计算器</h2>
+    <p>上秒杀/优惠券之前先算：折后每单还剩多少，多卖了够不够补降价的损失。</p>
+    <div class="row">
+      <a class="go" href="../tools/promo.html">打开工具 →</a>
+      <a class="read" href="guide-promo.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">15</span>
+    <h2>种子评论成本计算器</h2>
+    <p>算清用合规折扣换一条评论的真实成本，再和广告、Vine 对比。</p>
+    <div class="row">
+      <a class="go" href="../tools/review-cost.html">打开工具 →</a>
+      <a class="read" href="guide-review-cost.html">读说明</a>
+    </div>
+  </div>
+</div>
+
+<div class="sec">Listing 物料<span>2 个工具</span></div>
+<div class="grid">
+  <div class="doc">
+    <span class="no">16</span>
     <h2>标题规范与 75+125</h2>
-    <p>2026 新规：主标题 75 字符讲「卖什么、为什么选你」，Highlights 125 字符补材质场景。工具帮你重排信息组，不机械切段。</p>
+    <p>2026 新规：主标题 75 字符 + Highlights 125 字符。工具帮你重排信息组，不机械切段。</p>
     <div class="row">
       <a class="go" href="../tools/title-case.html">打开工具 →</a>
       <a class="read" href="guide-title-case.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">17</span>
+    <h2>Listing 字符与合规检查器</h2>
+    <p>上传前体检：字符超限、全大写、违禁营销词、装饰符，一次扫出来。</p>
+    <div class="row">
+      <a class="go" href="../tools/listing-checker.html">打开工具 →</a>
+      <a class="read" href="guide-listing-checker.html">读说明</a>
+    </div>
+  </div>
+</div>
+
+<div class="sec">广告<span>2 个工具</span></div>
+<div class="grid">
+  <div class="doc">
+    <span class="no">18</span>
+    <h2>广告出价计算器</h2>
+    <p>这个词该出多少钱？用售价 × 目标ACoS × 转化率，算出最高可承受 CPC。</p>
+    <div class="row">
+      <a class="go" href="../tools/bid.html">打开工具 →</a>
+      <a class="read" href="guide-bid.html">读说明</a>
+    </div>
+  </div>
+
+  <div class="doc">
+    <span class="no">19</span>
+    <h2>PPC 预算分配器</h2>
+    <p>月度预算别平均分。按「花费 ÷ ACoS」分配，赚钱的喂饱、亏钱的先停。</p>
+    <div class="row">
+      <a class="go" href="../tools/ppc-budget.html">打开工具 →</a>
+      <a class="read" href="guide-ppc-budget.html">读说明</a>
     </div>
   </div>
 </div>
