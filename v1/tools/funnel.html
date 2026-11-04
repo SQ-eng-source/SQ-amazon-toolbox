@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Listing 转化漏斗分析器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}.bar{height:26px;border-radius:6px;color:#fff;font-size:12px;line-height:26px;padding-left:10px;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Listing 转化漏斗分析器</h1>
+  <p class="desc">曝光→点击→加购→下单，哪一层掉人最多，就修哪一层。对比行业基准直接给诊断。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入（同一时间段，建议 ≥30 天）</h2>
+      <label>曝光量（ impressions / 展示）</label><input type="number" id="imp" value="100000" step="100">
+      <label>点击量（点击，含广告点击）</label><input type="number" id="clk" value="2500" step="10">
+      <label>加购量（选填，可看 Business Report）</label><input type="number" id="cart" value="120" step="5">
+      <label>订单量</label><input type="number" id="ord" value="55" step="1">
+    </div>
+    <div class="card">
+      <h2>② 漏斗与诊断</h2>
+      <div class="bar" style="background:#4a5568;width:100%">曝光 100%</div>
+      <div class="bar" id="b1" style="background:var(--accent)">点击 --%</div>
+      <div class="bar" id="b2" style="background:#38bdf8">加购 --%</div>
+      <div class="bar" id="b3" style="background:#0a8f5b">下单 --%</div>
+      <div class="row"><span>点击率 CTR（基准 0.3%–0.6%）</span><b id="ctr">--</b></div>
+      <div class="row"><span>加购率（基准 8%–15% of 点击）</span><b id="cartr">--</b></div>
+      <div class="row"><span>转化率 CVR（基准 10%–20% of 点击）</span><b id="cvr">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function pct(a,b){return b>0?(a/b*100).toFixed(2)+'%':'--'}
+function calc(){
+  const imp=+$('imp').value||0,clk=+$('clk').value||0,cart=+$('cart').value||0,ord=+$('ord').value||0;
+  $('b1').textContent='点击 '+pct(clk,imp);$('b2').textContent='加购 '+pct(cart,clk);
+  $('b3').textContent='下单 '+pct(ord,clk);
+  $('ctr').textContent=pct(clk,imp);$('cartr').textContent=pct(cart,clk);$('cvr').textContent=pct(ord,clk);
+  const cvrN=clk>0?ord/clk*100:0,ctrN=imp>0?clk/imp*100:0,v=$('v');
+  let msg=[];
+  if(ctrN<0.25)msg.push('CTR 偏低：主图/价格没有竞争力，先换主图首图测 AB');
+  else if(ctrN>0.8)msg.push('CTR 优秀：图和价格很抓人');
+  if(msg.length===0)msg.push('CTR 正常');
+  if(cart>0&&ord>0){const cr=cart>0?ord/cart*100:0;if(cr<45)msg.push('加购→下单只有 '+cr.toFixed(0)+'%：多半是运费/到货时间/评分劝退，检查购物车流失');else msg.push('加购→下单 '+cr.toFixed(0)+'%，正常');}
+  if(cvrN<8&&ord>0)msg.push('CVR 偏低：重点修五点描述、A+ 页面和评论质量');
+  else if(cvrN>=15)msg.push('CVR 优秀：Listing 转化没问题，可以放量加广告');
+  v.className=msg.length>1&&cvrN<10?'verdict bad':'verdict ok';
+  v.innerHTML=msg.join('<br>');
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / Listing 转化漏斗分析器</span><a href="../guides/guide-funnel.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#market">打开完整工具台 ↗</a></div>
+</body>
+</html>
