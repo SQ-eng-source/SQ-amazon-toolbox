@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>广告出价计算器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← 全部说明</a></div>
+<div class="wrap">
+<h1>广告出价计算器 · 使用说明</h1>
+<h2>它是干嘛的</h2>
+<p>打广告时最常见的问题是：<strong>这个词我该出多少钱？</strong></p>
+<p>出低了没曝光，出高了亏钱。这个工具用你的成本和转化率，算出<strong>这个词最高能出到多少 CPC</strong>。</p>
+<h2>三步用起来</h2>
+<ol><li>打开工具：<a href="../tools/bid.html">广告出价计算器</a></li><li>填五个数：</li></ol>
+<div class="tw"><table><thead><tr><th>字段</th><th>填什么</th></tr></thead><tbody><tr><td>售价（USD）</td><td>—</td></tr><tr><td>单件总成本（产品+头程+FBA+佣金）</td><td>四样加起来</td></tr><tr><td>目标广告 ACoS（%）</td><td>保本 = 毛利率；冲排名可放宽</td></tr><tr><td>该词当前转化率 CVR（%）</td><td>这个词的点击→下单比例，没有就先按类目均值</td></tr><tr><td>（可选）当前实际 CPC</td><td>填了会直接判断能不能跑</td></tr></tbody></table></div>
+<ol><li>看结果。</li></ol>
+<h2>结果怎么看</h2>
+<p>核心公式：</p>
+<blockquote><strong>最高可承受 CPC = 售价 × 目标 ACoS × 转化率</strong></blockquote>
+<p>举例：售价 $25，目标 ACoS 30%，CVR 10%</p>
+<p>→ 最高 CPC = 25 × 0.3 × 0.1 = <strong>$0.75</strong></p>
+<div class="tw"><table><thead><tr><th>结果</th><th>含义</th></tr></thead><tbody><tr><td>最高可承受 CPC</td><td>超过这个价，这个词大概率亏</td></tr><tr><td>目标获客成本</td><td>每单广告费的天花板</td></tr><tr><td>单件毛利</td><td>不打广告时一单赚多少</td></tr><tr><td>按当前 CPC 的盈亏判断</td><td>填了实际 CPC 才有，直接告诉你"可以跑 / 建议降价"</td></tr></tbody></table></div>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>CVR 是变数最大的输入</strong>。同一个词，旺季和淡季、有券和没券，转化率能差一倍。填保守值，宁可少出价。</li><li><strong>千万别用"行业平均 CPC"当出价</strong>。别人能出 $1.5 是因为他转化率高或者毛利高，你照抄就是亏。</li></ul>
+<h2>常见问题</h2>
+<p><strong>Q：目标 ACoS 该填多少？</strong></p>
+<p>新品冲排名可以填到保本线以上（比如毛利率 35% 就填 45%），但要有期限。稳定期用保本线或略低。</p>
+<p><strong>Q：算出来的最高 CPC 比建议竞价低很多怎么办？</strong></p>
+<p>说明这个词烧不起。两个方向：提高转化率（改主图/价格），或者去打更精准的长尾词。</p>
+<hr>
+<p><strong>一句话</strong>：出价不是猜的，是拿"售价 × 目标ACoS × 转化率"算出来的上限。</p>
+</div>
+</body>
+</html>
