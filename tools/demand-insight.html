@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>需求洞察 · 搜索词聚类 · SQ-AMAZON-TOOLBOX</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309;--soft:#f8fdfe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:24px;display:flex;justify-content:center;padding-top:34px}
+.wrap{width:960px}
+h1{font-size:21px;margin-bottom:4px}.desc{color:var(--sub);font-size:12.5px;margin-bottom:14px;line-height:1.7}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:13px;line-height:1.7;resize:vertical;min-height:150px;font-family:Consolas,"Courier New",monospace}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:5px 11px;font-size:12px;font-family:inherit}
+button:hover{background:#f2fbfd;border-color:#22d3ee}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+select{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff}
+.meta{font-size:12px;color:var(--sub)}
+.flag{font-size:12.5px;line-height:1.65;padding:8px 10px;border-radius:6px;margin-top:7px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}.flag.warn{background:#fef3c7;color:var(--warnb)}.flag.bad{background:#fdecea;color:var(--bad)}.flag.info{background:#eef2ff;color:#4338ca}
+.tip{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:7px}.tip b{color:#374151}
+.krow{display:grid;grid-template-columns:120px 1fr 90px;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.krow:last-child{border:0}
+.krow .kname{color:var(--deep);font-weight:600}
+.krow .kbar{height:9px;background:#eef2f5;border-radius:4px;overflow:hidden}
+.krow .kbar>i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.krow .kv{text-align:right;color:var(--sub)}
+.wlist{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.wchip{font-size:11px;background:#f2fbfd;border:1px solid #d3ecf4;color:var(--deep);border-radius:5px;padding:2px 7px}
+.wchip.dim{background:#f3f4f6;border-color:#e5e7eb;color:#6b7280}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11.5px;background:#e6fafc;color:var(--deep);border:1px solid #bfe7f2;border-radius:5px;padding:3px 7px}
+.chip.new{background:#eef2ff;border-color:#c9d2f8;color:#4338ca}
+.chip.warn{background:#fef3c7;border-color:#f1d488;color:var(--warnb)}
+#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}
+#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}
+#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}
+#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}
+</style>
+</head>
+<body>
+<div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / 需求洞察</span><a href="../index.html#market">打开完整工具台 ↗</a></div>
+<div class="wrap">
+  <h1>需求洞察（搜索词聚类）</h1>
+  <p class="desc">贴一批<b>搜索词 + 搜索量</b>（ABA 或商探导出），自动按品类核心词分组、按修饰词归类到<b>场景 / 人群 / 功能 / 材质 / 规格 / 价值</b>六个维度，看用户到底在找什么、哪个维度需求最重、哪里有没人占的词。写标题、五点和广告分组都从这出发。</p>
+
+  <div class="card">
+    <h2>① 搜索词数据 <span class="hint">一行一条：词,搜索量（或频次）</span></h2>
+    <label class="sm">数据（量可以用搜索量、SQP 成交量或词频，口径一致即可）</label>
+    <textarea id="data">under sink organizer,42000
+sink organizer,31000
+bathroom sink organizer,18000
+kitchen sink organizer,12500
+under sink storage,9800
+sink caddy,7400
+sliding sink organizer,5100
+2 tier sink organizer,4600
+pull out under sink shelf,3800
+under sink organizer for pipes,2100
+stainless sink organizer,1700
+small under sink organizer,1400
+under sink drawer,1200
+sink organizer for rv,900
+plastic under sink storage,700
+wide under sink shelf,600
+bamboo sink caddy,400
+under sink organizer for bathroom pipes,320</textarea>
+    <div class="bar">
+      <button class="primary" onclick="run()">聚类分析</button>
+      <span class="meta">已读 <b id="cnt">0</b> 个词</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 品类分组 <span class="hint">核心词 = 去掉修饰后的品类表达</span></h2>
+    <div id="groups"></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 需求构成 <span class="hint">六个维度，量就是需求</span></h2>
+    <div id="dims"></div>
+  </div>
+
+  <div class="card">
+    <h2>④ 洞察与空位</h2>
+    <div id="verdict"></div>
+  </div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+const flag=(c,t)=>'<div class="flag '+c+'">'+t+'</div>';
+
+const DIMS={
+  场景:{w:['kitchen','bathroom','rv','camper','office','bedroom','garage','laundry','travel','home','outdoor','van','boat','apartment','dorm','pipes','drain']},
+  人群:{w:['kids','baby','men','women','elderly','senior','pet','dog','cat']},
+  功能:{w:['sliding','pull out','pull-out','drawer','stackable','expandable','adjustable','sliding basket','rotating','foldable','no drill','hanging','over the','door mount','wireless','portable','easy install']},
+  材质:{w:['stainless','steel','bamboo','plastic','metal','acrylic','wood','carbon','mesh','iron','chrome','resin','pp','abs','ceramic']},
+  规格:{w:['small','wide','large','mini','2 tier','two tier','3 tier','2 pack','4 pack','set of','x-large','double','single','narrow','deep','tall','under 20','inch']},
+  价值:{w:['cheap','best','heavy duty','durable','premium','rustproof','waterproof','rust resistant','modern','cute','sleek','compact','space saving']}
+};
+const STOP=new Set(['for','and','with','the','of','a','an','in','on','to','my','under']);
+
+function parse(){
+  return $('data').value.split('\n').map(l=>l.split(/[,，\t]/)).filter(a=>a.length>=2&&a[0].trim()&&!isNaN(parseFloat(a[1]))).map(a=>({w:a[0].trim().toLowerCase(),v:parseFloat(a[1])}));
+}
+
+function classify(word){
+  const tags=[];
+  const has=(pat)=>word.includes(pat);
+  for(const [dim,cfg] of Object.entries(DIMS)){
+    if(cfg.w.some(x=>has(x))) tags.push(dim);
+  }
+  return tags;
+}
+
+function coreOf(word){
+  const tail=[word.split(' ').slice(-2).join(' '),word.split(' ').slice(-1)[0]];
+  for(const t of tail){
+    if(NOUNS.some(n=>t.includes(n))) return NOUNS.find(n=>t.includes(n));
+  }
+  return word.split(' ').slice(-1)[0];
+}
+const NOUNS=['organizer','storage','shelf','shelves','caddy','rack','holder','basket','tray','drawer','bin','stand','cart','tower','cabinet','organizers'];
+
+function run(){
+  const data=parse();
+  $('cnt').textContent=data.length;
+  if(data.length<5){ $('groups').innerHTML=''; $('dims').innerHTML=''; $('verdict').innerHTML=flag('warn','少于 5 个词没有聚类意义，多贴一些（ABA 导出 50～200 条最合适）'); return; }
+
+  /* 品类分组 */
+  const groups={};
+  data.forEach(d=>{ const c=coreOf(d.w); (groups[c]=groups[c]||[]).push(d); });
+  const gArr=Object.entries(groups).map(([k,arr])=>({k,arr,sum:arr.reduce((a,b)=>a+b.v,0)})).sort((a,b)=>b.sum-a.sum);
+  const totalV=data.reduce((a,b)=>a+b.v,0);
+  const maxG=gArr[0].sum;
+  $('groups').innerHTML=gArr.map(g=>'<div class="krow"><div class="kname">'+g.k+'<em style="display:block;color:#9ca3af;font-size:10.5px;font-style:normal">'+g.arr.length+' 个词</em></div><div class="kbar"><i style="width:'+(g.sum/maxG*100).toFixed(0)+'%"></i></div><div class="kv">'+g.sum.toLocaleString()+' ('+(g.sum/totalV*100).toFixed(0)+'%)</div></div><div class="wlist" style="grid-column:1/4;margin:-4px 0 4px">'+g.arr.slice(0,8).map(d=>'<span class="wchip'+(d.v<totalV/data.length*0.3?' dim':'')+'">'+d.w+'</span>').join('')+(g.arr.length>8?'<span class="wchip dim">…+'+(g.arr.length-8)+'</span>':'')+'</div>').join('');
+
+  /* 维度构成 */
+  const dimStats={};
+  data.forEach(d=>{
+    classify(d.w).forEach(t=>{ (dimStats[t]=dimStats[t]||{v:0,n:0,words:[]}).v+=d.v; dimStats[t].n++; dimStats[t].words.push(d.w); });
+  });
+  const untagged=data.filter(d=>!classify(d.w).length);
+  const untaggedV=untagged.reduce((a,b)=>a+b.v,0);
+  const dArr=Object.entries(dimStats).map(([k,v])=>({k,...v})).sort((a,b)=>b.v-a.v);
+  const maxD=Math.max(...dArr.map(x=>x.v),1);
+  $('dims').innerHTML=dArr.map(d=>'<div class="krow"><div class="kname">'+d.k+'<em style="display:block;color:#9ca3af;font-size:10.5px;font-style:normal">'+d.n+' 个词</em></div><div class="kbar"><i style="width:'+(d.v/maxD*100).toFixed(0)+'%"></i></div><div class="kv">'+(d.v/totalV*100).toFixed(0)+'% 需求</div></div><div class="wlist" style="grid-column:1/4;margin:-4px 0 4px">'+d.words.slice(0,6).map(w=>'<span class="wchip">'+w+'</span>').join('')+'</div>').join('')+
+    (untagged.length?'<div class="tip" style="margin-top:8px">另有 '+untagged.length+' 个词（'+(untaggedV/totalV*100).toFixed(0)+'%）不带六维修饰，属于纯品类词——这些是<b>大盘流量</b>，谁做品类谁得。</div>':'');
+
+  /* 洞察 */
+  const out=[];
+  out.push(flag('info','需求主轴：'+gArr.slice(0,2).map(g=>g.k+'（'+(g.sum/totalV*100).toFixed(0)+'%）').join(' + ')+dArr.slice(0,2).map(d=>'、'+d.k+'（'+(d.v/totalV*100).toFixed(0)+'%）').join('')+'。标题和五点至少要覆盖主轴词。'));
+  if(dArr[0]) out.push(flag('ok','最重的维度是<b>'+dArr[0].k+'</b>：'+(dArr[0].v/totalV*100).toFixed(0)+'% 的搜索都带这类修饰（'+dArr[0].words.slice(0,3).join('、')+'…）。五点第一条就该答它。'));
+  const weak=DIMS[Object.keys(DIMS)[0]];
+  const absent=Object.keys(DIMS).filter(k=>!dimStats[k]);
+  if(absent.length) out.push(flag('new','没被任何搜索词用到的维度：'+absent.join('、')+'。<b>这不是空位，是没需求</b>——别按自己的想象往标题里塞这些方向。'));
+  /* 长尾空位：修饰明确但量小的词 = 竞争可能也小 */
+  const med=data.map(d=>d.v).sort((a,b)=>a-b)[Math.floor(data.length/2)];
+  const niche=data.filter(d=>d.v<=med*0.5&&classify(d.w).length>=1).sort((a,b)=>b.v-a.v);
+  if(niche.length) out.push(flag('warn','低量大词候选（量≤中位数一半，修饰意图明确）：'+niche.slice(0,5).map(d=>d.w+'('+d.v.toLocaleString()+')').join('、')+'。这些词<b>广告竞争通常也小</b>，新品首月可以从这里起步。'));
+  if(untaggedV/totalV>0.6) out.push(flag('warn',(untaggedV/totalV*100).toFixed(0)+'% 的量集中在纯品类词上——大盘词被头部占着时，新品期先打上面那些带修饰的长尾。'));
+  out.push(flag('info','用法：把「②品类分组」里量最大的那组词放进「标题规范与 75+125」当关键词表；把「④低量大词」放进广告的<b>精准匹配组</b>起步。'));
+
+  $('verdict').innerHTML=out.join('');
+}
+</script>
+</body>
+</html>
