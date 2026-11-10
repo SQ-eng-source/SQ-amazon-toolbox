@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>新标题创作器 · SQ-AMAZON-TOOLBOX</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309;--soft:#f8fdfe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:24px;display:flex;justify-content:center;padding-top:34px}
+.wrap{width:960px}
+h1{font-size:21px;margin-bottom:4px}.desc{color:var(--sub);font-size:12.5px;margin-bottom:14px;line-height:1.7}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;line-height:1.7;resize:vertical;min-height:64px;font-family:inherit}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+textarea.out{background:var(--soft);border-color:#bfe7f2}
+input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;font-family:inherit}
+input[type=text]:focus{outline:none;border-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:5px 11px;font-size:12px;font-family:inherit}
+button:hover{background:#f2fbfd;border-color:#22d3ee}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:var(--deep)}
+button.mini{padding:3px 9px;font-size:11.5px}
+.meta{font-size:12px;color:var(--sub);margin-left:auto}
+.meta b{color:var(--ink);font-size:13.5px}.meta b.over{color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11.5px;background:#e6fafc;color:var(--deep);border:1px solid #bfe7f2;border-radius:5px;padding:3px 7px}
+.chip.good{background:#e6f6ef;border-color:#b7e2cf;color:var(--ok)}
+.chip.warn{background:#fef3c7;border-color:#f1d488;color:var(--warnb)}
+.chip.new{background:#eef2ff;border-color:#c9d2f8;color:#4338ca}
+.flag{font-size:12.5px;line-height:1.65;padding:8px 10px;border-radius:6px;margin-top:7px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}.flag.warn{background:#fef3c7;color:var(--warnb)}.flag.bad{background:#fdecea;color:var(--bad)}.flag.info{background:#eef2ff;color:#4338ca}
+.tip{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:7px}.tip b{color:#374151}
+label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+select,input[type=number]{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff}
+.scoreBox{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.scoreNum{font-size:34px;font-weight:800;line-height:1;color:var(--deep)}
+.scoreNum small{font-size:13px;font-weight:400;color:var(--sub)}
+.scoreWord{font-size:13px;color:var(--sub)}
+.srow{display:grid;grid-template-columns:104px 44px 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.srow:last-child{border:0}.srow .sc{font-weight:700;text-align:right}.srow .sc.full{color:var(--ok)}.srow .sc.mid{color:var(--warnb)}.srow .sc.low{color:var(--bad)}
+.srow .msg{color:#4b5563;line-height:1.55}.srow .msg em{font-style:normal;color:var(--sub);font-size:11.5px}
+.barwrap{height:5px;background:#eef2f5;border-radius:3px;overflow:hidden;margin-top:8px}
+.barfill{height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2);border-radius:3px;transition:width .25s}
+details{margin-top:10px}summary{cursor:pointer;font-size:12.5px;color:var(--deep);font-weight:600}
+details .tip{margin-top:6px}
+.frow{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.frow:last-child{border:0}
+.fbar{height:8px;background:#eef2f5;border-radius:4px;overflow:hidden}
+.fbar>i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.fcnt{color:var(--sub);font-size:11.5px;text-align:right}
+.vari{border:1px dashed #bfe7f2;border-radius:7px;padding:9px 11px;margin-top:8px;font-size:12.5px;line-height:1.6;background:#fbfeff}
+.vari b{color:var(--deep);font-size:11.5px;display:block;margin-bottom:3px}
+.vari span{color:var(--ink)}
+.vari button{float:right;margin-top:-3px}
+#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}
+#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}
+#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}
+#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}
+</style>
+</head>
+<body>
+<div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· Listing 物料 / 新标题创作器</span><a href="../index.html#listing">打开完整工具台 ↗</a></div>
+<div class="wrap">
+  <h1>新标题创作器（全新产品 · 75+125 新规）</h1>
+  <p class="desc">给<b>没有老标题的全新产品</b>用：填品牌、产品、关键词、卖点和 5～8 条竞品标题，一键生成符合新规的主标题 + Item Highlights，附带竞品词分析和五项打分。没有老标题可比，所以<b>用竞品标题当参照系</b>：高频词必须覆盖，竞品都没写的卖点就是你的差异位。</p>
+
+  <!-- ① 输入 -->
+  <div class="card">
+    <h2>① 输入 <span class="hint">产品信息 + 竞品标题</span></h2>
+    <div class="bar" style="margin-top:0;margin-bottom:9px">
+      <label class="sm" style="margin:0">站点</label>
+      <select id="site" onchange="presetSite()">
+        <option value="us-new">美国站 · 新规 75+125</option>
+        <option value="us-old">美国站 · 旧规单标题 200</option>
+        <option value="other">其他站点（自定义上限）</option>
+      </select>
+      <label class="sm" style="margin:0 0 0 6px">主标题上限</label>
+      <input id="cfgLimit" type="number" value="75" min="40" max="300" style="width:64px">
+      <label class="sm" style="margin:0 0 0 6px">Highlights 上限</label>
+      <input id="cfgHlLimit" type="number" value="125" min="0" max="500" style="width:64px">
+    </div>
+    <div class="grid2">
+      <div>
+        <label class="sm">品牌（写上架用的注册名）</label>
+        <input id="brand" type="text" value="SQ Home">
+      </div>
+      <div>
+        <label class="sm">产品名 / 核心词（买家会搜的那个词组，英文）</label>
+        <input id="product" type="text" value="under sink organizer">
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <div>
+        <label class="sm">核心关键词（有 SQP / 广告数据按「相关度×成交」排，逗号分隔）</label>
+        <textarea id="kw" style="min-height:52px">under sink organizer, sink organizer, under sink storage, bathroom storage</textarea>
+      </div>
+      <div>
+        <label class="sm">长尾词 / 场景词（逗号或换行分隔）</label>
+        <textarea id="longtail" style="min-height:52px">for kitchen and bathroom, sliding drawer, pull out shelf, under sink shelf for pipes</textarea>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label class="sm">特性 / 优势（一行一条，带数字或材质的排前面更容易入选）</label>
+      <textarea id="feats">Rustproof 304 stainless steel
+2-tier adjustable shelves
+Slide-out drawer design
+No tools, 5-minute install
+Fits around drain pipes</textarea>
+    </div>
+    <div style="margin-top:10px">
+      <label class="sm">竞品标题（5～8 条，一行一条 —— 生成和词分析都以它们为参照）</label>
+      <textarea id="comps">Simple Houseware Under Sink Sliding Organizer Basket, 2 Tier Pull Out Shelf Drawer
+madesmart 2-Tier Under Sink Sliding Organizer, Rust-Resistant
+YouU Under Sink Organizer with Sliding Drawers, 2 Pack Adjustable Shelf
+Copco 2-Tier Under Sink Sliding Cabinet Organizer, White
+Simple Houseware Expandable Under Sink Shelf, Stackable 2 Tier Organizer
+Mind Reader 2 Tier Under Sink Storage Organizer Sliding Basket, Wide</textarea>
+    </div>
+    <div class="bar">
+      <button class="primary" onclick="run()">生成标题并分析打分</button>
+      <button onclick="clearAll()">清空</button>
+      <span class="meta">竞品 <b id="compCnt">0</b> 条</span>
+    </div>
+  </div>
+
+  <!-- ② 主标题 -->
+  <div class="card">
+    <h2>② 主标题 <span class="hint">品牌 + 核心产品词 + 差异点 + 必要规格</span></h2>
+    <textarea id="out" class="out" oninput="renderAll()"></textarea>
+    <div class="bar">
+      <span class="meta">字符数 <b id="outLen">0</b> / <b id="limitLbl">75</b></span>
+      <span class="meta" style="margin-left:0">单词 <b id="wordCnt">0</b></span>
+      <button class="mini" onclick="copyOut()">复制</button>
+    </div>
+    <div id="flags"></div>
+    <div id="variants"></div>
+  </div>
+
+  <!-- ③ Highlights -->
+  <div class="card" id="hlCard">
+    <h2>③ Item Highlights 建议 <span class="hint">材质/结构 + 功能 + 场景，补 75 字符放不下的</span></h2>
+    <textarea id="hl" class="out" oninput="renderAll()"></textarea>
+    <div class="bar"><span class="meta">字符数 <b id="hlLen">0</b> / <b id="hlLimitLbl">125</b></span></div>
+    <div id="hlFlags"></div>
+  </div>
+
+  <!-- ④ 竞品分析 -->
+  <div class="card">
+    <h2>④ 竞品词分析 <span class="hint">高频词=必覆盖；竞品没写=差异位</span></h2>
+    <div id="freqBox"></div>
+    <div style="margin-top:12px"><label class="sm">覆盖检查（生成标题 vs 竞品高频词）</label><div id="coverBox" class="chips"></div></div>
+    <div style="margin-top:10px"><label class="sm">差异机会（你的卖点里竞品没人写的）</label><div id="gapBox" class="chips"></div></div>
+  </div>
+
+  <!-- ⑤ 打分 -->
+  <div class="card">
+    <h2>⑤ 自检打分 <span class="hint">运营标准，不是亚马逊官方公式</span></h2>
+    <div class="scoreBox">
+      <div class="scoreNum" id="scoreNum">--<small>/100</small></div>
+      <div class="scoreWord" id="scoreWord">点「生成」后自动计算</div>
+    </div>
+    <div class="barwrap"><div class="barfill" id="barfill" style="width:0%"></div></div>
+    <div id="scoreRows" style="margin-top:10px"></div>
+    <details>
+      <summary>五项标准怎么来的</summary>
+      <p class="tip">合规与真实 30 分：字符不超、无违规词。<b>这是前提。</b><br>产品识别 25 分：一眼看出卖什么、给谁用。<br>关键词相关性 20 分：核心搜索词覆盖（竞品高频词也计入检查）。<br>差异化 15 分：材质/结构/功能说清楚，不是 Premium / High Quality 空话。<br>可读性 10 分：不堆词。<br><b>最后还是看点击率和转化率，工具分数是发布前的筛子。</b></p>
+    </details>
+  </div>
+
+  <!-- ⑥ 规则 -->
+  <div class="card">
+    <h2>⑥ 默认规则 <span class="hint">与「标题规范与 75+125」工具同口径</span></h2>
+    <div class="grid2">
+      <div>
+        <label class="sm">小词（不大写的虚词）</label>
+        <textarea id="cfgSmall" style="min-height:52px">a, an, the, and, or, but, nor, for, so, yet, at, by, in, of, on, to, up, as, per, via, vs, with</textarea>
+      </div>
+      <div>
+        <label class="sm">永远保持原样的词（品牌、型号、缩写）</label>
+        <textarea id="cfgKeep" style="min-height:52px">iPhone, iPad, USB, USB-C, LED, RGB, HDMI, GPS, APP, TWS, IPX7, IPX8, 4K, 8K, XL, XXL, 600D, Oxford, 304</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const list=s=>String(s).split(/[,，\n]/).map(x=>x.trim()).filter(Boolean);
+const words=s=>(String(s).match(/[\p{L}\p{N}][\p{L}\p{N}'\-.&+]*/gu)||[]);
+const len=s=>[...String(s)].length;
+const uniq=a=>[...new Set(a)];
+
+const BANNED=['best selling','best-seller','best seller','#1','no.1','number one','free shipping','free gift','guarantee','cheapest','hot sale','100%','top rated','money back','wholesale','perfect for','high quality','premium quality','best quality','new arrival','hot sell'];
+const GENERIC=['premium','high quality','best','perfect','superior','amazing','professional','luxury','excellent','top quality','great'];
+const SCENE=['travel','home','office','gift','outdoor','camping','party','school','kitchen','gym','beach'];
+const STOP=new Set('a an the and or but nor for so yet at by in of on to up as per via vs with from your our you'.split(/\s+/));
+const MAT=/(\d+d|oxford|nylon|leather|aluminum|stainless|steel|silicone|magnetic|waterproof|foldable|rechargeable|bamboo|cotton|carbon|304|abs|pp|pvc)/i;
+const NUMWORD=/^\d+(x|ft|in|cm|mm|lb|oz|w|v|ah|mah|pcs|pack|tier|tier|pack|pk)?$/i;
+
+function settings(){ return {limit:+$('cfgLimit').value||75, hlLimit:+$('cfgHlLimit').value||0, small:new Set(list($('cfgSmall').value).map(x=>x.toLowerCase())), keep:new Set(list($('cfgKeep').value).map(x=>x.toLowerCase()))}; }
+function presetSite(){
+  const s=$('site').value;
+  if(s==='us-new'){$('cfgLimit').value=75;$('cfgHlLimit').value=125;$('hlCard').style.display='';}
+  else if(s==='us-old'){$('cfgLimit').value=200;$('cfgHlLimit').value=0;$('hlCard').style.display='none';}
+  else {$('cfgHlLimit').value=125;$('hlCard').style.display='';}
+  $('limitLbl').textContent=$('cfgLimit').value;
+  $('hlLimitLbl').textContent=$('cfgHlLimit').value;
+}
+
+/* ============ 大小写 ============ */
+function cap(w,st){
+  const lw=w.toLowerCase();
+  if(st.keep.has(lw)) return w;
+  if(NUMWORD.test(lw)) return w;
+  if(st.small.has(lw) && lw.length<4) return lw;
+  if(/^[A-Z0-9]/.test(w) && /[A-Z]/.test(w.slice(1))) return w;  // 已含大写
+  return lw.charAt(0).toUpperCase()+lw.slice(1);
+}
+function titleCase(s,st){
+  return words(s).map((w,i)=>i===0?cap(w,st):cap(w,st)).join(' ');
+}
+
+/* ============ 竞品词频 ============ */
+function compStats(comps){
+  const titles=comps.map(t=>t.toLowerCase()).filter(x=>words(x).length>2);
+  const uni={}, bi={};
+  titles.forEach(t=>{
+    const w=words(t).map(x=>x.toLowerCase()).filter(x=>!STOP.has(x)&&x.length>2&&!/^\d+$/.test(x));
+    const seen=new Set();
+    w.forEach(x=>{ if(!seen.has(x)){uni[x]=(uni[x]||0)+1; seen.add(x);} });
+    for(let i=0;i<w.length-1;i++){
+      const p=w[i]+' '+w[i+1];
+      if(!seen.has(p)){ bi[p]=(bi[p]||0)+1; seen.add(p); }
+    }
+  });
+  const arr=o=>Object.entries(o).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v||a.k.localeCompare(b.k));
+  return {n:titles.length, uni:arr(uni), bi:arr(bi), avgLen:titles.length?Math.round(titles.reduce((a,t)=>a+len(t),0)/titles.length):0};
+}
+
+/* ============ 生成 ============ */
+function rankFeat(f){
+  let s=0; const low=f.toLowerCase();
+  if(MAT.test(low)) s+=3; if(/\d/.test(low)) s+=2;
+  if(/no tool|easy install|minute/i.test(low)) s+=1;
+  GENERIC.forEach(g=>{ if(low.includes(g)) s-=2; });
+  return s;
+}
+function featPhrase(f,st){
+  const cleaned=f.replace(GENERIC.map(g=>new RegExp('\\b'+g+'\\b','gi')).find(r=>r.test(f))||/^\s*$/,'').trim();
+  return titleCase(cleaned||f, st);
+}
+
+function build(cfg){
+  const st=settings();
+  const brand=cfg.brand.trim();
+  const core=titleCase(cfg.product.trim(), st);
+  const comps=cfg.comps.map(x=>x.trim()).filter(x=>words(x).length>2);
+  const stats=compStats(comps);
+
+  /* 候选素材 */
+  const kws=uniq(list(cfg.kw).map(x=>x.toLowerCase()));
+  const lts=uniq(list(cfg.longtail));
+  const feats=list(cfg.feats).map(x=>x.trim()).filter(Boolean).sort((a,b)=>rankFeat(b)-rankFeat(a));
+
+  /* 竞品高频 bigram 里，不在 core/kw 里的提示词（不强制进标题） */
+  const coreLow=new Set(words(core.toLowerCase()));
+  const mustBi=stats.bi.filter(x=>x.v>=Math.max(2,Math.ceil(stats.n/2))).slice(0,4);
+
+  /* 场景短语：长尾词里 for 开头优先 */
+  let forPhrase=(lts.map(x=>x.trim()).find(x=>/^for\s/i.test(x))||'');
+  if(!forPhrase){
+    const sc=lts.find(x=>SCENE.some(c=>x.toLowerCase().includes(c)));
+    if(sc) forPhrase='for '+sc.toLowerCase();
+  }
+  forPhrase=forPhrase?titleCase(forPhrase, st):'';
+
+  /* 组装：brand + core + 卖点（按分）+ for 短语；超限时整条删，不砍半截 */
+  function assemble(order){
+    const parts=[]; if(brand) parts.push(brand); parts.push(core);
+    const pool=feats.map(f=>featPhrase(f,st)).filter(p=>p&&!p.toLowerCase().split(/\s+/).every(w=>coreLow.has(w)));
+    order.forEach(idx=>{ if(pool[idx]&&(len(parts.join(' ')+pool[idx])+1)<=st.limit) parts.push(pool[idx]); });
+    if(forPhrase&&(len(parts.join(' ')+forPhrase)+1)<=st.limit) parts.push(forPhrase);
+    while(len(parts.join(' '))>st.limit && parts.length>2) parts.pop();  /* 整条退，末尾不悬词 */
+    return parts.join(' ').replace(/\s+/g,' ').replace(/[,\s]+$/,'').trim();
+  }
+  const main=assemble([0,1,2,3,4]);
+
+  /* Highlights：材质/结构 + 功能 + 场景，把主标题装不下的卖点用上 */
+  const hlParts=[];
+  feats.forEach(f=>{ if(!main.toLowerCase().includes(f.toLowerCase().replace(/\b(\w+)\b/g,'$1').split(/\s+/).slice(0,3).join(' ').toLowerCase())) hlParts.push(featPhrase(f,st)); });
+  if(lts.length){ const l=lts.filter(x=>!/^for\s/i.test(x)).slice(0,2).map(x=>titleCase(x,st)); hlParts.push(...l); }
+  let hl=hlParts.slice(0,5).join(', ');
+  while(len(hl)>Math.max(st.hlLimit,40)){ const i=hl.lastIndexOf(','); if(i<0)break; hl=hl.slice(0,i); }
+
+  /* 变体：卖点顺序换 + 场景前置 */
+  const v1=assemble([1,0,2,3,4]);
+  let v2='';
+  if(forPhrase){ v2=(brand?brand+' ':'')+core+' '+forPhrase; const rest=assemble([0,1,2]).replace((brand?brand+' ':'')+core,'').trim(); if(rest && len(v2+' '+rest)+1<=st.limit) v2+=' '+rest; }
+
+  return {main, hl, variants:[v1,v2].filter(x=>x&&x!==main), stats, kws, feats, mustBi};
+}
+
+/* ============ 打分（与「标题规范与 75+125」同口径） ============ */
+function scoreTitle(t,hl,kws,st,compUni){
+  const low=t.toLowerCase(); const rows=[];
+  let c=30; const n=len(t);
+  if(n>st.limit) c-=12; else if(n>st.limit*0.94) c-=3;
+  const hit=BANNED.filter(b=>low.includes(b)); if(hit.length) c-=Math.min(12,6*hit.length);
+  if(/[【】\[\]{}~～!！]/.test(t)) c-=3;
+  const caps=(t.match(/\b[A-Z]{4,}\b/g)||[]).filter(x=>!st.keep.has(x.toLowerCase())); if(caps.length) c-=4;
+  c=Math.max(0,c);
+  rows.push(['合规与真实',c,30,c>=27?'字符、用词没踩线':(c>=20?'有小问题，修完再上':'先修合规问题，其他分不用看')]);
+  let p=0; const w=words(t);
+  if(w.length>=3) p+=8; if(w.length>=5) p+=4;
+  const hasNum=/\d/.test(low), hasSize=/\b(xs|s|m|l|xl|xxl|large|small|medium|mini|max|2 tier|2-tier|3 tier|3-tier|2 pack|4 pack|6 pack)\b/i.test(low);
+  if(hasNum||hasSize) p+=6;
+  if(/\b(for|compatible with|fits)\b/i.test(low)) p+=7;
+  p=Math.min(25,p);
+  rows.push(['产品识别',p,25,p>=22?'一眼能看出卖什么、给谁用':(p>=15?'能看出产品，但「给谁用」不够明确':'买家可能看不明白')]);
+  let k=0;
+  if(kws.length){ const tw=words(low); const inT=kws.filter(x=>words(x.toLowerCase()).every(y=>tw.includes(y))); k=Math.round(20*inT.length/Math.min(kws.length,4)); k=Math.min(20,k); }
+  else k=12;
+  rows.push(['关键词相关性',k,20,k>=16?'核心搜索词保住了':(k>=10?'核心词覆盖不够，检查是否漏了主词':'关键词和主标题脱节')]);
+  let d=0; const gen=GENERIC.filter(g=>low.includes(g));
+  if(MAT.test(low)) d+=9; else if(hasNum||hasSize) d+=5;
+  if(!gen.length) d+=6; else d=Math.max(0,3-gen.length*2);
+  d=Math.min(15,d);
+  rows.push(['差异化',d,15,d>=12?'有具体材质/结构，说得清为什么选它':(d>=8?'有点差异点，但偏泛':'空话词不算差异化')]);
+  let r=10; const dupWords={};
+  words(low).forEach(x=>{ if(!STOP.has(x)&&x.length>2) dupWords[x]=(dupWords[x]||0)+1; });
+  const dup=Object.keys(dupWords).filter(x=>dupWords[x]>1); if(dup.length) r-=Math.min(5,2*dup.length);
+  const sc=words(low).filter(x=>SCENE.includes(x)); if(sc.length>=3) r-=3;
+  if(n>st.limit) r-=2;
+  if(hl&&st.hlLimit){ const hw=words(hl.toLowerCase()).filter(x=>!STOP.has(x)); const tw=new Set(words(low));
+    const ov=hw.filter(x=>tw.has(x)).length||0; if(hw.length&&ov/hw.length>0.7) r-=3; }
+  r=Math.max(0,r);
+  rows.push(['可读性',r,10,r>=8?'读起来自然、没有堆词':(r>=5?'有重复或堆叠，读着累':'重复太多，像关键词清单')]);
+  return rows;
+}
+
+/* ============ 渲染 ============ */
+function flag(cls,txt){ return '<div class="flag '+cls+'">'+txt+'</div>'; }
+
+function renderAll(){
+  const st=settings(), t=$('out').value, hl=$('hl').value;
+  $('outLen').textContent=len(t); $('outLen').className=len(t)>st.limit?'over':'';
+  $('limitLbl').textContent=st.limit; $('wordCnt').textContent=words(t).length;
+  $('hlLen').textContent=len(hl); $('hlLen').className=len(hl)>st.hlLimit?'over':''; $('hlLimitLbl').textContent=st.hlLimit;
+  const low=t.toLowerCase();
+  const fl=[];
+  const hit=BANNED.filter(b=>low.includes(b));
+  if(hit.length) fl.push(flag('bad','违规词：'+hit.map(esc).join('、')+' —— 直接删，没商量'));
+  if(/[【】\[\]{}~～!！]/.test(t)) fl.push(flag('warn','用了符号（[]【】!～）—— 新规标题别用这些'));
+  if(len(t)>st.limit) fl.push(flag('bad','超字符上限 '+len(t)+'/'+st.limit+' —— 每个词都要挣自己的位置'));
+  else if(len(t)>st.limit*0.94) fl.push(flag('info','快到上限了（'+len(t)+'/'+st.limit+'），再加词之前想清楚值不值'));
+  if(GENERIC.some(g=>low.includes(g))) fl.push(flag('warn','有空话词（Premium / High Quality 这类）—— 占了字符不带来选择理由'));
+  if(t && !/\b(for|compatible|fits)\b/i.test(low)) fl.push(flag('info','没写「给谁用」—— 25 分里的 7 分靠这个，有明确人群就补上'));
+  $('flags').innerHTML=fl.join('');
+  const hlFl=[];
+  if(st.hlLimit){
+    if(!hl.trim()) hlFl.push(flag('warn','Highlights 是空的 —— 125 字符的补充位浪费了'));
+    else{
+      const hw=words(hl.toLowerCase()).filter(x=>!STOP.has(x)), tw=new Set(words(low));
+      const ov=hw.filter(x=>tw.has(x)).length||0;
+      if(hw.length&&ov/hw.length>0.7) hlFl.push(flag('warn','和主标题重合 '+(ov/hw.length*100).toFixed(0)+'% —— 没有补充新信息'));
+      if(len(hl)>st.hlLimit) hlFl.push(flag('bad','Highlights 超上限 '+len(hl)+'/'+st.hlLimit));
+    }
+  }
+  $('hlFlags').innerHTML=hlFl.join('');
+
+  const rows=scoreTitle(t,hl,STATE.kws||[],st,STATE.stats&&STATE.stats.uni);
+  const total=rows.reduce((a,b)=>a+b[1],0);
+  $('scoreNum').innerHTML=(t?total:'--')+'<small>/100</small>';
+  $('barfill').style.width=(t?total:0)+'%';
+  $('scoreWord').textContent=t?(total>=85?'可以直接用':(total>=70?'能用，但还有明确的改进点':(total>=55?'问题不少，按提示逐条改':'建议重写'))):'点「生成」后自动计算';
+  $('scoreRows').innerHTML=rows.map(([nm,sc,mx,msg])=>{
+    const cls=sc/mx>=0.9?'full':(sc/mx>=0.6?'mid':'low');
+    return '<div class="srow"><div>'+nm+'<em style="display:block;color:#9ca3af;font-size:11px">满分 '+mx+'</em></div><div class="sc '+cls+'">'+sc+'</div><div class="msg">'+msg+'</div></div>';
+  }).join('');
+}
+
+let STATE={kws:[],stats:null};
+
+function renderComp(){
+  const stats=STATE.stats; if(!stats) return;
+  const max=stats.bi.length?stats.bi[0].v:1;
+  const top=stats.bi.slice(0,8).filter(x=>x.v>=2);
+  $('freqBox').innerHTML='<div class="tip" style="margin:0 0 8px">共 '+stats.n+' 条竞品 · 平均 '+stats.avgLen+' 字符。下面是<b>至少 2 条竞品都写了</b>的词组（越多条写，越是这个类目的“标配”）：</div>'+
+    (top.map(x=>'<div class="frow"><div>'+esc(x.k)+'</div><div class="fbar"><i style="width:'+(x.v/max*100)+'%"></i></div><div class="fcnt">'+x.v+'/'+stats.n+'</div></div>').join('')||flag('info','竞品标题太少，凑够 5 条再生成才有参照意义'));
+  const tw=new Set(words($('out').value.toLowerCase()));
+  const cov=top.map(x=>{
+    const inT=words(x.k).every?words(x.k).every(w=>tw.has(w)):false;
+    return '<span class="chip '+(inT?'good':'warn')+'">'+(inT?'✓':'缺')+' '+esc(x.k)+'</span>';
+  }).join('');
+  $('coverBox').innerHTML=cov||'<span class="chip">—</span>';
+  const compAll=new Set(stats.uni.map(x=>x.k));
+  const gaps=[];
+  (STATE.feats||[]).forEach(f=>{
+    const ws=words(f.toLowerCase()).filter(x=>!STOP.has(x)&&x.length>3&&!compAll.has(x));
+    if(ws.length) gaps.push(ws.slice(0,2).join(' '));
+  });
+  uniq(gaps).slice(0,8).forEach(g=>$('gapBox').innerHTML='');
+  $('gapBox').innerHTML=uniq(gaps).slice(0,8).map(g=>'<span class="chip new">'+esc(g)+'</span>').join('')||'<span class="chip">竞品都写过的卖点不算差异</span>';
+}
+
+function renderVariants(vs){
+  $('variants').innerHTML=vs.map((v,i)=>'<div class="vari"><b>备选 '+(i+1)+'（同素材不同排序）</b><button class="mini" onclick="useVariant('+i+')">用这个</button><span>'+esc(v)+'</span><div class="meta" style="margin:2px 0 0">'+len(v)+' 字符</div></div>').join('');
+  STATE.vs=vs;
+}
+function useVariant(i){ $('out').value=STATE.vs[i]; renderAll(); renderComp(); }
+function copyOut(){ const t=$('out').value; if(!t)return;
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{},()=>{ const ta=$('out'); ta.select(); document.execCommand('copy'); }); }
+
+function run(){
+  const cfg={brand:$('brand').value, product:$('product').value, kw:$('kw').value, longtail:$('longtail').value, feats:$('feats').value, comps:$('comps').value.split('\n')};
+  const comps=cfg.comps.map(x=>x.trim()).filter(x=>words(x).length>2);
+  $('compCnt').textContent=comps.length;
+  if(!cfg.brand.trim()||!cfg.product.trim()){ $('flags').innerHTML=flag('warn','至少填品牌和产品名，其他可以留空'); return; }
+  const r=build(cfg);
+  STATE={kws:r.kws, stats:r.stats, feats:r.feats, vs:[]};
+  $('out').value=r.main; $('hl').value=r.hl;
+  renderAll(); renderComp(); renderVariants(r.variants);
+}
+function clearAll(){
+  ['brand','product'].forEach(i=>$(i).value='');
+  ['kw','longtail','feats','comps','out','hl'].forEach(i=>$(i).value='');
+  STATE={kws:[],stats:null,feats:[],vs:[]};
+  $('flags').innerHTML=''; $('hlFlags').innerHTML=''; $('variants').innerHTML=''; $('scoreRows').innerHTML='';
+  $('scoreNum').innerHTML='--<small>/100</small>'; $('barfill').style.width='0%'; $('scoreWord').textContent='点「生成」后自动计算';
+  $('freqBox').innerHTML=''; $('coverBox').innerHTML=''; $('gapBox').innerHTML=''; $('compCnt').textContent='0';
+}
+presetSite();
+</script>
+</body>
+</html>
