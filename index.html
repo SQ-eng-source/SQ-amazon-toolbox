@@ -19,6 +19,12 @@ aside{width:258px;flex-shrink:0;overflow-y:auto;color:var(--ink);
 .brand h1{font-size:17px;letter-spacing:.5px;color:#0e7490}
 .brand h1 span{color:#0891b2}
 .brand p{font-size:11px;color:#6b93a3;margin-top:4px}
+.brand[role=link]{cursor:pointer;transition:background .15s}
+.brand[role=link]:hover{background:rgba(255,255,255,.72)}
+.brand[role=link]:hover h1{color:#0891b2}
+.brand[role=link]:focus-visible{outline:2px solid #22d3ee;outline-offset:-2px}
+.brand .homehint{font-size:10px;color:#a0bfcc;margin-top:6px;opacity:0;transition:opacity .15s}
+.brand[role=link]:hover .homehint{opacity:1}
 .group{margin-top:14px;padding:0 10px}
 .group-title{font-size:11px;font-weight:700;color:#0e7490;letter-spacing:1.2px;padding:0 8px 6px;display:flex;align-items:center;gap:6px}
 .group-title::after{content:"";flex:1;height:1px;background:#b3e2ef}
@@ -41,9 +47,10 @@ iframe{flex:1;border:none;width:100%}
 </head>
 <body data-page-node-id="QnhlvyDPoEjkmRkvSmmFX3">
 <aside data-page-node-id="IvQYh8oA9iFIrHgES80IMz">
-  <div class="brand" data-page-node-id="HT4jDSEaF1PNRxOPzn9Q46">
+  <div class="brand" data-page-node-id="HT4jDSEaF1PNRxOPzn9Q46" role="link" tabindex="0" title="点击返回工具台首页" onclick="returnHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();returnHome()}">
     <h1 data-page-node-id="z6ufDI84BP8Ei6vjbILmTX">🏝 SQ-AMAZON<span data-page-node-id="3JwMfWpkkFdyH7OJN3NyAl">-TOOLBOX</span></h1>
     <p data-page-node-id="AnW3t3XnA4gJ0HCGWD3ZtE">7 大板块 · 按运营工作流组织</p>
+    <div class="homehint">点击返回首页</div>
   </div>
   <div id="nav" data-page-node-id="YVHUOkSyBvPrSiLulyz3BL"></div>
   <!-- VERSIONS_LINK_START 发布冻结版时，这一段会被脚本删掉 -->
@@ -98,6 +105,12 @@ function openTool(fid,name){
   document.getElementById('back').style.display='';
 }
 function backHub(){go(curHub,curHubName);return false;}
+function returnHome(){
+  const first=STRUCT[0];
+  go(first.id,first.name);
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  return false;
+}
 function setHead(t,crumb){
   document.getElementById('head').textContent=t;
   document.getElementById('crumb').textContent=crumb?('— '+crumb):'';
