@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>类目流量透视 · SQ-AMAZON-TOOLBOX</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309;--soft:#f8fdfe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:24px;display:flex;justify-content:center;padding-top:34px}
+.wrap{width:960px}
+h1{font-size:21px;margin-bottom:4px}.desc{color:var(--sub);font-size:12.5px;margin-bottom:14px;line-height:1.7}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:13px;line-height:1.7;resize:vertical;min-height:84px;font-family:Consolas,"Courier New",monospace}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:5px 11px;font-size:12px;font-family:inherit}
+button:hover{background:#f2fbfd;border-color:#22d3ee}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+.meta{font-size:12px;color:var(--sub)}
+.flag{font-size:12.5px;line-height:1.65;padding:8px 10px;border-radius:6px;margin-top:7px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}.flag.warn{background:#fef3c7;color:var(--warnb)}.flag.bad{background:#fdecea;color:var(--bad)}.flag.info{background:#eef2ff;color:#4338ca}
+.tip{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:7px}.tip b{color:#374151}
+.trow{display:grid;grid-template-columns:170px 1fr 60px 60px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.trow:last-child{border:0}
+.trow .lab{color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .num{text-align:right}
+.trow .chg{text-align:right;font-weight:700}
+.chg.up{color:var(--bad)}.chg.dn{color:var(--ok)}.chg.fl{color:var(--sub);font-weight:400}
+.tbar{height:9px;background:#eef2f5;border-radius:4px;overflow:hidden}
+.tbar>i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.kpi>div{background:var(--soft);border:1px solid #d3ecf4;border-radius:8px;padding:10px 12px}
+.kpi b{font-size:20px;color:var(--deep);display:block;line-height:1.2}
+.kpi span{font-size:11px;color:var(--sub)}
+#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}
+#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}
+#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}
+#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}
+</style>
+</head>
+<body>
+<div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / 类目流量透视</span><a href="../guides/guide-category-xray.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#market">打开完整工具台 ↗</a></div>
+<div class="wrap">
+  <h1>类目流量透视</h1>
+  <p class="desc">一个页面四个视角，把 SQP 周报、ABA、商探的数据贴进来各自算：<b>① 类目转化率分层 ② 流量入口构成 ③ 大词同比 ④ 流量特征</b>。哪个视角有数据就算哪个，四块独立。</p>
+
+  <div class="card">
+    <h2>① 类目转化率分层 <span class="hint">SQP：词,曝光,点击,加购,成交</span></h2>
+    <label class="sm">数据（每行：搜索词,曝光量,点击量,加购量,成交量。来源 SQP 品类报告）</label>
+    <textarea id="cvrData">under sink organizer,380000,24000,3100,1680
+sink organizer,290000,19000,2500,1320
+bathroom sink organizer,120000,8200,1100,590
+kitchen sink organizer,98000,6900,940,520
+under sink storage,76000,4700,560,290
+sink caddy,54000,3900,520,340
+sliding sink organizer,32000,2400,360,260
+pull out under sink shelf,21000,1700,280,210</textarea>
+    <div class="bar"><button class="primary" onclick="runCvr()">算转化分层</button><span class="meta" id="cvrMeta"></span></div>
+    <div id="cvrOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>② 流量入口构成 <span class="hint">业务报告：入口,占比%</span></h2>
+    <label class="sm">数据（每行：入口名称,占比%。来源业务报告的流量来源或自己的广告拆解）</label>
+    <textarea id="srcData">自然搜索,38
+广告-搜索词投放,26
+广告-商品投放,14
+关联流量,9
+秒杀/促销,5
+类目节点,4
+外部/社媒,4</textarea>
+    <div class="bar"><button class="primary" onclick="runSrc()">算入口构成</button><span class="meta" id="srcMeta"></span></div>
+    <div id="srcOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 大词同比 <span class="hint">词,去年量,今年量</span></h2>
+    <label class="sm">数据（每行：搜索词,去年搜索量,今年搜索量。ABA 或商探两个周期的对比）</label>
+    <textarea id="yoyData">under sink organizer,82000,91000
+sink organizer,76000,69000
+bathroom sink organizer,21000,26000
+kitchen sink organizer,19000,17500
+under sink storage,15000,16800
+sink caddy,11000,9800
+sliding sink organizer,6200,7400
+bamboo sink caddy,900,1400</textarea>
+    <div class="bar"><button class="primary" onclick="runYoy()">算同比</button><span class="meta" id="yoyMeta"></span></div>
+    <div id="yoyOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>④ 流量特征 <span class="hint">词,搜索量 —— 集中度与长尾结构</span></h2>
+    <label class="sm">数据（每行：搜索词,搜索量。同一周期的一批词）</label>
+    <textarea id="featData">under sink organizer,91000
+sink organizer,69000
+bathroom sink organizer,26000
+kitchen sink organizer,17500
+under sink storage,16800
+sink caddy,9800
+sliding sink organizer,7400
+2 tier sink organizer,6100
+pull out under sink shelf,4400
+under sink organizer for pipes,2600
+stainless sink organizer,1900
+small under sink organizer,1500
+under sink drawer,1300
+sink organizer for rv,950
+plastic under sink storage,780
+wide under sink shelf,640
+bamboo sink caddy,1400
+under sink organizer for bathroom pipes,380</textarea>
+    <div class="bar"><button class="primary" onclick="runFeat()">算特征</button><span class="meta" id="featMeta"></span></div>
+    <div id="featOut"></div>
+  </div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+const flag=(c,t)=>'<div class="flag '+c+'">'+t+'</div>';
+const rows=(txt,n)=>txt.split('\n').map(l=>l.split(/[,，\t]/).map(x=>x.trim())).filter(a=>a.length>=n&&a.every(x=>!isNaN(parseFloat(x))||isNaN(0)==false)&&a.slice(1).every(x=>!isNaN(parseFloat(x))));
+
+/* ① 转化分层 */
+function runCvr(){
+  const data=rows($('cvrData').value,5).map(a=>({w:a[0],imp:+a[1],clk:+a[2],cart:+a[3],ord:+a[4]})).filter(d=>d.imp>0);
+  if(!data.length){ $('cvrOut').innerHTML=flag('warn','没读到有效行（要 5 列：词,曝光,点击,加购,成交）'); return; }
+  const all=data.reduce((a,d)=>({imp:a.imp+d.imp,clk:a.clk+d.clk,cart:a.cart+d.cart,ord:a.ord+d.ord}),{imp:0,clk:0,cart:0,ord:0});
+  const catCvr=(all.ord/all.imp*100);
+  $('cvrMeta').textContent=data.length+' 个词，类目整体 CVR（成交/曝光） '+catCvr.toFixed(2)+'%';
+  const sorted=[...data].sort((a,b)=>(b.ord/b.imp)-(a.ord/a.imp));
+  const max=Math.max(...data.map(d=>d.ord/d.imp));
+  $('cvrOut').innerHTML=
+    '<div class="kpi"><div><b>'+catCvr.toFixed(2)+'%</b><span>类目 CVR（成交÷曝光）</span></div>'+
+    '<div><b>'+((all.ord/all.clk)*100).toFixed(1)+'%</b><span>点击转化（成交÷点击）</span></div>'+
+    '<div><b>'+((all.cart/all.clk)*100).toFixed(1)+'%</b><span>加购率（加购÷点击）</span></div>'+
+    '<div><b>'+sorted[0].w.slice(0,16)+'</b><span>转化最高的词 '+(sorted[0].ord/sorted[0].imp*100).toFixed(2)+'%</span></div></div>'+
+    sorted.map(d=>'<div class="trow"><div class="lab">'+d.w+'</div><div class="tbar"><i style="width:'+(d.ord/d.imp/max*100).toFixed(0)+'%"></i></div><div class="num">'+(d.ord/d.imp*100).toFixed(2)+'%</div><div class="chg '+(d.ord/d.imp>catCvr/100?'up':'dn')+'">'+(d.ord/d.imp>catCVRRate(catCvr)?'高':'低')+'</div></div>').join('')+
+    flag('info','口径提醒：词级 CVR = 该词成交量÷曝光量。SQP 的量级只有同词内可比，跨词只比<b>相对高低</b>。点击转化和类目 CVR 差距大的词，说明搜索结果页竞争激烈或你的页面弱。');
+  function catCVRRate(x){ return x/100; }
+}
+
+/* ② 入口构成 */
+function runSrc(){
+  const data=rows($('srcData').value,2).map(a=>({w:a[0],v:+a[1]})).filter(d=>d.v>0);
+  const sum=data.reduce((a,d)=>a+d.v,0);
+  if(!data.length||sum<=0){ $('srcOut').innerHTML=flag('warn','没读到有效行（入口,占比）'); return; }
+  $('srcMeta').textContent=data.length+' 个入口';
+  const ad=data.filter(d=>/广告|ad|cpc|sp|sb|sd/i.test(d.w)).reduce((a,d)=>a+d.v,0);
+  const organic=data.filter(d=>/自然|organic/i.test(d.w)).reduce((a,d)=>a+d.v,0);
+  const max=Math.max(...data.map(d=>d.v));
+  $('srcOut').innerHTML=data.sort((a,b)=>b.v-a.v).map(d=>'<div class="trow"><div class="lab">'+d.w+'</div><div class="tbar"><i style="width:'+(d.v/max*100).toFixed(0)+'%"></i></div><div class="num">'+(d.v/sum*100).toFixed(1)+'%</div><div class="chg fl">'+d.v+'%</div></div>').join('')+
+    (ad>0?flag((organic>=45?'ok':'warn'),'广告合计 '+ad.toFixed(0)+'%，自然 '+organic.toFixed(0)+'%。'+(organic>=45?'自然过 45%，结构健康。':'自然单占比不足——投放退出风险高，TACOS 压不下去。')):'')+
+    flag('info','健康的成长路径是：广告把词排名买上去 → 自然位接住 → 广告占比逐月降。如果广告占比连续 2 个月不降，要么词阵地没站稳，要么价格没竞争力。');
+}
+
+/* ③ 大词同比 */
+function runYoy(){
+  const data=rows($('yoyData').value,3).map(a=>({w:a[0],a:+a[1],b:+a[2]})).filter(d=>d.a>0);
+  if(!data.length){ $('yoyOut').innerHTML=flag('warn','没读到有效行（词,去年量,今年量）'); return; }
+  const sumA=data.reduce((a,d)=>a+d.a,0), sumB=data.reduce((a,d)=>a+d.b,0);
+  const overall=(sumB-sumA)/sumA;
+  $('yoyMeta').textContent=data.length+' 个词，整体同比 '+(overall>0?'+':'')+(overall*100).toFixed(1)+'%';
+  const max=Math.max(...data.map(d=>Math.abs((d.b-d.a)/d.a)));
+  $('yoyOut').innerHTML=data.sort((a,b)=>(b.b-b.a)/b.a-(a.b-a.a)/a.a).map(d=>{
+    const g=(d.b-d.a)/d.a;
+    return '<div class="trow"><div class="lab">'+d.w+'</div><div class="tbar"><i style="width:'+(Math.abs(g)/max*100).toFixed(0)+'%;background:'+(g>0?'linear-gradient(90deg,#f5c6c0,#c0392b)':'linear-gradient(90deg,#b7e2cf,#0a8f5b)')+'"></i></div><div class="num">'+d.a.toLocaleString()+'→'+d.b.toLocaleString()+'</div><div class="chg '+(g>0.03?'up':(g<-0.03?'dn':'fl'))+'">'+(g>0?'+':'')+(g*100).toFixed(1)+'%</div></div>';
+  }).join('')+
+  flag(overall>0.05?'ok':(overall<-0.05?'bad':'info'),'整体 '+(overall>0?'+':'')+(overall*100).toFixed(1)+'%。'+(overall>0.05?'大盘在扩，跟着涨的是机会词：'+data.filter(d=>(d.b-d.a)/d.a>0.1).slice(0,3).map(d=>d.w).join('、')+'。':(overall<-0.05?'大盘在缩，进场前想清楚退场节奏。':'大盘稳定，拼的是份额。')))+
+  flag('info','个别词逆大盘的更值钱：涨得比大盘快的词往往是被新品/新场景带起来的，优先做进标题和广告。');
+}
+
+/* ④ 流量特征 */
+function runFeat(){
+  const data=rows($('featData').value,2).map(a=>({w:a[0],v:+a[1]})).filter(d=>d.v>0);
+  if(data.length<5){ $('featOut').innerHTML=flag('warn','少于 5 个词算不出结构'); return; }
+  const total=data.reduce((a,d)=>a+d.v,0);
+  const sorted=[...data].sort((a,b)=>b.v-a.v);
+  const top5=sorted.slice(0,5).reduce((a,d)=>a+d.v,0)/total;
+  const avg=total/data.length;
+  const longtail=data.filter(d=>d.v<avg*0.2).reduce((a,d)=>a+d.v,0)/total;
+  const hhi=sorted.slice(0,10).reduce((a,d)=>a+Math.pow(d.v/total*100,2),0);
+  $('featMeta').textContent=data.length+' 个词';
+  $('featOut').innerHTML='<div class="kpi"><div><b>'+(top5*100).toFixed(0)+'%</b><span>Top5 词集中度</span></div><div><b>'+Math.round(avg).toLocaleString()+'</b><span>词均搜索量</span></div><div><b>'+(longtail*100).toFixed(0)+'%</b><span>长尾占比（量&lt;均值20%）</span></div><div><b>'+hhi.toFixed(0)+'</b><span>Top10 HHI（&gt;1500=集中）</span></div></div>'+
+    flag(top5>0.6?'bad':(top5>0.4?'warn':'ok'),'Top5 词吃掉 '+(top5*100).toFixed(0)+'% 的量。'+(top5>0.6?'高度集中——大盘词被头部垄断时，新品从长尾切入（先用「需求洞察」找带修饰的低量词）。':(top5>0.4?'中等集中——大盘词能打，但要算 CAC。':'分散型类目——谁都拿不到垄断位，比拼执行。')))+
+    flag(longtail>0.3?'ok':'info','长尾（量不到均值 20% 的词）占 '+(longtail*100).toFixed(0)+'% 的量。'+(longtail>0.3?'长尾厚，适合新品爬坡：出单不依赖大盘词排名。':'长尾薄，起步就得碰大词——备好广告预算。'))+
+    flag('info','HHI 只看 Top10 的份额平方和，越大越集中。<b>ABA 点击份额只在同词内可比</b>，这里用的是搜索量口径，跨词可比。');
+}
+</script>
+</body>
+</html>
