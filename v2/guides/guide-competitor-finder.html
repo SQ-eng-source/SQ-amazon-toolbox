@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 竞品挖掘器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../index.html" title="返回工具台首页">← 返回工具台</a><a href="index.html" title="所有工具的使用说明">全部说明</a></div>
+<div class="wrap">
+<h1>AI 竞品挖掘器 · 使用说明</h1>
+<p><a href="../tools/competitor-finder.html">→ 直接打开工具</a></p>
+<blockquote>做竞品分析时最费劲的一步：<strong>一堆 ASIN，哪个才是真正跟我抢生意的？</strong></blockquote>
+<p>光比价格和关键词不够——两个产品价格差不多，但一个讲降噪、一个讲音质，抢的根本不是同一批买家。所以这个工具把<strong>你的标题、五点、描述、图片主题</strong>和竞品的放在一起比，按<strong>内容重合度</strong>判断像不像。</p>
+<hr>
+<h2>打分口径</h2>
+<ul><li>价格接近 <strong>20%</strong> + 体量位次 <strong>15%</strong> + 关键词重合 <strong>15%</strong> + 内容重合 <strong>50%</strong>（标题/五点/描述/图片内部按 20/20/10/15 加权，哪项没贴权重自动分摊给已贴的项）</li><li>自动分成<strong>直接竞品 / 间接竞品 / 威胁款 / 不相关</strong>四档</li><li>算法在本地跑，数据不外发；填的数据自动存在浏览器里，下次打开还在</li></ul>
+<hr>
+<h2>四步用起来</h2>
+<ol><li>打开工具台 → 板块 03 竞品分析 → <strong>AI 竞品挖掘器</strong>。</li><li>填「① 你的产品画像 + 你的 Listing 全文」：价格 / 评分 / 评论数 / BSR 照旧，再把<strong>你的标题、五点（一行一条）、图片主题（一行一个）、描述</strong>贴进去。图片主题不用精确描述，写清这张图在讲什么就行，比如 <code>场景-跑步佩戴</code>、<code>卖点-防水</code>、<code>规格-尺寸图</code>。</li><li>填「② 候选竞品」：先填基础数据（ASIN、价格、评分、评论数、BSR）点添加，然后点表格里那一行的 <strong>✎</strong>，把<strong>它的标题、五点、图片主题、描述</strong>贴进去——改完自动保存。嫌麻烦只填价格和关键词也行，工具会按关键词重合兜底计分，但没全文准。</li><li>表格实时出判定；去「③ 深度对比」下拉选一个竞品，看逐项拆解。</li></ol>
+<hr>
+<h2>结果怎么看</h2>
+<div class="tw"><table><thead><tr><th>总分</th><th>判定</th><th>怎么用</th></tr></thead><tbody><tr><td>≥ 75</td><td><strong>直接竞品</strong></td><td>深度拆解首选：主图、五点、差评、价格带</td></tr><tr><td>50–74</td><td>间接竞品</td><td>参考，不硬抄</td></tr><tr><td>≥ 60 且评论是你的 5 倍</td><td>⚠ <strong>威胁款</strong></td><td>评论体量碾压你，别正面抢词，绕开打长尾</td></tr><tr><td>&lt; 50</td><td>不相关</td><td>忽略</td></tr></tbody></table></div>
+<p>表格里的几个百分比列：</p>
+<ul><li><strong>标题 / 五点 / 描述 / 图片</strong>：你的词或图片主题里，它也占了多大比例。比如"五点 60%"= 你的卖点词它讲了一多半。</li><li><strong>内容合计</strong>：四项加权后的总重合度。显示"仅关键词"= 这个竞品没贴全文，走的是兜底计分，点 ✎ 补上更准。</li></ul>
+<h3>深度对比（③）里最值钱的三栏</h3>
+<ul><li><strong>它讲了、你没讲的卖点</strong>（黄色标签）：抄角度，别抄原句，改写后塞进你的五点。</li><li><strong>它有、你没有的图（补图清单）</strong>：比如它有"场景-通勤"你没有，这就是你下一张图拍什么。</li><li><strong>五点表里"角度不同"的行</strong>：你讲了它没讲的卖点 = 你的差异化弹药，主图和第一点优先放这些。</li></ul>
+<p>标题对比会把<strong>共同词高亮</strong>（你们都在打的词 = 正面战场），并列出"它讲了没进你标题的词"（补词机会）。</p>
+<hr>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>图片主题用自己的话写没关系</strong>，工具是模糊匹配：你写 <code>场景-跑步</code> 它写 <code>跑步场景图</code> 也能对上。但"卖点-快充"和"卖点-续航"算两个不同主题。</li><li><strong>分数是参考，不是判决</strong>。低于 50 但设计思路很像的，也值得看一眼。工具只算数字像不像，看不出产品逻辑。</li></ul>
+<hr>
+<h2>常见问题</h2>
+<p><strong>Q：为什么要填 BSR？</strong></p>
+<p>BSR 决定"市场位次"那 15 分。你跟它差 10 倍排名，说明你们不在同一个竞争层面。</p>
+<p><strong>Q：描述一定要填吗？</strong></p>
+<p>不强制。描述只占 10%，没贴的话权重自动分给标题五点图片。但 A+ 文案里经常藏着它真正主推的场景词，贴了更准。</p>
+<p><strong>Q：只有一两个竞品能用吗？</strong></p>
+<p>能，但结论很薄。建议至少 5–8 个候选，才能看出规律。</p>
+<hr>
+<p><strong>一句话</strong>：先分清"直接竞品"和"威胁款"，前者学结构，后者绕着打；没讲的卖点和没拍的图，都是你的增量。</p>
+</div>
+</body>
+</html>
