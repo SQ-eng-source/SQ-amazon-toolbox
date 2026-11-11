@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>上架后复盘 60/90 · SQ-AMAZON-TOOLBOX</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309;--soft:#f8fdfe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:24px;display:flex;justify-content:center;padding-top:34px}
+.wrap{width:960px}
+h1{font-size:21px;margin-bottom:4px}.desc{color:var(--sub);font-size:12.5px;margin-bottom:14px;line-height:1.7}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:5px 11px;font-size:12px;font-family:inherit}
+button:hover{background:#f2fbfd;border-color:#22d3ee}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:var(--deep)}
+label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+input[type=number]{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit}
+input[type=number]:focus{outline:none;border-color:var(--accent)}
+.meta{font-size:12px;color:var(--sub)}
+.flag{font-size:12.5px;line-height:1.65;padding:8px 10px;border-radius:6px;margin-top:7px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}.flag.warn{background:#fef3c7;color:var(--warnb)}.flag.bad{background:#fdecea;color:var(--bad)}.flag.info{background:#eef2ff;color:#4338ca}
+.tip{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:7px}.tip b{color:#374151}
+.scoreBox{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.scoreNum{font-size:34px;font-weight:800;line-height:1;color:var(--deep)}
+.scoreNum small{font-size:13px;font-weight:400;color:var(--sub)}
+.scoreWord{font-size:13px;color:var(--sub)}
+.srow{display:grid;grid-template-columns:104px 44px 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.srow:last-child{border:0}.srow .sc{font-weight:700;text-align:right}.srow .sc.full{color:var(--ok)}.srow .sc.mid{color:var(--warnb)}.srow .sc.low{color:var(--bad)}
+.srow .msg{color:#4b5563;line-height:1.55}.srow .msg em{font-style:normal;color:var(--sub);font-size:11.5px}
+.barwrap{height:5px;background:#eef2f5;border-radius:3px;overflow:hidden;margin-top:8px}
+.barfill{height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2);border-radius:3px;transition:width .25s}
+.verdict{border-radius:10px;padding:14px 16px;margin-top:10px;font-size:14px;line-height:1.8}
+.verdict.go{background:#e6f6ef;border:1px solid #b7e2cf;color:#085c3d}
+.verdict.watch{background:#fef3c7;border:1px solid #f1d488;color:#8a6d1f}
+.verdict.stop{background:#fdecea;border:1px solid #f5c6c0;color:#a32d2d}
+.verdict b{font-size:16px}
+#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}
+#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}
+#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}
+#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}
+</style>
+</head>
+<body>
+<div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 新品 SOP / 上架后复盘</span><a href="../guides/guide-sop-review.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#sop">打开完整工具台 ↗</a></div>
+<div class="wrap">
+  <h1>上架后复盘（60 / 90 天）</h1>
+  <p class="desc">填最近 30 天真实数据，按<b>流量 / 转化 / 利润 / 库存</b>四项打分，出「加投 / 观察 / 停投回炉 / 清货退出」处置建议。判定线来自孵化门禁模型：<b>D60 CTR≥0.3%、CVR≥8%；D90 净利≥10% 且自然单≥45%</b>。数据取自业务报告 + 广告报表，别拍脑袋。</p>
+
+  <div class="card">
+    <h2>① 基本盘 <span class="hint">最近 30 天 · 业务报告口径</span></h2>
+    <div class="grid4">
+      <div><label class="sm">上架至今天数</label><input id="days" type="number" value="62"></div>
+      <div><label class="sm">Sessions（30天）</label><input id="sessions" type="number" value="4200"></div>
+      <div><label class="sm">总销量（30天）</label><input id="units" type="number" value="336"></div>
+      <div><label class="sm">当前库存可售天数</label><input id="stockDays" type="number" value="55"></div>
+    </div>
+    <div class="grid4" style="margin-top:10px">
+      <div><label class="sm">广告花费（30天）$</label><input id="adCost" type="number" value="2600"></div>
+      <div><label class="sm">广告销售额（30天）$</label><input id="adRev" type="number" value="5200"></div>
+      <div><label class="sm">净利（30天）$</label><input id="netProfit" type="number" value="980"></div>
+      <div><label class="sm">总销售额（30天）$</label><input id="totalRev" type="number" value="9800"></div>
+    </div>
+    <div class="grid4" style="margin-top:10px">
+      <div><label class="sm">CTR %（业务报告点击率）</label><input id="ctr" type="number" value="0.38" step="0.01"></div>
+      <div><label class="sm">CVR %（Unit Session %）</label><input id="cvr" type="number" value="8" step="0.1"></div>
+      <div><label class="sm">自然单占比 %（自然销量/总销量）</label><input id="organic" type="number" value="48"></div>
+      <div><label class="sm">上期 Sessions（上个30天）</label><input id="prevSessions" type="number" value="3800"></div>
+    </div>
+    <div class="bar">
+      <button class="primary" onclick="run()">复盘打分并给处置建议</button>
+      <span class="meta">填不出的先空着，分数会标「数据缺失」</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 四项打分 <span class="hint">各 25 分</span></h2>
+    <div class="scoreBox">
+      <div class="scoreNum" id="scoreNum">--<small>/100</small></div>
+      <div class="scoreWord" id="scoreWord">填数后自动计算</div>
+    </div>
+    <div class="barwrap"><div class="barfill" id="barfill" style="width:0%"></div></div>
+    <div id="scoreRows" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 处置建议 <span class="hint">按上架天数套 60 / 90 天门禁</span></h2>
+    <div id="verdict"></div>
+    <div id="notes"></div>
+    <p class="tip">门禁是<b>止损线不是目标线</b>：过了线只说明不用止损，不代表该加倍投。加投的判断另看利润结构和流量缝隙（用「选品机会评分」重跑 A/B 模块）。</p>
+  </div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+const num=(id,def)=>{const v=parseFloat($(id).value);return isNaN(v)?null:v;};
+const flag=(c,t)=>'<div class="flag '+c+'">'+t+'</div>';
+
+function run(){
+  const days=num('days')||0, ses=num('sessions'), units=num('units'), stock=num('stockDays'),
+        adC=num('adCost'), adR=num('adRev'), npf=num('netProfit'), tr=num('totalRev'),
+        ctr=num('ctr'), cvr=num('cvr'), org=num('organic'), prevSes=num('prevSessions');
+  const rows=[];
+  const kw=s=>(s==null?'（缺失）':s);
+
+  /* 流量 25 */
+  let f=0, fMsg=[];
+  if(ses!=null&&prevSes!=null){
+    const g=(ses-prevSes)/prevSes;
+    if(g>0.15){f+=12;fMsg.push('流量环比 +'+(g*100).toFixed(0)+'%，在涨');}
+    else if(g>-0.1){f+=8;fMsg.push('流量环比 '+(g*100).toFixed(0)+'%，走平');}
+    else {f+=3;fMsg.push('流量环比 '+(g*100).toFixed(0)+'%，在掉');}
+  } else fMsg.push('Sessions 缺失，流量项按一半估');
+  if(ctr!=null){
+    if(days<=60&&ctr>=0.4){f+=8;fMsg.push('CTR '+ctr+'% 超新品线 0.4%');}
+    else if(ctr>=0.3){f+=6;fMsg.push('CTR '+ctr+'% 过 0.3% 底线');}
+    else {fMsg.push('CTR '+ctr+'% 低于 0.3% 底线——图和价格有问题');}
+  } else f+=4;
+  if(units!=null&&ses!=null&&ses>0){fMsg.push('日均 '+(units/30).toFixed(1)+' 单 / '+(ses/30).toFixed(0)+' session');}
+  rows.push(['流量',Math.min(25,f),25,fMsg.join('；')]);
+
+  /* 转化 25 */
+  let c=0, cMsg=[];
+  if(cvr!=null){
+    if(cvr>=10){c+=14;cMsg.push('CVR '+cvr+'%，健康');}
+    else if(cvr>=8){c+=10;cMsg.push('CVR '+cvr+'%，过线但一般');}
+    else {cMsg.push('CVR '+cvr+'%，低于 8% 底线——页面接不住流量');}
+  } else c+=6;
+  if(org!=null){
+    if(org>=45){c+=8;cMsg.push('自然单 '+org+'%，过 45% 线');}
+    else if(org>=30){c+=5;cMsg.push('自然单 '+org+'%，勉强');}
+    else {cMsg.push('自然单 '+org+'%，严重依赖广告');}
+  } else c+=4;
+  rows.push(['转化',Math.min(25,c),25,cMsg.join('；')||'数据缺失']);
+
+  /* 利润 25 */
+  let p=0, pMsg=[];
+  if(npf!=null&&tr!=null&&tr>0){
+    const nm=npf/tr;
+    if(nm>=0.15){p+=16;pMsg.push('净利率 '+(nm*100).toFixed(1)+'%，达 15% 加投线');}
+    else if(nm>=0.10){p+=11;pMsg.push('净利率 '+(nm*100).toFixed(1)+'%，过 10% 线');}
+    else {pMsg.push('净利率 '+(nm*100).toFixed(1)+'%，低于 10% 止损线');}
+  } else p+=6;
+  if(adC!=null&&tr!=null&&tr>0){
+    const tacos=adC/tr;
+    if(tacos<=0.12){p+=9;pMsg.push('TACOS '+(tacos*100).toFixed(1)+'%，可控');}
+    else if(tacos<=0.2){p+=5;pMsg.push('TACOS '+(tacos*100).toFixed(1)+'%，偏高');}
+    else {pMsg.push('TACOS '+(tacos*100).toFixed(1)+'%，超平衡点——砍高 ACOS 投放，留核心词');}
+  } else p+=4;
+  if(adR!=null&&adC!=null&&adC>0) pMsg.push('广告 ROAS '+(adR/adC).toFixed(1));
+  rows.push(['利润',Math.min(25,p),25,pMsg.join('；')||'数据缺失']);
+
+  /* 库存健康 25 */
+  let s=0, sMsg=[];
+  if(stock!=null){
+    const daily=units!=null?units/30:null;
+    if(stock>=60){s+=16;sMsg.push('可售 '+stock+' 天，够一轮补货周期');}
+    else if(stock>=30){s+=10;sMsg.push('可售 '+stock+' 天，30 天内要补货');}
+    else {sMsg.push('可售只剩 '+stock+' 天，先补货再谈其他');}
+    if(daily) sMsg.push('日均出 '+(daily).toFixed(1)+' 单');
+    if(daily&&stock<21) sMsg.push('<b>断货风险：按这个速度 '+(stock).toFixed(0)+' 天后售罄</b>');
+  } else s+=8;
+  rows.push(['库存健康',Math.min(25,s),25,sMsg.join('；')||'数据缺失']);
+
+  const total=rows.reduce((a,b)=>a+b[1],0);
+  $('scoreNum').innerHTML=total+'<small>/100</small>';
+  $('barfill').style.width=total+'%';
+  $('scoreWord').textContent=total>=80?'四项全过，具备加投条件':(total>=60?'基本盘成立，有明确的改进点':(total>=40?'问题不少，按建议逐条修':'止损区，先看处置建议再说'));
+  $('scoreRows').innerHTML=rows.map(([nm,sc,mx,msg])=>{
+    const cls=sc/mx>=0.8?'full':(sc/mx>=0.5?'mid':'low');
+    return '<div class="srow"><div>'+nm+'<em style="display:block;color:#9ca3af;font-size:11px">满分 '+mx+'</em></div><div class="sc '+cls+'">'+sc+'</div><div class="msg">'+msg+'</div></div>';
+  }).join('');
+
+  /* 处置：按天数套门禁 */
+  const v=[], n=[];
+  const d60fail=(ctr!=null&&ctr<0.3)||(cvr!=null&&cvr<8);
+  const d90fail=(npf!=null&&tr!=null&&npf/tr<0.10)&&(org!=null&&org<45);
+  let cls,head,body;
+  if(days<=60&&d60fail){
+    cls='stop'; head='停投回炉（D60 门禁未过）';
+    body='CTR '+kw(ctr)+'%、CVR '+kw(cvr)+'% 至少一项低于 D60 线（0.3% / 8%）。<b>不加预算</b>：先改主图、价格、标题，两周后复测。流量和预算救不了接不住的页面。';
+  } else if(days>60&&d90fail){
+    cls='stop'; head='清库存退出（D90 止损线）';
+    body='净利率低于 10% 且自然单占比不足 45%，且已过 60 天窗口——模型判定<b>清库存退出</b>，把资金挪给过线的产品。降价清货 + 秒杀，别再补货。';
+  } else if(total>=80){
+    cls='go'; head='加投';
+    body='四项都过线。可以按 90 天计划加预算：先加给<b>已经出单的核心词</b>，一次加 20～30%，观察一周 CVR 不掉再加下一档。备货补到 60 天覆盖。';
+    n.push(flag('info','「加投」不代表无限投：TACOS 一旦超过平衡点，先砍高 ACOS 的投放再谈加。'));
+  } else if(total>=60){
+    cls='watch'; head='观察（有明确的短板）';
+    body='基本盘成立但有短板。先修分数最低的那一项，两周后重新复盘。别在这时候加预算——预算只会放大现有的问题。';
+  } else {
+    cls='stop'; head='止损区';
+    body='总分 '+total+'。先看打分表里标红的项，多数情况是 CTR 或 CVR 掉线——那是页面问题，不是流量问题。修完再跑一次。';
+  }
+  if(ctr!=null&&ctr<0.3) n.push(flag('warn','CTR '+ctr+'%：主图点击力不足。三招——换主图角度/加尺寸数字进图/降 5% 价格测试两周。'));
+  if(cvr!=null&&cvr<8) n.push(flag('warn','CVR '+cvr+'%：页面转化不足。查五点是否答了差评里最常被骂的问题，价格是否高于竞品中位数。'));
+  if(org!=null&&org<45&&days>60) n.push(flag('info','自然单占比 '+org+'%：广告依赖症。看「选品机会评分」的 B 模块（流量缝隙）——自然单上不去，多半是词阵地没站稳。'));
+  if(stock!=null&&stock<21) n.push(flag('bad','库存 '+stock+' 天：先保货。断货重启等于把新品期清零重来。'));
+  $('verdict').innerHTML='<div class="verdict '+cls+'"><b>'+head+'</b><br>'+body+'</div>';
+  $('notes').innerHTML=n.join('');
+}
+</script>
+</body>
+</html>
