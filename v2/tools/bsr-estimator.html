@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>BSR 销量估算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}.big{font-size:34px;font-weight:700;margin:6px 0}.row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}.row:last-child{border:none}.row b{font-size:14px}.verdict{margin-top:14px;padding:12px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;line-height:1.6}.verdict.ok{background:#e6f6ef;color:var(--ok)}.verdict.bad{background:#fdecea;color:var(--bad)}.verdict.mid{background:#e0f2fe;color:var(--accent)}p.tip{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>BSR 销量估算器</h1>
+  <p class="desc">输入竞品的类目排名（BSR），快速估算它的月销量和月销售额——选品和定价前先摸对手的量。不同类目系数差异大，结果仅供区间参考。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 输入</h2>
+      <label>大类目（选最接近的流量级别）</label>
+      <select id="cat">
+        <option value="home">家居厨房（大流量类目）</option>
+        <option value="sports" selected>运动户外（中流量）</option>
+        <option value="pet">宠物用品（中流量）</option>
+        <option value="toys">玩具（季节波动大）</option>
+        <option value="tool">工具/工业（小流量）</option>
+      </select>
+      <label>竞品 BSR 排名</label><input type="number" id="bsr" value="2500" step="100">
+      <label>竞品售价（USD）</label><input type="number" id="price" value="25.99" step="0.01">
+      <label>竞品评论数（估生命周期参考）</label><input type="number" id="rev" value="1800" step="50">
+    </div>
+    <div class="card">
+      <h2>② 估算结果</h2>
+      <label>预估日销量</label>
+      <div class="big" id="daily" style="color:var(--accent)">--</div>
+      <div class="row"><span>预估月销量</span><b id="monthly">--</b></div>
+      <div class="row"><span>预估月销售额</span><b id="gmv">--</b></div>
+      <div class="row"><span>评论系数（评论÷月销，健康 15–40）</span><b id="rr">--</b></div>
+      <div class="row"><span>上架时间粗估（按 5% 留评率）</span><b id="age">--</b></div>
+      <div class="verdict mid" id="v">--</div>
+      <p class="tip">BSR 与销量是幂律关系（排名翻倍，销量约砍半再打折），系数按类目校准。建议用 Helium10/卖家精灵插件交叉验证后再下重注。</p>
+    </div>
+  </div>
+</div>
+<script>
+// 近似幂律系数：日销 = K / BSR^a，按类目经验值标定
+const CATS={home:{K:180000,a:0.88},sports:{K:90000,a:0.90},pet:{K:100000,a:0.90},toys:{K:120000,a:0.92},tool:{K:45000,a:0.90}};
+function $(i){return document.getElementById(i)}
+function calc(){
+  const c=CATS[$('cat').value], bsr=Math.max(1,+$('bsr').value||1),
+        price=+$('price').value||0, rev=+$('rev').value||0;
+  const daily=Math.max(1,Math.round(c.K/Math.pow(bsr,c.a)));
+  const monthly=daily*30;
+  $('daily').textContent=daily.toLocaleString()+' 件/天';
+  $('monthly').textContent=monthly.toLocaleString()+' 件';
+  $('gmv').textContent='$'+(monthly*price).toLocaleString();
+  const rr=monthly>0?rev/monthly:0;
+  $('rr').textContent=rr.toFixed(1);
+  const age=rev>0?Math.round(rev/(monthly*0.05)/30):0;
+  $('age').textContent=age>0?('约 '+age+' 个月'):'--';
+  const v=$('v');
+  if(rr<10)v.className='verdict ok',v.textContent='评论系数 '+rr.toFixed(1)+'：新上位款或刷单撤评后的款，排名还热，值得盯';
+  else if(rr<45)v.className='verdict mid',v.textContent='评论系数 '+rr.toFixed(1)+'（正常成熟款）。这个量级'+(monthly>1500?'竞争激烈，进场要备足弹药':'属于可切入的腰部市场')+'';
+  else v.className='verdict bad',v.textContent='评论系数 '+rr.toFixed(1)+' 偏高：老品吃存量，或近期销量在下滑，进场需谨慎';
+}
+document.querySelectorAll('input,select').forEach(i=>i.addEventListener('input',calc));
+$('cat').addEventListener('change',calc);calc();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / BSR 销量估算器</span><a href="../guides/guide-bsr-estimator.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#market">打开完整工具台 ↗</a></div>
+</body>
+</html>
