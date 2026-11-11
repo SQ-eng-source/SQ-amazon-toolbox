@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>需求洞察（搜索词聚类）· 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../index.html" title="返回工具台首页">← 返回工具台</a><a href="index.html" title="所有工具的使用说明">全部说明</a></div>
+<div class="wrap">
+<h1>需求洞察（搜索词聚类）· 使用说明</h1>
+<p><a href="../tools/demand-insight.html">→ 直接打开工具</a></p>
+<blockquote>拿到一堆搜索词，别急着塞进标题。先回答一个问题：<strong>用户到底在找什么？</strong> 这个工具把词按六个维度聚类，告诉你哪个维度的需求最重、哪里还有没人占的空位。</blockquote>
+<hr>
+<h2>这个工具解决什么问题</h2>
+<p>写 Listing 最常见的错：把自己觉得厉害的卖点当主打，但买家搜的词里根本没人提这个维度。</p>
+<p>比如一批"dog bowl"的搜索词里，"slow feeder""raised""stainless""for large dogs"各占一块——功能、规格、材质、人群都真实存在，但权重完全不同。<strong>主标题和五点第一句该打哪个维度，词表说了算，不是你说了算。</strong></p>
+<p>工具做的事：</p>
+<ol><li>按品类核心词把词<strong>分组</strong>。</li><li>把修饰词归到<strong>六个维度</strong>：场景 / 人群 / 功能 / 材质 / 规格 / 价值。</li><li>算每个维度的<strong>需求构成占比</strong>。</li><li>找<strong>空位</strong>：某个维度有真实搜索量，但主流竞品都没覆盖的词。</li></ol>
+<hr>
+<h2>怎么用</h2>
+<ol><li>打开工具台 → 板块 02 市场洞察 → <strong>需求洞察</strong>。</li><li>把搜索词和量一起贴进数据框（一行一词一带量；量可以是搜索量、SQP 成交量或词频，<strong>口径一致就行</strong>）。来源：ABA 词表、商探关键词导出、SQP 搜索词报告都行。</li><li>出结果：分组 → 六维度构成 → 空位洞察。</li></ol>
+<hr>
+<h2>结果怎么看</h2>
+<ul><li><strong>需求最重的维度 = 你的主打卖点</strong>：标题核心词后面第一个修饰词、五点第一句、主图场景，都优先放它。</li><li><strong>第二、第三维度</strong>：塞进五点和 Search Terms，别挤标题。</li><li><strong>空位洞察里的词</strong>：有量没人占——这就是你的差异位。可能是没人做的场景，也可能是大家忽略的人群。先确认不是坑（比如是停售品类的残留词）再押。</li></ul>
+<hr>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>词量至少几十个</strong>才有聚类意义，十来个词看构成纯属抽样噪音。</li><li><strong>同义词先合并</strong>：<code>dog bowl</code> 和 <code>dog bowls</code> 在你贴的表里是一回事就手动合成一行，量相加，占比才准。</li></ul>
+<hr>
+<p><strong>一句话</strong>：需求最重的维度是主打卖点，空位的维度是差异位——标题五点都从这张构成表出发。</p>
+</div>
+</body>
+</html>
