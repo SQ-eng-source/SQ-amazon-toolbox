@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQP 类目平均转化率计算器（导入版）</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --border:#e2e5ea; --text:#1f2329; --muted:#6b7280;
+    --accent:#2563eb; --accent-soft:#eff6ff; --ok:#16a34a; --danger:#dc2626;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"PingFang SC","Microsoft YaHei",-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:24px;}
+  .wrap{max-width:1080px; margin:0 auto;}
+  h1{font-size:22px; margin-bottom:4px;}
+  .sub{color:var(--muted); font-size:13px; margin-bottom:20px;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;}
+  .card h2{font-size:16px; margin-bottom:10px;}
+  label{display:block; font-size:13px; color:var(--muted); margin-bottom:4px;}
+  input,select{width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; background:#fff;}
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .field{flex:1; min-width:150px;}
+  button{padding:9px 18px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:14px; cursor:pointer;}
+  button.ghost{background:#fff; color:var(--accent); border:1px solid var(--accent);}
+  button:hover{opacity:.9;}
+  .metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:10px; margin-top:14px;}
+  .metric{background:var(--accent-soft); border-radius:10px; padding:12px;}
+  .metric .k{font-size:12px; color:var(--muted);}
+  .metric .v{font-size:20px; font-weight:700; margin-top:2px;}
+  .metric .note{font-size:11px; color:var(--muted);}
+  .good{color:var(--ok);} .bad{color:var(--danger);}
+  .hint{font-size:12px; color:var(--muted); margin-top:6px;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:12px;}
+  th,td{border-bottom:1px solid var(--border); padding:6px 8px; text-align:right; white-space:nowrap;}
+  th:first-child,td:first-child{text-align:left; white-space:normal;}
+  th{background:#f3f4f6; font-weight:600;}
+  .warnbox{background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:10px 12px; font-size:13px; margin-top:12px;}
+  .drop{border:2px dashed #b9c6e2; border-radius:12px; padding:28px; text-align:center; color:var(--muted); cursor:pointer; transition:.15s;}
+  .drop.on{border-color:var(--accent); background:var(--accent-soft);}
+  .drop b{color:var(--accent);}
+  details{margin-top:10px;}
+  summary{font-size:13px; color:var(--muted); cursor:pointer;}
+  textarea{width:100%; min-height:110px; margin-top:8px; border:1px solid var(--border); border-radius:8px; font-family:Consolas,monospace; font-size:12px; padding:8px; resize:vertical;}
+  .rec-in{border:none; border-bottom:1px dashed #cbd5e1; background:transparent; font-size:13px; border-radius:0; padding:2px 4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SQP 类目平均转化率计算器（导入版）</h1>
+  <div class="sub">数据源：品牌分析 → 搜索查询表现（Search Query Performance）导出表。直接导入文件计算，无需复制粘贴。口径：点击→购买，实测数据。</div>
+
+  <!-- 导入与计算 -->
+  <div class="card">
+    <h2>① 导入 SQP 导出表格（xlsx / csv / tsv）</h2>
+    <div class="drop" id="drop" onclick="document.getElementById('file').click()">
+      <b>点击选择文件</b> 或把 SQP 导出的表格文件拖到这里<br>
+      <span style="font-size:12px;">支持 .xlsx / .csv / .tsv，自动识别列，单文件即可</span>
+    </div>
+    <input type="file" id="file" accept=".xlsx,.csv,.tsv,.txt" style="display:none" onchange="onFile(this.files[0])">
+    <details>
+      <summary>没有文件？也可以粘贴（备用）</summary>
+      <textarea id="pasteBox" placeholder="直接粘贴 SQP 表格内容（含表头）"></textarea>
+      <div style="margin-top:8px;"><button onclick="usePaste()">用粘贴内容计算</button></div>
+    </details>
+
+    <div id="colmapRow" style="display:none; margin-top:14px;">
+      <h2 style="font-size:14px;">列映射（自动识别，可手动修正）</h2>
+      <div class="row">
+        <div class="field"><label>搜索词</label><select id="mQ"></select></div>
+        <div class="field"><label>曝光</label><select id="mImp"></select></div>
+        <div class="field"><label>点击</label><select id="mClk"></select></div>
+        <div class="field"><label>购买</label><select id="mOrd"></select></div>
+        <div class="field"><label>加购（可选）</label><select id="mCart"></select></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:14px; align-items:end;">
+      <div class="field" style="flex:2;">
+        <label>要剔除的品牌词（英文逗号分隔，可选。品牌词转化率远高于类目大词，会拉高均值）</label>
+        <input id="brandKw" placeholder="如 Anker, Jackery" oninput="recompute()">
+      </div>
+      <div class="field" style="max-width:180px;">
+        <label>数据时间窗（备注用）</label>
+        <input id="timeRange" placeholder="如 2026-W38~W41">
+      </div>
+      <div style="flex:none;"><button class="ghost" onclick="loadDemo()">载入示例</button></div>
+    </div>
+
+    <div id="out"></div>
+    <div id="tbl"></div>
+  </div>
+
+  <!-- 保存记录 -->
+  <div class="card">
+    <h2>我的转化率记录（与商探版共用，可改名、导出）</h2>
+    <div class="row" style="align-items:end;">
+      <div class="field" style="flex:2;">
+        <label>名称（保存后可随时改）</label>
+        <input id="saveName" placeholder="如：浮潜面镜-美国站-旺季同期4周">
+      </div>
+      <div class="field">
+        <label>转化率 %（留空 = 保存计算结果；填值 = 手动录入）</label>
+        <input type="number" step="0.01" id="saveVal" placeholder="如 8.74">
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button onclick="saveRecord()">保存</button>
+        <button class="ghost" onclick="exportRecords()">导出 CSV</button>
+      </div>
+    </div>
+    <div id="recOut"></div>
+  </div>
+
+  <!-- 计算逻辑 -->
+  <div class="card">
+    <h2>计算逻辑</h2>
+    <ol style="padding-left:20px; font-size:14px;">
+      <li><b>口径</b>：类目平均转化率 = Σ购买 ÷ Σ点击（点击→购买，SQP 实测数据）。曝光→购买是另一口径，分开输出，别混。</li>
+      <li><b>点击加权</b>：Σ购买 ÷ Σ点击 等价于按点击量加权。长尾词点击少，简单平均会被带偏，工具另算一个"简单平均"放出来对照。</li>
+      <li><b>剔品牌词</b>：填了品牌词后，"去品牌词转化率"单独输出——对标自己大词表现时看这个。</li>
+      <li><b>样本门槛</b>：总点击 &lt; 1000 时输出 95% 置信区间（Wald），看区间不看点值。</li>
+      <li><b>季节性</b>：SQP 是周度数据。季节品请导入"去年同期 N 周"和"今年同期 N 周"分别计算保存，用记录里的两个值对比——两个窗口必须处于季节曲线同一位置。</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+const KEY={
+  q:/搜索词|查询|search\s*term|query|关键词/i,
+  imp:/曝光|展示|impression/i,
+  clk:/点击|click/i,
+  cart:/加购|购物车|cart/i,
+  ord:/购买|订单|下单|purchas|order|unit/i
+};
+function num(v){
+  if(v==null) return NaN;
+  v=String(v).trim();
+  if(v===''||v==='#'||/^#+$/.test(v)||v==='-') return NaN;
+  v=v.replace(/[,%\s￥$]/g,'');
+  const n=parseFloat(v);
+  return isFinite(n)?n:NaN;
+}
+function fmt(n,d=2){ return isFinite(n)? n.toFixed(d):'—'; }
+function fmtInt(n){ return isFinite(n)? Math.round(n).toLocaleString('en-US'):'—'; }
+function ci(p,n){
+  if(!isFinite(p)||n<=0) return null;
+  const h=1.96*Math.sqrt(p*(1-p)/n);
+  return [Math.max(0,p-h)*100,(p+h)*100];
+}
+function metricCard(k,v,note,cls){
+  return `<div class="metric"><div class="k">${k}</div><div class="v ${cls||''}">${v}</div><div class="note">${note||''}</div></div>`;
+}
+function detect(hdr,rx){ return hdr.findIndex(h=>rx.test(h)); }
+
+// ---------- 表格解析 ----------
+function splitLine(line,delim){
+  const out=[]; let cur='',q=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else{
+      if(ch==='"') q=true;
+      else if(ch===delim){ out.push(cur); cur=''; }
+      else cur+=ch;
+    }
+  }
+  out.push(cur); return out;
+}
+function parseDelimited(text){
+  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(!lines.length) return null;
+  const delim=lines[0].includes('\t')?'\t':',';
+  return lines.map(l=>splitLine(l,delim));
+}
+function colIndex(ref){ // "AB12" -> 27
+  const m=String(ref).match(/^([A-Z]+)/i);
+  if(!m) return null;
+  let n=0; for(const ch of m[1].toUpperCase()) n=n*26+(ch.charCodeAt(0)-64);
+  return n-1;
+}
+async function parseXlsx(buf){
+  const dv=new DataView(buf), td=new TextDecoder();
+  let eocd=-1;
+  for(let i=buf.byteLength-22;i>=Math.max(0,buf.byteLength-66000);i--){
+    if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; }
+  }
+  if(eocd<0) throw new Error('不是有效的 xlsx 文件（zip 目录缺失）');
+  const cnt=dv.getUint16(eocd+10,true);
+  let off=dv.getUint32(eocd+16,true);
+  const files={};
+  for(let i=0;i<cnt;i++){
+    if(dv.getUint32(off,true)!==0x02014b50) break;
+    const method=dv.getUint16(off+10,true), csize=dv.getUint32(off+20,true);
+    const nl=dv.getUint16(off+28,true), el=dv.getUint16(off+30,true), cl=dv.getUint16(off+32,true);
+    const lho=dv.getUint32(off+42,true);
+    const name=td.decode(new Uint8Array(buf,off+46,nl));
+    const lnl=dv.getUint16(lho+26,true), lel=dv.getUint16(lho+28,true);
+    let data=new Uint8Array(buf,lho+30+lnl+lel,csize);
+    if(method===8){
+      const ds=new DecompressionStream('deflate-raw');
+      data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(ds)).arrayBuffer());
+    }
+    files[name]=data;
+    off+=46+nl+el+cl;
+  }
+  const ss=[];
+  if(files['xl/sharedStrings.xml']){
+    const doc=new DOMParser().parseFromString(td.decode(files['xl/sharedStrings.xml']),'text/xml');
+    doc.querySelectorAll('si').forEach(si=>{
+      let s=''; si.querySelectorAll('t').forEach(t=>s+=t.textContent); ss.push(s);
+    });
+  }
+  const sheetName=Object.keys(files).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/i.test(n)).sort()[0];
+  if(!sheetName) throw new Error('xlsx 里没找到工作表');
+  const doc=new DOMParser().parseFromString(td.decode(files[sheetName]),'text/xml');
+  const rows=[];
+  doc.querySelectorAll('row').forEach(row=>{
+    let arr=[];
+    row.querySelectorAll('c').forEach(c=>{
+      const idx=c.getAttribute('r')?colIndex(c.getAttribute('r')):arr.length;
+      while(arr.length<(idx==null?arr.length:idx)) arr.push('');
+      const t=c.getAttribute('t'), v=c.querySelector('v'), isEl=c.querySelector('is');
+      let val='';
+      if(t==='s'&&v) val=(ss[parseInt(v.textContent)]??'')+'';
+      else if(t==='inlineStr'&&isEl) isEl.querySelectorAll('t').forEach(x=>val+=x.textContent);
+      else if(v) val=v.textContent;
+      arr.push(val);
+    });
+    rows.push(arr);
+  });
+  const w=Math.max(...rows.map(r=>r.length),1);
+  return rows.map(r=>{ while(r.length<w) r.push(''); return r; });
+}
+
+// ---------- 数据进入 ----------
+let grid=null, headers=[], rows=[];
+function setGrid(data){
+  if(!data||data.length<2){ alert('没读到有效数据行'); return; }
+  const first=data[0].every(c=>isNaN(num(c)));
+  if(first){ headers=data[0].map(h=>String(h).trim()); rows=data.slice(1); }
+  else{ headers=data[0].map((_,i)=>'列'+(i+1)); rows=data; }
+  grid=data;
+  const dq=detect(headers,KEY.q), di=detect(headers,KEY.imp), dc=detect(headers,KEY.clk),
+        dca=detect(headers,KEY.cart), doo=detect(headers,KEY.ord);
+  document.getElementById('colmapRow').style.display='';
+  [['mQ',dq],['mImp',di],['mClk',dc],['mOrd',doo],['mCart',dca]].forEach(([id,det])=>{
+    const sel=document.getElementById(id);
+    sel.innerHTML='<option value="-1">不使用</option>'+headers.map((h,i)=>`<option value="${i}">${i}. ${String(h).slice(0,24)}</option>`).join('');
+    sel.value=det>=0?det:-1;
+  });
+  // fallback 默认值：无表头时 搜索词=0
+  recompute();
+}
+async function onFile(f){
+  if(!f) return;
+  try{
+    document.getElementById('drop').innerHTML='<b>解析中…</b> '+esc(f.name);
+    if(/\.xlsx$/i.test(f.name)){
+      const buf=await f.arrayBuffer();
+      setGrid(await parseXlsx(buf));
+    }else{
+      const text=await f.text();
+      setGrid(parseDelimited(text));
+    }
+    document.getElementById('drop').innerHTML='<b>✓ 已导入</b> '+esc(f.name)+'（点此可换文件）';
+  }catch(e){
+    alert('解析失败：'+e.message);
+    document.getElementById('drop').innerHTML='<b>点击选择文件</b> 或把 SQP 导出的表格文件拖到这里';
+  }
+}
+function usePaste(){
+  const t=document.getElementById('pasteBox').value.trim();
+  if(!t){ alert('先粘贴内容'); return; }
+  setGrid(parseDelimited(t));
+}
+// drag & drop
+const drop=document.getElementById('drop');
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('on');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('on');}));
+drop.addEventListener('drop',e=>{ const f=e.dataTransfer.files[0]; if(f) onFile(f); });
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+// ---------- 计算 ----------
+let lastResult=null;
+function getSel(id){ const i=parseInt(document.getElementById(id).value); return isNaN(i)?-1:i; }
+function recompute(){
+  if(!grid) return;
+  const iq=getSel('mQ'),iimp=getSel('mImp'),iclk=getSel('mClk'),iord=getSel('mOrd'),icart=getSel('mCart');
+  if(iclk<0||iord<0){
+    document.getElementById('out').innerHTML='<div class="warnbox">请在列映射里指定"点击"和"购买"列。</div>';
+    document.getElementById('tbl').innerHTML=''; return;
+  }
+  const brandStr=document.getElementById('brandKw').value.trim();
+  const brands=brandStr? brandStr.split(/[,，]/).map(s=>s.trim().toLowerCase()).filter(Boolean):[];
+  let tImp=0,tClk=0,tOrd=0,tCart=0,fClk=0,fOrd=0;
+  let sumSimple=0,cntSimple=0,sumSimpleF=0,cntSimpleF=0;
+  const list=[];
+  rows.forEach(r=>{
+    const q= iq>=0? String(r[iq]||'').trim():'';
+    const imp=iimp>=0?num(r[iimp]):NaN, clk=iclk>=0?num(r[iclk]):NaN,
+          ord=iord>=0?num(r[iord]):NaN, cart=icart>=0?num(r[icart]):NaN;
+    if(!isFinite(clk)||!isFinite(ord)||clk<=0) return;
+    tClk+=clk; tOrd+=ord;
+    if(isFinite(imp)) tImp+=imp;
+    if(isFinite(cart)) tCart+=cart;
+    if(ord>0){ sumSimple+=ord/clk; cntSimple++; }
+    const isBrand=brands.length&&q&&brands.some(b=>q.toLowerCase().includes(b));
+    if(!isBrand){
+      fClk+=clk; fOrd+=ord;
+      if(ord>0){ sumSimpleF+=ord/clk; cntSimpleF++; }
+    }
+    list.push({q,imp,clk,ord,cart,brand:isBrand,cvr:ord>0?ord/clk:NaN});
+  });
+  list.sort((a,b)=>b.clk-a.clk);
+  let html='<div class="metrics">';
+  if(tClk>0){
+    const cvr=tOrd/tClk, c=ci(cvr,tClk);
+    lastResult={cvr:cvr,sumOrder:tOrd,totalClk:tClk,src:'SQP导入'+(document.getElementById('timeRange').value.trim()?'·'+document.getElementById('timeRange').value.trim():'')};
+    html+=metricCard('类目转化率（点击→购买）',fmt(cvr*100)+'%',
+      `点击 ${fmtInt(tClk)} · 95% 区间 ${fmt(c[0])}–${fmt(c[1])}%`,'good');
+    if(fClk>0){
+      const fc=ci(fOrd/fClk,fClk);
+      html+=metricCard('去品牌词转化率',fmt(fOrd/fClk*100)+'%',
+        `点击 ${fmtInt(fClk)} · 区间 ${fmt(fc[0])}–${fmt(fc[1])}%`);
+    }
+    if(tImp>0) html+=metricCard('平均 CTR',fmt(tClk/tImp*100)+'%','点击÷曝光');
+    if(tCart>0) html+=metricCard('加购率',fmt(tCart/tClk*100)+'%','加购÷点击');
+    if(tCart>0) html+=metricCard('加购→购买比',fmt(tOrd/tCart*100)+'%','先行指标');
+    html+=metricCard('各词简单平均（仅对照）',cntSimple?fmt(sumSimple/cntSimple*100)+'%':'—','未加权，会被长尾词带偏');
+  } else html+=metricCard('类目转化率','—','没有有效数据行，检查列映射','bad');
+  html+='</div>';
+  html+=`<div class="warnbox" style="display:${tClk<1000?'block':'none'};">⚠️ 总点击 ${fmtInt(tClk)} 低于 1000，样本不足，请以上方置信区间为准。</div>`;
+  document.getElementById('out').innerHTML=html;
+
+  let t='<table><tr><th>搜索词</th><th>点击</th><th>购买</th><th>词转化率</th><th>品牌词</th></tr>';
+  list.slice(0,50).forEach(x=>{
+    t+=`<tr><td>${esc(x.q)||'—'}</td><td>${fmtInt(x.clk)}</td><td>${fmtInt(x.ord)}</td><td>${isFinite(x.cvr)?fmt(x.cvr*100)+'%':'—'}</td><td>${x.brand?'是':'—'}</td></tr>`;
+  });
+  t+='</table>';
+  document.getElementById('tbl').innerHTML=`<h2 style="font-size:14px;margin-top:16px;">按点击量排序 TOP ${Math.min(50,list.length)}</h2>`+t;
+
+  const nameEl=document.getElementById('saveName');
+  if(!nameEl.value.trim()&&list.length&&list[0].q){
+    nameEl.placeholder=list[0].q.slice(0,20)+'-SQP-'+new Date().toLocaleDateString('zh-CN');
+  }
+}
+function loadDemo(){
+  document.getElementById('pasteBox').value=
+`搜索词\t搜索量\t曝光量\t点击量\t点击率\t点击份额\t加购量\t购买量
+snorkeling gear for adults\t1688952\t7600328\t310122\t4.08%\t0.4316\t26360\t19026
+snorkeling mask\t533432\t2400444\t98296\t4.09%\t0.1358\t8078\t5693
+snorkel\t487571\t2194070\t67316\t3.07%\t0.0836\t5446\t3024
+full face snorkel mask adults\t246744\t1110348\t46181\t4.17%\t0.0574\t3988\t2985
+scuba mask\t211810\t953146\t24397\t2.56%\t0.0303\t1991\t1619
+scuba gear\t210101\t945455\t4350\t0.46%\t0.0054\t322\t187
+snorkel set\t168866\t759897\t20529\t2.68%\t0.0255\t1692\t982
+snorkle mask set adult\t173883\t782474\t37362\t4.77%\t0.0464\t3135\t2072
+diving mask\t108257\t487157\t11512\t2.36%\t0.0143\t910\t737
+snorkel mask adult\t144412\t649854\t23672\t3.64%\t0.0294\t1976\t1352`;
+  usePaste();
+}
+
+// ---------- 保存记录（与商探版共用 cvr_records_v1） ----------
+const RK='cvr_records_v1';
+function getRecords(){try{return JSON.parse(localStorage.getItem(RK))||[]}catch(e){return []}}
+function setRecords(a){localStorage.setItem(RK,JSON.stringify(a))}
+function saveRecord(){
+  const nameEl=document.getElementById('saveName'), valEl=document.getElementById('saveVal');
+  let cvr,sumOrder=null,totalClk=null,src='';
+  if(valEl.value.trim()!==''){
+    cvr=num(valEl.value)/100; src='手动录入';
+  } else if(lastResult&&isFinite(lastResult.cvr)){
+    cvr=lastResult.cvr; sumOrder=lastResult.sumOrder; totalClk=lastResult.totalClk; src=lastResult.src;
+  } else { alert('没有可保存的转化率：先导入计算一次，或手动填值。'); return; }
+  const recs=getRecords();
+  recs.unshift({
+    id: Date.now()+'-'+Math.floor(Math.random()*1000),
+    name: nameEl.value.trim()||('未命名-'+new Date().toLocaleDateString('zh-CN')),
+    cvr: cvr, sumOrder: sumOrder, totalClk: totalClk, src: src,
+    time: new Date().toLocaleString('zh-CN',{hour12:false})
+  });
+  setRecords(recs);
+  nameEl.value=''; valEl.value='';
+  renderRecords();
+}
+function renameRecord(id,name){
+  const recs=getRecords(), i=recs.findIndex(x=>x.id===id);
+  if(i>=0){ recs[i].name=name.trim()||recs[i].name; setRecords(recs); }
+}
+function revalueRecord(id,v){
+  const recs=getRecords(), i=recs.findIndex(x=>x.id===id);
+  if(i>=0){ const n=parseFloat(v); if(isFinite(n)) recs[i].cvr=n/100; setRecords(recs); renderRecords(); }
+}
+function delRecord(id){
+  if(!confirm('删除这条记录？')) return;
+  setRecords(getRecords().filter(x=>x.id!==id));
+  renderRecords();
+}
+function renderRecords(){
+  const recs=getRecords(), box=document.getElementById('recOut');
+  if(!recs.length){ box.innerHTML='<div class="hint" style="margin-top:10px;">还没有记录。算完填个名字点"保存"。建议：季节品把"去年同期"和"今年同期"各存一条，名称里写清窗口，对比看。</div>'; return; }
+  let t='<table style="margin-top:12px;"><tr><th>名称（点击可直接改）</th><th>转化率</th><th>总点击</th><th>来源</th><th>保存时间</th><th></th></tr>';
+  recs.forEach(x=>{
+    t+=`<tr>
+      <td><input class="rec-in" value="${esc(x.name)}" style="min-width:140px;" onchange="renameRecord('${x.id}',this.value)"></td>
+      <td><input class="rec-in" type="number" step="0.01" value="${isFinite(x.cvr)?(x.cvr*100).toFixed(2):''}" style="width:76px;display:inline-block;" onchange="revalueRecord('${x.id}',this.value)"> %</td>
+      <td>${x.totalClk!=null?fmtInt(x.totalClk):'—'}</td>
+      <td>${esc(x.src||'—')}</td>
+      <td>${esc(x.time)}</td>
+      <td><button class="ghost" style="padding:2px 10px;font-size:12px;" onclick="delRecord('${x.id}')">删除</button></td>
+    </tr>`;
+  });
+  t+='</table>';
+  box.innerHTML=t;
+}
+function exportRecords(){
+  const recs=getRecords();
+  if(!recs.length){ alert('还没有记录可导出。'); return; }
+  let csv='\ufeff名称,转化率%,总订单,总点击,来源,保存时间\n';
+  recs.forEach(x=>{ csv+=`"${String(x.name).replace(/"/g,'""')}",${(x.cvr*100).toFixed(4)},${x.sumOrder!=null?x.sumOrder.toFixed(0):''},${x.totalClk!=null?Math.round(x.totalClk):''},"${String(x.src||'').replace(/"/g,'""')}","${x.time}"\n`; });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='转化率记录.csv'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+renderRecords();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / SQP 类目平均转化率计算器（导入版）</span><a href="../guides/guide-sqp-cvr.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#market">打开完整工具台 ↗</a></div>
+</body>
+</html>
