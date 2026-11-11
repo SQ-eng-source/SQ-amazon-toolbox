@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="ZTEHtU6yo12akdHcybacpF">
+<head data-page-node-id="vic7sGiYKFhk2IIujgR8o8">
+<meta charset="UTF-8" data-page-node-id="cFawupCxqYn33ckoyD5bek">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="kfx5SE9M2q1gARM8JxzPqx">
+<title>商探类目平均转化率计算器</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --border:#e2e5ea; --text:#1f2329; --muted:#6b7280;
+    --accent:#2563eb; --accent-soft:#eff6ff; --ok:#16a34a; --warn:#d97706; --danger:#dc2626;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"PingFang SC","Microsoft YaHei",-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:24px;}
+  .wrap{max-width:1080px; margin:0 auto;}
+  h1{font-size:22px; margin-bottom:4px;}
+  .sub{color:var(--muted); font-size:13px; margin-bottom:20px;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;}
+  .card h2{font-size:16px; margin-bottom:10px;}
+  label{display:block; font-size:13px; color:var(--muted); margin-bottom:4px;}
+  input,textarea,select{width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; background:#fff;}
+  textarea{min-height:150px; resize:vertical; font-family:Consolas,monospace; font-size:12px;}
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .field{flex:1; min-width:160px;}
+  button{padding:9px 18px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:14px; cursor:pointer;}
+  button.ghost{background:#fff; color:var(--accent); border:1px solid var(--accent);}
+  button:hover{opacity:.9;}
+  .metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-top:14px;}
+  .metric{background:var(--accent-soft); border-radius:10px; padding:12px;}
+  .metric .k{font-size:12px; color:var(--muted);}
+  .metric .v{font-size:20px; font-weight:700; margin-top:2px;}
+  .metric .note{font-size:11px; color:var(--muted);}
+  .good{color:var(--ok);} .bad{color:var(--danger);}
+  .hint{font-size:12px; color:var(--muted); margin-top:6px;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:12px;}
+  th,td{border-bottom:1px solid var(--border); padding:6px 8px; text-align:right; white-space:nowrap;}
+  th:first-child,td:first-child{text-align:left; white-space:normal;}
+  th{background:#f3f4f6; font-weight:600; position:sticky; top:0;}
+  .logic li{margin-bottom:8px;}
+  .logic b{color:var(--accent);}
+  .hidden{display:none;}
+  select.colmap{max-width:230px;}
+  .warnbox{background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:10px 12px; font-size:13px; margin-top:12px;}
+  .step{display:flex; gap:10px; margin-bottom:10px; font-size:14px;}
+  .step .n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;}
+  .formula{background:#0f172a; color:#e2e8f0; border-radius:8px; padding:12px 16px; font-family:Consolas,monospace; font-size:13px; margin:10px 0; line-height:1.9;}
+  .formula .c{color:#7dd3fc;}
+</style>
+</head>
+<body data-page-node-id="cAPfqyAmD30mmHTrPGcrbm">
+<div class="wrap" data-page-node-id="CUE9vmMJuLeDoDYRENct4g">
+  <h1 data-page-node-id="nHdy7a7bf7hqqHFXVhH0P5">商探类目平均转化率计算器</h1>
+  <div class="sub" data-page-node-id="nmoEI2IeLrUPGVmmntCpG4">数据源：亚马逊后台 → 增长 → 商机探测器（Opportunity Explorer）。粘贴搜索词报告 + 商品报告两份下载表，自动算出类目平均转化率。</div>
+
+  <!-- 计算工具 -->
+  <div class="card" data-page-node-id="gtamMeBgiuXJlEGZtsRfmL">
+    <h2 data-page-node-id="hbGFYaby3Ugmdqyg7PNZtK">① 粘贴搜索词报告（商探 → 细分市场 → 搜索词选项卡 → 下载）</h2>
+    <textarea id="pasteSearch" placeholder="搜索词	搜索量	…	点击份额	…	搜索转化率	…"></textarea>
+    <div class="hint" data-page-node-id="XwsOdSBhj1A7RzjdoSuAcA">支持从 Excel 直接全选复制（TSV）或 CSV。需要列：搜索词、搜索量（过去 360 天）、点击份额（过去 360 天）、搜索转化率（过去 360 天）。</div>
+
+    <h2 style="margin-top:18px;" data-page-node-id="69s2UDLpO7qGUMdK0W2qgK">② 粘贴商品报告（商探 → 商品选项卡 → 下载），用来求总点击量</h2>
+    <textarea id="pasteGoods" placeholder="商品名称	ASIN	…	细分市场点击量（过去 360 天）	…"></textarea>
+    <div class="row" style="margin-top:10px; align-items:end;" data-page-node-id="Am8ng4ZB5SRThEyxQ8CDkA">
+      <div class="field" style="flex:1;" data-page-node-id="roT37kBTMBCbajZqa4SSmT">
+        <label data-page-node-id="ELpBe4QkUOjRaEXwgZfAH8">或者直接填总点击量（商品表"细分市场点击量"之和）</label>
+        <input type="number" id="manualClk" placeholder="如 805196" data-page-node-id="9VrPoY4NJXwSUenW6H2GYl">
+      </div>
+      <div style="display:flex; gap:8px;" data-page-node-id="EWufhpBBhkzNQ4d5PVIfXa">
+        <button class="ghost" onclick="loadDemo()" data-page-node-id="GBwgLQSfJTKxEXQCXixNGn">载入示例数据</button>
+        <button onclick="calc()" data-page-node-id="yQhRFCSWnZk0C097saj3aY">计算</button>
+      </div>
+    </div>
+
+    <div id="colmapRow" class="hidden" style="margin-top:14px;" data-page-node-id="TESfsMIip0dISU6fsXejQD">
+      <h2 style="font-size:14px;" data-page-node-id="NNvVKszL9EIWU742at0jrP">列映射（自动识别，识别错了手动改）</h2>
+      <div class="row" data-page-node-id="mf1QJzxpE9VRmZPs9booGW">
+        <div class="field" data-page-node-id="qRguKTwUDUF4QhoyErvVBW"><label data-page-node-id="bUzWh6lW6wglPCClhVy3od">搜索词</label><select class="colmap" id="mQ" onchange="calc()" data-page-node-id="zkfV8ydOuwFSxLMzuWQrHc"></select></div>
+        <div class="field" data-page-node-id="SdTfDEOkaXLufnR3HRlSPl"><label data-page-node-id="iHydnCKJ6NPA8BpR77fPbj">搜索量</label><select class="colmap" id="mVol" onchange="calc()" data-page-node-id="SALeJ1on6CbgCaysnzHBXb"></select></div>
+        <div class="field" data-page-node-id="nKl2HuhF8Gj6ttNiLFqT9R"><label data-page-node-id="b280qZHR9UP2Z3ys9AVQsq">点击份额</label><select class="colmap" id="mShare" onchange="calc()" data-page-node-id="DE54wz739BB3DZaejndAdG"></select></div>
+        <div class="field" data-page-node-id="rKU64BK5In4RV72lDviKNd"><label data-page-node-id="PFAubZgo4Zm4G0kRj96evV">搜索转化率</label><select class="colmap" id="mCvr" onchange="calc()" data-page-node-id="drjqWEabTKQEKZnwoCoC0k"></select></div>
+      </div>
+      <div class="row" id="goodsMapRow" data-page-node-id="KcrVvq6X52SdUfuwNgmRHA">
+        <div class="field" data-page-node-id="Uy9EVF05nX9u7pKRJAYEND"><label data-page-node-id="8qWamUAeNqkjpKUwErYGCY">商品表：细分市场点击量</label><select class="colmap" id="mGClk" onchange="calc()" data-page-node-id="plcIqYTh1EELxiCFyCYzyE"></select></div>
+      </div>
+    </div>
+
+    <div id="out" data-page-node-id="EqHUI3RORdfdGlSmyxhXpt"></div>
+    <div id="tbl" data-page-node-id="aBcPpYinDjrtsCrexnEOaB"></div>
+  </div>
+
+  <!-- 保存记录 -->
+  <div class="card">
+    <h2>我的转化率记录（可重命名、可手动录入、可导出）</h2>
+    <div class="row" style="align-items:end;">
+      <div class="field" style="flex:2;">
+        <label>名称（保存后可随时改）</label>
+        <input id="saveName" placeholder="如：浮潜面镜-美国站-2026旺季前">
+      </div>
+      <div class="field">
+        <label>转化率 %（留空 = 保存上方计算结果；填值 = 手动录入）</label>
+        <input type="number" step="0.01" id="saveVal" placeholder="如 8.74">
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button onclick="saveRecord()">保存</button>
+        <button class="ghost" onclick="exportRecords()">导出 CSV</button>
+      </div>
+    </div>
+    <div id="recOut"></div>
+  </div>
+
+  <!-- 计算逻辑 -->
+  <div class="card logic" data-page-node-id="QJQQJ0UXXR4DbKUUQOnweG">
+    <h2 data-page-node-id="BeTDCmRLA2At7IF4pEQ7Ky">计算逻辑（对应文档操作步骤）</h2>
+    <div class="step" data-page-node-id="bQBBgHpHHbiUcoEDJ8l4bx"><div class="n" data-page-node-id="8agAFpVypLL1GsbjHmkECP">1</div><div data-page-node-id="0wCHF9QvgN4ZzmzpolvNJY">亚马逊后台 → <b data-page-node-id="l25yDgHvQGXgF4LfNGDt36">增长 → 商机探测器</b>，按关键词搜索找到目标细分市场。</div></div>
+    <div class="step" data-page-node-id="bqNfAEpJfVGnxaTylP7xja"><div class="n" data-page-node-id="Yh3KVyIWv0vGpqBg1Ff8UI">2</div><div data-page-node-id="DrMZawadSUIBZpRCeIzKWQ">进入细分市场，切到<b data-page-node-id="CBfOlAeHKfXAAMngHNuiFi">搜索词</b>选项卡，点右上角下载，得到搜索词报告。</div></div>
+    <div class="step" data-page-node-id="xXu0FiYuX76qLpr0phEl8Z"><div class="n" data-page-node-id="ndc6lF0RScTYfYCk4zwhqa">3</div><div data-page-node-id="YaRTNJkGLKJWHj9iEdOkti">切到<b data-page-node-id="oBj8ulyLCfNkKPgjQl1C10">商品</b>选项卡，同样下载；把"细分市场点击量（过去 360 天）"整列求和，得到<b data-page-node-id="v1yj97u7bIfkFJ4OOJuqEx">总点击量</b>。</div></div>
+    <div class="step" data-page-node-id="CsM1ktpxKCFjtJDSm3chDf"><div class="n" data-page-node-id="Sm9rCERBL0liLkbBEF61QV">4</div><div data-page-node-id="Bd2asHlHu0eV2Cni53Jrn7">逐词计算并汇总：</div></div>
+    <div class="formula" data-page-node-id="6swScQGxyvv9HiAcp5SZmq">
+      <span class="c" data-page-node-id="N4xYTzzeTzhIMUiAhUFSsi">订单</span> = 搜索转化率 × 搜索量<br data-page-node-id="zKzBvJk8RdNcbyMEEBhbaP">
+      <span class="c" data-page-node-id="qlXaQknmkeLukmoisplLMr">单词点击量</span> = 总点击量 × 该词点击份额<br data-page-node-id="pNG70AgpuJDaDMS5hXYFvr">
+      <span class="c" data-page-node-id="n3wHZbTJ3EGu8TKpDBYFN2">单词点击转化率</span> = 订单 ÷ 单词点击量<br data-page-node-id="U5I1JSYijY0GFW2jcAFPVJ">
+      <span class="c" data-page-node-id="cbNmsEa2CgOlyeZPVZHw4H">类目平均转化率</span> = Σ订单 ÷ 总点击量
+    </div>
+    <ol style="padding-left:20px; font-size:14px;" data-page-node-id="Gr8N2rg0fUqZZJ0EO6xtco">
+      <li data-page-node-id="JIaBVQkq8gQOGu0bx56TfB"><b data-page-node-id="8BIB25OCOxsD42HCV45MjP">为什么这样算</b>：商探不给每个词的绝对点击量，只给点击份额。用商品表的总点击量 × 份额还原出单词点击量，再用"搜索转化率 × 搜索量"估订单，就得到每个词的点击→购买转化率。类目平均 = 总订单 ÷ 总点击，天然是按点击量加权的，不会被长尾词带偏。</li>
+      <li data-page-node-id="TPZn6hxUDIdqEUo44SXmsF"><b data-page-node-id="k4sdfj3dmi1kXqfgNxFxZn">口径提醒</b>：商探所有指标都是<b data-page-node-id="zTFp3syE26GF4IiinDxGCg">过去 360 天</b>滚动窗口。季节品用这个均值对标具体季节的表现会失真——旺季实际转化率通常明显高于 360 天均值。对比不同细分市场时口径一致，可以横向比；对标自己当周业务报告数据时不行。</li>
+      <li data-page-node-id="t6HFkYAShZ91664HCDpRWr"><b data-page-node-id="EZPpK6JzX9deoVZjRIBGfd">订单是估算值</b>：搜索转化率 ≈ 订单 ÷ 搜索量，本身是平台估算口径，且同一 ASIN 会同时出现在多个细分市场，存在少量重复计算。用它看量级和相对大小，不要当精确值。</li>
+      <li data-page-node-id="JG0hNUUzOfosc3kjGRHU4j"><b data-page-node-id="Fwg6Ljl4AVNLWmxAUrcOQw">交叉校验</b>：单词点击转化率也可以用 订单 ÷ 点击量 直接算，本工具两种路径结果一致；若和 Excel 手算对不上，先检查列映射。</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+const KEY={
+  q:/搜索词|关键词|search\s*term|query/i,
+  vol:/搜索量|search\s*volume|searches/i,
+  share:/点击份额|click\s*share/i,
+  cvr:/搜索转化率|search\s*conv/i,
+  gclk:/细分市场点击量|niche\s*click|点击量|clicks/i
+};
+function num(v){
+  if(v==null) return NaN;
+  v=String(v).trim();
+  if(v===''||v==='#'||/^#+$/.test(v)||v==='-') return NaN;
+  v=v.replace(/[,%\s￥$]/g,'').replace(/,/g,'');
+  if(/%$/.test(String(v).trim())) { }
+  const n=parseFloat(v);
+  return isFinite(n)?n:NaN;
+}
+function rate(v){ // 解析转化率/份额：带%除100；不带%且>1按百分数处理，≤1按小数
+  if(v==null) return NaN;
+  let s=String(v).trim();
+  if(s===''||/^#+$/.test(s)) return NaN;
+  const hasPct=s.includes('%');
+  s=s.replace(/[,%\s]/g,'');
+  const n=parseFloat(s);
+  if(!isFinite(n)) return NaN;
+  if(hasPct) return n/100;
+  return n>1? n/100 : n;
+}
+function fmt(n,d=2){ return isFinite(n)? n.toFixed(d):'—'; }
+function fmtInt(n){ return isFinite(n)? Math.round(n).toLocaleString('en-US'):'—'; }
+function parseTable(text){
+  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(!lines.length) return null;
+  const delim=lines[0].includes('\t')?'\t':(lines[0].includes(',')?',':null);
+  let data=lines.map(l=> delim? l.split(delim) : l.split(/\s{2,}/));
+  const first=data[0].every(c=>isNaN(num(c)));
+  if(first) return {headers:data[0].map(h=>String(h).trim()), rows:data.slice(1)};
+  const headers=data[0].map((_,i)=>'列'+(i+1));
+  return {headers, rows:data};
+}
+function metricCard(k,v,note,cls){
+  return `<div class="metric"><div class="k">${k}</div><div class="v ${cls||''}">${v}</div><div class="note">${note||''}</div></div>`;
+}
+function detect(hdr,rx){
+  return hdr.findIndex(h=>rx.test(h));
+}
+let sData=null,gData=null,lastResult=null;
+function buildSelect(id,headers,det){
+  const sel=document.getElementById(id);
+  sel.innerHTML='<option value="-1">不使用</option>'+headers.map((h,i)=>`<option value="${i}">${i}. ${String(h).slice(0,24)}</option>`).join('');
+  sel.value=det>=0?det:-1;
+}
+function calc(){
+  const st=document.getElementById('pasteSearch').value.trim();
+  if(!st){document.getElementById('out').innerHTML='<div class="warnbox">先粘贴搜索词报告。</div>';return;}
+  sData=parseTable(st);
+  const gt=document.getElementById('pasteGoods').value.trim();
+  gData=gt?parseTable(gt):null;
+  // column detection
+  const dq=detect(sData.headers,KEY.q), dvol=detect(sData.headers,KEY.vol),
+        dshare=detect(sData.headers,KEY.share), dcvr=detect(sData.headers,KEY.cvr);
+  document.getElementById('colmapRow').classList.remove('hidden');
+  buildSelect('mQ',sData.headers,dq);
+  buildSelect('mVol',sData.headers,dvol);
+  buildSelect('mShare',sData.headers,dshare);
+  buildSelect('mCvr',sData.headers,dcvr);
+  const goodsMapRow=document.getElementById('goodsMapRow');
+  if(gData){
+    goodsMapRow.style.display='';
+    const dgc=detect(gData.headers,KEY.gclk);
+    buildSelect('mGClk',gData.headers,dgc);
+  } else goodsMapRow.style.display='none';
+  recompute();
+}
+function getSel(id){const i=parseInt(document.getElementById(id).value);return isNaN(i)?-1:i;}
+function recompute(){
+  const iq=getSel('mQ'),ivol=getSel('mVol'),ishare=getSel('mShare'),icvr=getSel('mCvr'),igclk=getSel('mGClk');
+  if(ivol<0||ishare<0||icvr<0){
+    document.getElementById('out').innerHTML='<div class="warnbox">没有识别到 搜索量 / 点击份额 / 搜索转化率 列，请在列映射里手动指定。</div>';
+    document.getElementById('tbl').innerHTML='';return;
+  }
+  // total clicks
+  let totalClk=NaN,clkSrc='';
+  const manual=num(document.getElementById('manualClk').value);
+  if(gData&&igclk>=0){
+    let s=0,any=false;
+    gData.rows.forEach(r=>{const v=num(r[igclk]);if(isFinite(v)){s+=v;any=true;}});
+    if(any){totalClk=s;clkSrc='来自商品报告求和';}
+  }
+  if(!isFinite(totalClk)&&isFinite(manual)&&manual>0){totalClk=manual;clkSrc='手动输入';}
+
+  const list=[];
+  sData.rows.forEach(r=>{
+    const q= iq>=0? String(r[iq]||'').trim():'';
+    const vol=num(r[ivol]), share=rate(r[ishare]), scvr=rate(r[icvr]);
+    if(!isFinite(vol)||!isFinite(scvr)) return;
+    const order=scvr*vol;
+    const clk=isFinite(share)&&isFinite(totalClk)? totalClk*share:NaN;
+    const cvr=isFinite(clk)&&clk>0? order/clk:NaN;
+    list.push({q,vol,share,scvr,order,clk,cvr});
+  });
+  const sumOrder=list.reduce((a,x)=>a+(isFinite(x.order)?x.order:0),0);
+  const sumClkWords=list.reduce((a,x)=>a+(isFinite(x.clk)?x.clk:0),0);
+  let html='<div class="metrics">';
+  html+=metricCard('总订单（估算）',fmt(sumOrder,0),'Σ(搜索转化率 × 搜索量)');
+  if(isFinite(totalClk)) html+=metricCard('总点击量',fmtInt(totalClk),clkSrc);
+  else html+=metricCard('总点击量','—','粘贴商品报告或手动填入','bad');
+  if(isFinite(totalClk)&&totalClk>0&&sumOrder>0){
+    const cat=sumOrder/totalClk;
+    lastResult={cvr:cat,sumOrder,totalClk,clkSrc};
+    html+=metricCard('类目平均转化率（点击→购买）',fmt(cat*100)+'%',
+      `总订单 ÷ 总点击 = ${fmt(sumOrder,0)} ÷ ${fmtInt(totalClk)}`,'good');
+    html+=metricCard('360天口径提醒','⚠','季节品旺季实际值通常高于此均值');
+    const nameEl=document.getElementById('saveName');
+    if(!nameEl.value.trim()){
+      const topWord=list.reduce((a,x)=>(!a||x.order>a.order)?x:a,null);
+      nameEl.placeholder=(topWord&&topWord.q? topWord.q+'-':'')+'细分市场-'+new Date().toLocaleDateString('zh-CN');
+    }
+  }
+  if(sumClkWords>0) html+=metricCard('各词简单平均（仅对照）',
+    fmt(list.filter(x=>isFinite(x.cvr)).reduce((a,x)=>a+x.cvr,0)/Math.max(1,list.filter(x=>isFinite(x.cvr)).length)*100)+'%',
+    '未加权，会被长尾词带偏，别用它对标');
+  html+='</div>';
+  if(!isFinite(totalClk)) html+='<div class="warnbox">⚠️ 缺少总点击量：请粘贴商品选项卡报告（含"细分市场点击量"列），或在上方手动填入求和结果。</div>';
+  document.getElementById('out').innerHTML=html;
+
+  list.sort((a,b)=>b.order-a.order);
+  const top=list.slice(0,50);
+  let t='<table><tr><th>搜索词</th><th>搜索量</th><th>点击份额</th><th>搜索转化率</th><th>订单(估)</th><th>点击量(估)</th><th>点击转化率</th><th>订单占比</th></tr>';
+  top.forEach(x=>{
+    t+=`<tr><td>${x.q||'—'}</td><td>${fmtInt(x.vol)}</td><td>${isFinite(x.share)?fmt(x.share*100)+'%':'—'}</td><td>${isFinite(x.scvr)?fmt(x.scvr*100)+'%':'—'}</td><td>${fmt(x.order,0)}</td><td>${fmtInt(x.clk)}</td><td>${isFinite(x.cvr)?fmt(x.cvr*100)+'%':'—'}</td><td>${sumOrder>0?fmt(x.order/sumOrder*100)+'%':'—'}</td></tr>`;
+  });
+  t+='</table>';
+  document.getElementById('tbl').innerHTML=`<h2 style="font-size:14px;margin-top:16px;">逐词明细（按订单降序，最多 50 行）</h2>`+t;
+}
+
+// ===== 保存记录 =====
+const RK='cvr_records_v1';
+function getRecords(){try{return JSON.parse(localStorage.getItem(RK))||[]}catch(e){return []}}
+function setRecords(a){localStorage.setItem(RK,JSON.stringify(a))}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function saveRecord(){
+  const nameEl=document.getElementById('saveName'), valEl=document.getElementById('saveVal');
+  let cvr,sumOrder=null,totalClk=null,src='';
+  if(valEl.value.trim()!==''){
+    cvr=num(valEl.value)/100; src='手动录入';
+  } else if(lastResult&&isFinite(lastResult.cvr)){
+    cvr=lastResult.cvr; sumOrder=lastResult.sumOrder; totalClk=lastResult.totalClk; src='商探计算（'+(lastResult.clkSrc||'')+'）';
+  } else { alert('没有可保存的转化率：先计算一次，或在右侧手动填一个值。'); return; }
+  const recs=getRecords();
+  recs.unshift({
+    id: Date.now()+'-'+Math.floor(Math.random()*1000),
+    name: nameEl.value.trim()|| ('未命名-'+new Date().toLocaleDateString('zh-CN')),
+    cvr: cvr, sumOrder: sumOrder, totalClk: totalClk, src: src,
+    time: new Date().toLocaleString('zh-CN',{hour12:false})
+  });
+  setRecords(recs);
+  nameEl.value=''; valEl.value='';
+  renderRecords();
+}
+function renameRecord(id,name){
+  const recs=getRecords(), i=recs.findIndex(x=>x.id===id);
+  if(i>=0){ recs[i].name=name.trim()||recs[i].name; setRecords(recs); }
+}
+function revalueRecord(id,v){
+  const recs=getRecords(), i=recs.findIndex(x=>x.id===id);
+  if(i>=0){ const n=parseFloat(v); if(isFinite(n)) recs[i].cvr=n/100; setRecords(recs); renderRecords(); }
+}
+function delRecord(id){
+  if(!confirm('删除这条记录？')) return;
+  setRecords(getRecords().filter(x=>x.id!==id));
+  renderRecords();
+}
+function renderRecords(){
+  const recs=getRecords(), box=document.getElementById('recOut');
+  if(!recs.length){ box.innerHTML='<div class="hint" style="margin-top:10px;">还没有保存的记录。计算完成后填个名字点"保存"，或直接手动录入一个转化率。记录保存在本浏览器里。</div>'; return; }
+  let t='<table style="margin-top:12px;"><tr><th>名称（点击可直接改）</th><th>转化率</th><th>总订单</th><th>总点击</th><th>来源</th><th>保存时间</th><th></th></tr>';
+  recs.forEach(x=>{
+    t+=`<tr>
+      <td><input value="${esc(x.name)}" onchange="renameRecord('${x.id}',this.value)" style="border:none;border-bottom:1px dashed #cbd5e1;background:transparent;font-size:13px;min-width:140px;border-radius:0;padding:2px 4px;"></td>
+      <td><input type="number" step="0.01" value="${isFinite(x.cvr)?(x.cvr*100).toFixed(2):''}" onchange="revalueRecord('${x.id}',this.value)" style="border:none;border-bottom:1px dashed #cbd5e1;background:transparent;font-size:13px;width:80px;border-radius:0;padding:2px 4px;display:inline-block;"> %</td>
+      <td>${x.sumOrder!=null?fmt(x.sumOrder,0):'—'}</td>
+      <td>${x.totalClk!=null?fmtInt(x.totalClk):'—'}</td>
+      <td>${esc(x.src||'—')}</td>
+      <td>${esc(x.time)}</td>
+      <td><button class="ghost" style="padding:2px 10px;font-size:12px;" onclick="delRecord('${x.id}')">删除</button></td>
+    </tr>`;
+  });
+  t+='</table>';
+  box.innerHTML=t;
+}
+function exportRecords(){
+  const recs=getRecords();
+  if(!recs.length){ alert('还没有记录可导出。'); return; }
+  let csv='\ufeff名称,转化率%,总订单,总点击,来源,保存时间\n';
+  recs.forEach(x=>{ csv+=`"${String(x.name).replace(/"/g,'""')}",${(x.cvr*100).toFixed(4)},${x.sumOrder!=null?x.sumOrder.toFixed(0):''},${x.totalClk!=null?Math.round(x.totalClk):''},"${String(x.src||'').replace(/"/g,'""')}","${x.time}"\n`; });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='转化率记录.csv'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+renderRecords();
+
+function loadDemo(){
+  document.getElementById('pasteSearch').value=
+`搜索词\t搜索量（过去 360 天）\t搜索量增长\t点击份额（过去 360 天）\t搜索转化率（过去 360 天）
+snorkeling gear for adults\t1,688,952\t0.2821\t0.4316\t0.0171
+snorkeling mask\t533,432\t0.7221\t0.1358\t0.0161
+snorkel\t487,571\t0.623\t0.0836\t0.016
+full face snorkel mask adults\t246,744\t0.497\t0.0574\t0.0155
+scuba mask\t211,810\t0.6737\t0.0303\t0.0101
+scuba gear\t210,101\t0.4095\t0.0054\t0.0011
+snorkel set\t168,866\t0.6729\t0.0255\t0.0096
+snorkle mask set adult\t173,883\t0.3933\t0.0464\t0.022
+diving mask\t108,257\t0.9041\t0.0143\t0.0096
+snorkel mask adult\t144,412\t0.344\t0.0294\t0.0181
+snorkeling gear\t89,429\t0.1232\t0.0131\t0.0113
+snorkeling mask\t63,360\t0.313\t0.0127\t0.0128`;
+  document.getElementById('pasteGoods').value='';
+  document.getElementById('manualClk').value='805196';
+  calc();
+}
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / 商探类目平均转化率计算器</span><a href="../guides/guide-niche-cvr.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#market">打开完整工具台 ↗</a></div>
+</body>
+</html>
