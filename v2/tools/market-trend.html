@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>市场流量趋势 · SQ-AMAZON-TOOLBOX</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--warnb:#b45309;--soft:#f8fdfe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:24px;display:flex;justify-content:center;padding-top:34px}
+.wrap{width:960px}
+h1{font-size:21px;margin-bottom:4px}.desc{color:var(--sub);font-size:12.5px;margin-bottom:14px;line-height:1.7}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}.card h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:13px;line-height:1.7;resize:vertical;min-height:110px;font-family:Consolas,"Courier New",monospace}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.08)}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+button{cursor:pointer;border:1px solid #bfe7f2;background:#fff;color:var(--deep);border-radius:6px;padding:5px 11px;font-size:12px;font-family:inherit}
+button:hover{background:#f2fbfd;border-color:#22d3ee}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+select{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;font-family:inherit;background:#fff}
+label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+.meta{font-size:12px;color:var(--sub)}
+.flag{font-size:12.5px;line-height:1.65;padding:8px 10px;border-radius:6px;margin-top:7px}
+.flag.ok{background:#e6f6ef;color:var(--ok)}.flag.warn{background:#fef3c7;color:var(--warnb)}.flag.bad{background:#fdecea;color:var(--bad)}.flag.info{background:#eef2ff;color:#4338ca}
+.tip{font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:7px}.tip b{color:#374151}
+.trow{display:grid;grid-template-columns:110px 1fr 70px 70px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.trow:last-child{border:0}
+.trow .lab{color:#4b5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .num{text-align:right;color:var(--ink)}
+.trow .chg{text-align:right;font-weight:700}
+.chg.up{color:var(--bad)}.chg.dn{color:var(--ok)}.chg.fl{color:var(--sub);font-weight:400}
+.tbar{height:9px;background:#eef2f5;border-radius:4px;overflow:hidden;position:relative}
+.tbar>i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:11.5px;background:#e6fafc;color:var(--deep);border:1px solid #bfe7f2;border-radius:5px;padding:3px 7px}
+.chip.up{background:#fdecea;border-color:#f5c6c0;color:var(--bad)}
+.chip.dn{background:#e6f6ef;border-color:#b7e2cf;color:var(--ok)}
+.chip.warn{background:#fef3c7;border-color:#f1d488;color:var(--warnb)}
+#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}
+#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}
+#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}
+#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}
+</style>
+</head>
+<body>
+<div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 市场洞察 / 市场流量趋势</span><a href="../guides/guide-market-trend.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#market">打开完整工具台 ↗</a></div>
+<div class="wrap">
+  <h1>市场流量趋势</h1>
+  <p class="desc">贴<b>历史搜索数据</b>（ABA 排名或商探搜索量），看一个词 / 一个类目大盘的涨跌与季节性。判定口径：同比看结构（掉头了吗），环比看动量（当下方向），季节指数看月份规律。数据至少 12 期才有季节性结论。</p>
+
+  <div class="card">
+    <h2>① 数据 <span class="hint">一行一期：周期标签 + 数值</span></h2>
+    <div class="bar" style="margin:0 0 9px">
+      <label class="sm" style="margin:0">数值含义</label>
+      <select id="mode">
+        <option value="vol">搜索量（商探 / 卖家精灵）</option>
+        <option value="rank">ABA 排名（数字越小越热）</option>
+      </select>
+      <span class="meta">ABA 排名模式只判方向，不折算搜索量</span>
+    </div>
+    <label class="sm">数据（每行：周期,数值。周期写成 2025-03 或 25W12 都行，保持一致即可）</label>
+    <textarea id="data">2025-01,82000
+2025-02,74000
+2025-03,98000
+2025-04,121000
+2025-05,142000
+2025-06,168000
+2025-07,175000
+2025-08,154000
+2025-09,118000
+2025-10,96000
+2025-11,89000
+2025-12,84000
+2026-01,91000
+2026-02,88000
+2026-03,118000
+2026-04,139000</textarea>
+    <div class="bar">
+      <button class="primary" onclick="run()">分析趋势</button>
+      <span class="meta">已读 <b id="cnt">0</b> 期</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 逐期走势 <span class="hint">环比变化，红涨绿跌</span></h2>
+    <div id="rows"></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 结论 <span class="hint">趋势判定 + 季节性</span></h2>
+    <div id="verdict"></div>
+  </div>
+</div>
+
+<script>
+const $=i=>document.getElementById(i);
+const flag=(c,t)=>'<div class="flag '+c+'">'+t+'</div>';
+
+function run(){
+  const mode=$('mode').value;
+  const rows=$('data').value.split('\n').map(l=>l.split(/[,，\t]/).map(x=>x.trim())).filter(a=>a.length>=2&&a[0]&&!isNaN(parseFloat(a[1]))).map(a=>({p:a[0],v:parseFloat(a[1])}));
+  $('cnt').textContent=rows.length;
+  if(rows.length<3){ $('rows').innerHTML=''; $('verdict').innerHTML=flag('warn','有效数据不足 3 期，先凑够再分析'); return; }
+
+  const isRank=mode==='rank';
+  const vals=rows.map(r=>r.v);
+  const mean=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const max=vals.reduce((a,b)=>Math.max(a,b));
+
+  /* 环比表 */
+  $('rows').innerHTML=rows.map((r,i)=>{
+    let chg='—', cls='fl', pct='';
+    if(i>0){
+      const prev=rows[i-1].v;
+      if(prev!==0){
+        const g=(r.v-prev)/Math.abs(prev);
+        pct=(g>0?'+':'')+(g*100).toFixed(1)+'%';
+        if(isRank){ cls=g>0.03?'dn':(g<-0.03?'up':'fl'); }  /* 排名升=涨 */
+        else { cls=g>0.03?'up':(g<-0.03?'dn':'fl'); }
+      }
+    }
+    const w=Math.sqrt(r.v/ (isRank? (max): max))/1; /* 排名小=热，条长另算 */
+    let barW = isRank ? Math.max(4, (1-(r.v/max))*100) : Math.max(4,(r.v/max)*100);
+    return '<div class="trow"><div class="lab">'+r.p+'</div><div class="tbar"><i style="width:'+barW.toFixed(0)+'%"></i></div><div class="num">'+(isRank?('#'+r.v.toLocaleString()):r.v.toLocaleString())+'</div><div class="chg '+cls+'">'+(pct||'—')+'</div></div>';
+  }).join('');
+
+  /* 同比：找同月对去年 */
+  const byMonth={};
+  rows.forEach(r=>{ const m=r.p.match(/(\d{2})$/); if(m) byMonth[r.p.slice(0,-2)+m[1]]=r.v; });
+  let yoy=null, yoyPair='';
+  const keys=rows.map(r=>r.p);
+  for(const k of keys){
+    const mm=k.slice(-2), pre=k.slice(0,-2);
+    if(!pre) continue;
+    const prevKey=(parseInt(pre)-1)+pre.slice(-1)+mm;
+    if(keys.includes(prevKey)){
+      const a=rows.find(r=>r.p===prevKey).v, b=rows.find(r=>r.p===k).v;
+      if(a>0){ yoy=(b-a)/Math.abs(a); yoyPair=prevKey+' → '+k; break; }
+    }
+  }
+
+  /* 动量：末 3 期均值 vs 前 3 期均值 */
+  const last3=vals.slice(-3), prev3=vals.slice(-6,-3);
+  const m1=last3.reduce((a,b)=>a+b,0)/3, m2=prev3.length?prev3.reduce((a,b)=>a+b,0)/prev3.length:null;
+  const momentum=(m2&&m2!==0)?(m1-m2)/m2:null;
+
+  /* 季节性：按月分组，月均值 / 总均值 */
+  const months={};
+  rows.forEach(r=>{ const m=r.p.slice(-2); (months[m]=months[m]||[]).push(r.v); });
+  const season=Object.entries(months).map(([m,arr])=>({m, idx:(arr.reduce((a,b)=>a+b,0)/arr.length)/(mean||1)})).sort((a,b)=>b.idx-a.idx);
+
+  /* 趋势判定 */
+  const out=[];
+  let trend;
+  if(momentum==null) trend='数据不够';
+  else if(isRank){ trend = momentum>0.05?'下降（排名走差）':(momentum<-0.05?'上升（排名走强）':'走平'); }
+  else { trend = momentum>0.05?'上行':(momentum<-0.05?'下行':'走平'); }
+
+  if(yoyPair){
+    const good=isRank? yoy<0 : yoy>0;
+    out.push(flag(good?'ok':'warn','同比 '+yoyPair+'：'+(yoy>0?'+':'')+(yoy*100).toFixed(1)+'%（'+(isRank?'排名变化':'搜索量变化')+'）。'+(good?'结构上还在涨。':'结构上在萎缩——不是淡季的话要当心。')));
+  } else out.push(flag('info','没找到可配对的同比期（需要同一月份出现两次，如 2025-03 和 2026-03）'));
+
+  out.push(flag('info','近 3 期 vs 前 3 期：'+(momentum==null?'数据不足':((momentum>0?'+':'')+(momentum*100).toFixed(1)+'% 的动量，判定为「'+trend+'」'))));
+
+  const peakSeason=season.slice(0,3).map(s=>parseInt(s.m)+'月('+ (s.idx).toFixed(2)+')').join('、');
+  const trough=season.slice(-2).map(s=>parseInt(s.m)+'月('+ (s.idx).toFixed(2)+')').join('、');
+  if(Object.keys(months).length>=8){
+    out.push(flag('warn','季节性：峰值月份 '+peakSeason+'，谷底 '+trough+'（指数 1.00=全年均值）。备货和广告预算要<b>提前 1～2 个月</b>跟峰值走，别等跌了再砍。'));
+  } else out.push(flag('info','月份数据不足 8 个月，季节性结论偏弱，先按无规律处理'));
+
+  /* 端到端斜率 */
+  const first3=vals.slice(0,3), f1=first3.reduce((a,b)=>a+b,0)/3;
+  const l1=last3.reduce((a,b)=>a+b,0)/3;
+  const span=(l1-f1)/((f1!==0)?f1:1);
+  out.push(flag('info','首 3 期 → 末 3 期整体：'+(span>0?'+':'')+(span*100).toFixed(1)+'%。'+(Math.abs(span)>0.3?(span>0?'这个盘子在扩，值得跟。':'这个盘子在缩，进场要算清楚退出节奏。'):'盘子大小基本稳定。')));
+
+  $('verdict').innerHTML=out.join('');
+}
+</script>
+</body>
+</html>
