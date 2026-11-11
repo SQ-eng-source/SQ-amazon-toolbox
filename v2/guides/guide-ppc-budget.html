@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPC 预算分配器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../index.html" title="返回工具台首页">← 返回工具台</a><a href="index.html" title="所有工具的使用说明">全部说明</a></div>
+<div class="wrap">
+<h1>PPC 预算分配器 · 使用说明</h1>
+<h2>它是干嘛的</h2>
+<p>月度预算 $3000，几个 Campaign 怎么分？大部分人是拍脑袋或者平均分。</p>
+<p>这个工具按<strong>表现</strong>分：赚钱的给更多，潜力款留培育钱，测试的给固定小预算。<strong>钱跟着赚钱的词走。</strong></p>
+<h2>三步用起来</h2>
+<ol><li>打开工具：<a href="../tools/ppc-budget.html">PPC 预算分配器</a></li><li>填"① 总预算与分配策略"：</li></ol>
+<div class="tw"><table><thead><tr><th>字段</th><th>建议值</th></tr></thead><tbody><tr><td>月度广告总预算（USD）</td><td>你这个月敢花多少</td></tr><tr><td>表现好 Campaign 保底系数</td><td>默认 1.5，越舍得给赚钱活动就调越高</td></tr><tr><td>新品培育预留（占总预算 %）</td><td>默认 15，有新品在推就调高</td></tr></tbody></table></div>
+<ol><li>填"② 各 Campaign 表现"：每个活动填名称、月度花费、月度销售额，再从下拉框选<strong>角色</strong>：</li></ol>
+<div class="tw"><table><thead><tr><th>角色</th><th>给多少预算</th></tr></thead><tbody><tr><td>主推-冲量</td><td>按表现加权分</td></tr><tr><td>赚钱-收割</td><td>按表现加权分，<strong>再乘保底系数</strong>（优先喂饱）</td></tr><tr><td>新品-培育</td><td>加权分之外，还额外分到新品预留预算</td></tr><tr><td>测试</td><td>不参与加权，按你现在的花费固定给</td></tr></tbody></table></div>
+<ol><li>「③ 分配结果」给出每个活动的建议日预算。</li></ol>
+<h2>分配逻辑（看得懂才敢用）</h2>
+<blockquote><strong>分配权重 = 花费 ÷ ACoS</strong></blockquote>
+<p>同一个 ACoS 下，花得多的说明体量大，能承接更多预算；而 ACoS 高于 60% 的活动直接不参与加权（先关掉或优化）。</p>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>日预算至少撑 15–20 次点击</strong>（日预算 ÷ CPC ≥ 15）。预算太碎，数据不够，系统学不出东西，白花钱。</li><li><strong>一次别动太多</strong>。预算调整幅度大，活动会重新进学习期，表现会先掉一截。</li></ul>
+<h2>常见问题</h2>
+<p><strong>Q：ACoS 多少算"表现好"？</strong></p>
+<p>和你的保本 ACoS 比，不是和 20%/30% 这种固定数字比。低于保本线就是赚钱的。</p>
+<p><strong>Q：测试活动为什么不参与分配？</strong></p>
+<p>测试的目的是验证，不是效率。给它小但稳定的预算，跑够点击量再说。</p>
+<p><strong>Q：ACoS 超过 60% 的怎么办？</strong></p>
+<p>先别给钱。降竞价、否掉差词、检查 Listing，等它回到 40% 以下再考虑加预算。</p>
+<hr>
+<p><strong>一句话</strong>：预算别平均分，按"花费 ÷ ACoS"分——赚钱的地方多喂，亏钱的地方先停。</p>
+</div>
+</body>
+</html>
