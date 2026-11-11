@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Listing 字符与合规检查器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:860px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}textarea{width:100%;height:110px;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:13px;resize:vertical}textarea:focus{outline:none;border-color:var(--accent)}.count{font-size:20px;font-weight:700;margin:4px 0}.count span{font-size:13px;color:var(--sub);font-weight:400}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}.row b{font-size:14px}.flag{padding:10px;border-radius:6px;font-size:13px;margin-top:8px;line-height:1.6}.flag.bad{background:#fdecea;color:var(--bad)}.flag.warn{background:#e0f2fe;color:#0891b2}.flag.ok{background:#e6f6ef;color:var(--ok)}.chip{display:inline-block;background:var(--line);border-radius:4px;padding:2px 6px;margin:2px;font-size:12px}.chip.bad{background:#fdecea;color:var(--bad);font-weight:600}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Listing 字符与合规检查器</h1>
+  <p class="desc">粘贴标题或五点，检查字符数、全大写词、禁用/敏感词（best、#1、free shipping 之类会被压权甚至下架的词）。</p>
+  <div class="grid">
+    <div class="card">
+      <h2>① 粘贴内容</h2>
+      <label>标题（上限一般 200 字符，部分类目 150）</label>
+      <textarea id="title" placeholder="粘贴标题...">Premium Wireless Earbuds, BEST Bluetooth 5.3 Headphones with Charging Case, IPX7 Waterproof for iPhone Android, Black</textarea>
+      <label>五点描述（逐条检查）</label>
+      <textarea id="bullets" placeholder="粘贴五点，每行一条...">【Hi-Fi Stereo Sound】Experience crystal clear audio.
+[Long Battery Life] Up to 30 hours playtime. FREE carrying case included!
+#1 Rated Customer Service. Contact us anytime.
+【Comfortable Fit】3 sizes ear tips included.</textarea>
+    </div>
+    <div class="card">
+      <h2>② 检查结果</h2>
+      <label>标题字符数</label>
+      <div class="count" id="tCount">0 <span>/ 200</span></div>
+      <label>五点：条数与最长条</label>
+      <div class="count" id="bCount">0 条</div>
+      <div class="row"><span>平均词长 / 标题单词数</span><b id="words">--</b></div>
+      <div id="flags"></div>
+    </div>
+  </div>
+</div>
+<script>
+const BANNED=['best','#1','no.1','number one','free shipping','free gift','guarantee','cheapest','hot sale','100%','top rated','world\'s','satisfaction','money back','wholesale','python','promotion'];
+function $(i){return document.getElementById(i)}
+function check(txt,limit,label){
+  const chars=[...txt].length, words=txt.trim()?txt.trim().split(/\s+/).length:0;
+  let issues=[];
+  if(chars>limit)issues.push('bad','超长：'+chars+'/'+limit+'，多余部分会被截断');
+  else if(chars>limit*0.92)issues.push('warn','接近上限，注意会被截断');
+  else issues.push('ok',label+' 字符 OK（'+chars+'/'+limit+'）');
+  // 全大写词
+  const caps=txt.match(/\b[A-Z]{4,}\b/g)||[];
+  if(caps.length)issues.push('warn','全大写词 '+caps.length+' 个（'+caps.join(', ')+'）——亚马逊指南不建议，可能被抑制');
+  // 禁用词
+  const low=txt.toLowerCase(), hits=[];
+  BANNED.forEach(w=>{if(low.includes(w))hits.push(w)});
+  if(hits.length)issues.push('bad','疑似违规/营销词：'+hits.map(h=>'<span class="chip bad">'+h+'</span>').join(' '));
+  // 特殊字符
+  if(/[【】\[\]{}]/.test(txt))issues.push('warn','含括号装饰符——部分类目可用，但亚马逊官方不鼓励非字母数字符号');
+  if(/[!]{2,}|[！]{2,}/.test(txt))issues.push('warn','连续感叹号，压缩权重风险');
+  return {chars,words,issues};
+}
+function render(){
+  const t=check($('title').value,200,'标题');
+  $('tCount').innerHTML=t.chars+' <span>/ 200</span>';
+  $('tCount').style.color=t.chars>200?'var(--bad)':'var(--ink)';
+  const blines=$('bullets').value.split('\n').filter(l=>l.trim());
+  const bChecks=blines.map(l=>check(l,500,'五点条'));
+  const maxChars=Math.max(0,...bChecks.map(b=>b.chars));
+  $('bCount').innerHTML=blines.length+' 条，最长 '+maxChars+' 字符';
+  $('bCount').style.color=blines.length>5?'var(--bad)':'var(--ink)';
+  $('words').textContent=t.words+' 词 / 平均 '+(t.words?(t.chars/t.words).toFixed(1):0)+' 字符';
+  let html='';
+  [[ '标题', t.issues],['五点（汇总）', bChecks.flatMap(b=>b.issues)]].forEach(([lab,iss])=>{
+    for(let i=0;i<iss.length;i+=2){
+      html+='<div class="flag '+iss[i]+'"><b>'+lab+'：</b>'+iss[i+1]+'</div>';
+    }
+  });
+  $('flags').innerHTML=html||'<div class="flag ok">无问题</div>';
+}
+document.querySelectorAll('textarea').forEach(t=>t.addEventListener('input',render));render();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· Listing 物料 / Listing 字符与合规检查器</span><a href="../guides/guide-listing-checker.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#listing">打开完整工具台 ↗</a></div>
+</body>
+</html>
