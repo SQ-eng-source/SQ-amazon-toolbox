@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Listing 字符与合规检查器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../index.html" title="返回工具台首页">← 返回工具台</a><a href="index.html" title="所有工具的使用说明">全部说明</a></div>
+<div class="wrap">
+<h1>Listing 字符与合规检查器 · 使用说明</h1>
+<h2>它是干嘛的</h2>
+<p>上传 Listing 之前，先过一遍体检：<strong>字符超没超、有没有违规词、全大写会不会被压权重。</strong></p>
+<p>这些错误在后台不一定报错，但会悄悄吃掉你的曝光。</p>
+<h2>三步用起来</h2>
+<ol><li>打开工具：<a href="../tools/listing-checker.html">Listing 字符与合规检查器</a></li><li>把<strong>标题</strong>粘进上面的大框，<strong>五点描述</strong>粘进下面的框（<strong>一行一条</strong>，别把五条连成一段）。</li><li>右边自动出检查结果，边打字边更新。</li></ol>
+<h2>结果怎么看</h2>
+<div class="tw"><table><thead><tr><th>检查项</th><th>标准</th></tr></thead><tbody><tr><td>标题字符数</td><td>上限一般 200，<strong>部分类目 150</strong></td></tr><tr><td>接近上限（超过 92%）</td><td>会有黄色提示，容易被截断</td></tr><tr><td>五点条数与最长条</td><td>建议 5 条，单条太长手机端会折叠</td></tr><tr><td>全大写词（4 个字母以上）</td><td>亚马逊不鼓励，可能被抑制显示</td></tr><tr><td>疑似违规/营销词</td><td>红色，必须改</td></tr><tr><td>装饰符 <code>【】[]{}</code> 、连续感叹号</td><td>黄色，官方不鼓励非字母数字符号</td></tr></tbody></table></div>
+<p><strong>标题词数 / 平均字符长度</strong>也一并给出，太长可以拆短句。</p>
+<h2>工具会查的违规词</h2>
+<p><code>best</code>、<code>#1</code>、<code>no.1</code>、<code>number one</code>、<code>free shipping</code>、<code>free gift</code>、<code>guarantee</code>、<code>cheapest</code>、<code>hot sale</code>、<code>100%</code>、<code>top rated</code>、<code>world's</code>、<code>satisfaction</code>、<code>money back</code>、<code>wholesale</code>、<code>promotion</code></p>
+<p>这些词属于"夸大宣传 / 促销承诺"，轻则被删，重则影响账户健康。</p>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>不同类目字符上限不一样</strong>。工具按 200 算，如果后台提示 150，以<strong>后台实际上传时的提示</strong>为准。</li><li><strong>过了检查 ≠ 排名好</strong>。这个工具只查合规和长度，不查关键词覆盖和可读性。关键词那块用「标题规范」工具。</li></ul>
+<h2>常见问题</h2>
+<p><strong>Q：五点一定要写满 500 字符吗？</strong></p>
+<p>不用。能说清卖点、手机端不折叠就好。五条超过 5 条会被标红。</p>
+<p><strong>Q：<code>100%</code> 也不行？</strong></p>
+<p>不行，属于绝对化表述。可以改成 <code>fully</code>、<code>complete</code>。</p>
+<p><strong>Q：检查完还要做什么？</strong></p>
+<p>再用「标题规范」过一遍关键词结构，最后人工读一遍——<strong>像买家一样读，看能不能三秒懂</strong>。</p>
+<hr>
+<p><strong>一句话</strong>：上传前跑一遍，少一次被删改的机会。</p>
+</div>
+</body>
+</html>
