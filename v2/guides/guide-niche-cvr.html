@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>商探类目平均转化率计算器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../index.html" title="返回工具台首页">← 返回工具台</a><a href="index.html" title="所有工具的使用说明">全部说明</a></div>
+<div class="wrap">
+<h1>商探类目平均转化率计算器 · 使用说明</h1>
+<p><a href="../tools/niche-cvr.html">→ 直接打开工具</a></p>
+<blockquote>想知道「这个类目平均多少人看了会买」，但亚马逊不给这个数。这个工具用后台「商机探测器」下载的两张表，把类目平均转化率算出来。</blockquote>
+<hr>
+<h2>先说清楚这个数是干什么用的</h2>
+<p><strong>类目平均转化率 = 这个细分市场里，所有点击里有多少变成了订单。</strong></p>
+<p>它是你的<strong>参照线</strong>，不是目标。</p>
+<ul><li>你的产品转化率 <strong>8%</strong>，类目平均 <strong>12%</strong> → 你在拖后腿，问题可能出在主图、价格或评论数</li><li>你的产品转化率 <strong>15%</strong>，类目平均 <strong>12%</strong> → 你做得比同行好，可以考虑加广告推</li></ul>
+<p>没有这条参照线，你看到自己 8% 的转化率，根本不知道是好是坏。</p>
+<blockquote>⚠️ <strong>重要</strong>：这个工具算出来的数，是<strong>看量级用的估算值</strong>，不是精确数字。原因写在最后一节。</blockquote>
+<hr>
+<h2>数据从哪来</h2>
+<p>全部来自亚马逊后台，不用花钱买软件。</p>
+<p>路径：<strong>卖家后台 → 增长 → 商机探测器（Opportunity Explorer）</strong></p>
+<p>进去以后：</p>
+<ol><li><strong>按关键词搜索</strong>你的品类，比如搜「dog bed」，找到对应的「细分市场」。选那个和你产品最像的。</li><li>进到细分市场里，切到 <strong>「搜索词」</strong> 选项卡 → 点右上角<strong>下载</strong>。</li><li>再切到 <strong>「商品」</strong> 选项卡 → 同样<strong>下载</strong>。</li></ol>
+<p>拿到两个文件，都是 Excel。<strong>不用整理，直接全选复制粘贴进来就行。</strong></p>
+<hr>
+<h2>怎么用</h2>
+<h3>第 1 步：粘搜索词报告</h3>
+<p>把「搜索词」那张表<strong>全选（Ctrl+A）→ 复制（Ctrl+C）</strong>，粘贴到工具里「① 粘贴搜索词报告」的大框里。</p>
+<p>工具需要这四列：</p>
+<div class="tw"><table><thead><tr><th>列名</th><th>在报告里叫什么</th></tr></thead><tbody><tr><td>搜索词</td><td>搜索词</td></tr><tr><td>搜索量</td><td>搜索量（过去 360 天）</td></tr><tr><td>点击份额</td><td>点击份额（过去 360 天）</td></tr><tr><td>搜索转化率</td><td>搜索转化率（过去 360 天）</td></tr></tbody></table></div>
+<p><strong>表头自动识别</strong>，识别错了在下面「列映射」里手动改。</p>
+<h3>第 2 步：粘商品报告</h3>
+<p>把「商品」那张表同样全选复制，粘到「② 粘贴商品报告」的框里。</p>
+<p>这张表只用来做一件事：<strong>把「细分市场点击量（过去 360 天）」这一列加起来，得到这个细分市场你所有竞品的总点击量。</strong></p>
+<blockquote>如果你已经自己加好了，也可以跳过粘贴，直接在下面「或者直接填总点击量」里填数字。</blockquote>
+<h3>第 3 步：点计算</h3>
+<p>点「计算」，结果就出来了。</p>
+<p><strong>先看「载入示例数据」</strong>：第一用不确定格式对不对，点这个按钮，工具会自动填一套样例进去，你按「计算」看看结果长什么样。熟悉了再换自己的数据。</p>
+<hr>
+<h2>结果怎么理解</h2>
+<p>算出来的核心是一个百分比，比如 <strong>11.8%</strong>。</p>
+<p>意思是：<strong>这个细分市场过去 360 天，每 100 次点击平均产生 11.8 个订单。</strong></p>
+<p>拿它跟什么比：</p>
+<div class="tw"><table><thead><tr><th>对比对象</th><th>说明</th></tr></thead><tbody><tr><td><strong>你自己的转化率</strong></td><td>从「业务报告 → 子商品详情页销售额」看自己的「购买按钮赢得率」和「转化率」。低于类目平均就要找原因。</td></tr><tr><td><strong>别的细分市场</strong></td><td>同一个产品可能对应好几个细分市场，算几个出来横向比，选那个转化率高、竞争相对小的进去。</td></tr></tbody></table></div>
+<hr>
+<h2>工具到底怎么算的（想懂就看，不想懂可以跳过）</h2>
+<p>商机探测器<strong>不给每个词的实际点击量</strong>，只给「点击份额」（这个词占了多少比例的点击）。</p>
+<p>所以工具做了三步换算：</p>
+<pre><code>① 单词点击量 = 总点击量 × 该词点击份额
+② 单词订单   = 搜索转化率 × 搜索量
+③ 单词点击转化率 = ② ÷ ①
+最后：类目平均转化率 = 全部订单之和 ÷ 总点击量</code></pre>
+<p><strong>为什么不直接对每个词的转化率取平均？</strong></p>
+<p>因为那样小词会拉偏结果。一个只被点过 3 次的词，转化率 66% 或 0%，平均进去都会让整体数字失真。</p>
+<p>用「总订单 ÷ 总点击」这种算法，<strong>点击多的词自然权重就大</strong>，这才是真实的类目水平。</p>
+<hr>
+<h2>三个必须知道的口径问题</h2>
+<h3>① 全是「过去 360 天」的滚动数据</h3>
+<p>商机探测器所有指标都是过去 360 天的滚动窗口。</p>
+<p><strong>这带来一个问题：季节性产品会失真。</strong></p>
+<p>比如取暖垫，360 天里把淡季和旺季一起平均了，算出来 9%。但你如果准备在 11 月上架，实际旺季转化率可能是 15%。</p>
+<ul><li>✅ <strong>可以这样用</strong>：对比不同细分市场（大家都是 360 天口径，公平）</li><li>❌ <strong>不要这样用</strong>：拿它对标你当周的业务报告数据（口径不一样）</li></ul>
+<h3>② 订单数是估算的</h3>
+<p>「搜索转化率」本身就是亚马逊估算的口径，不是精确统计。而且<strong>同一个 ASIN 会同时出现在多个细分市场里</strong>，会有少量重复计算。</p>
+<p><strong>所以：用它看量级和相对大小，不要当精确值。</strong> 说「这个类目大概 10% 左右」可以，说「这个类目是 11.8%」就过头了。</p>
+<h3>③ 如果自己手算对不上</h3>
+<p>工具提供了两条计算路径，结果应该一致。如果和你在 Excel 里手算差很多，<strong>先检查列映射有没有认错列</strong>——这是最常见的原因。</p>
+<hr>
+<h2>保存和对比</h2>
+<p>下方的「我的转化率记录」可以存多组数据：</p>
+<ul><li>填个名字（比如「dog bed · 美国 · 11月」）→ 点保存 → 以后随时能调出来对比</li><li>想手动录入别人给你的数据，直接在「转化率 %」框里填数字，名字写清楚就行</li><li>点「导出 CSV」，可以拉到 Excel 里做趋势图</li></ul>
+<p><strong>建议每季度算一次存下来</strong>，你能看出这个类目的转化率是在变好还是变差。</p>
+<hr>
+<h2>常见问题</h2>
+<p><strong>Q：我的类目搜不到细分市场怎么办？</strong></p>
+<p>说明你的词太冷门，亚马逊没把它单独划分。换个更宽泛的大词搜，比如把「宠物加热垫 大号」换成「pet bed」。</p>
+<p><strong>Q：粘贴进去没反应？</strong></p>
+<p>多半是从 Excel 复制时格式没带过来。改用「另存为 CSV，用记事本打开，全选复制」这种方式，最稳。</p>
+<p><strong>Q：算出来是 0 或者特别离谱？</strong></p>
+<p>先看列映射对不对。再检查搜索量那一列有没有混进文字。工具只认数字，遇到文字会跳过。</p>
+<p><strong>Q：这个能算单个 ASIN 的转化率吗？</strong></p>
+<p>不能。这是<strong>类目级</strong>的平均值。算单个 ASIN 去看「业务报告」或者「商机探测器 → 商品选项卡」里的单品数据。</p>
+<hr>
+<h2>一句话总结</h2>
+<p><strong>后台商机探测器下载两张表 → 粘进来 → 点计算 → 拿这个数当参照线，看自己高于还是低于它。</strong></p>
+</div>
+</body>
+</html>
