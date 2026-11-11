@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 竞品挖掘器</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--accent:#0891b2;--deep:#0e7490;--ok:#0a8f5b;--bad:#c0392b;--soft:#e0f2fe}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:28px;display:flex;justify-content:center}
+.wrap{width:1080px}
+h1{font-size:21px;margin-bottom:4px}
+.desc{color:var(--sub);font-size:13px;margin-bottom:20px;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.card h2{font-size:14px;margin-bottom:12px;color:var(--deep)}
+label{display:block;font-size:12.5px;color:var(--sub);margin:9px 0 4px}
+input,textarea,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;font-size:13.5px;background:#fff}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{height:64px;resize:vertical;line-height:1.5}
+.tall{height:110px}
+button{background:linear-gradient(90deg,#22d3ee,#0891b2);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+button.ghost{background:#fff;color:var(--accent);border:1px solid var(--line);font-weight:600}
+button.ghost:hover{background:#f0fbfe;border-color:var(--turq,#22d3ee)}
+.row2{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--sub);font-size:11.5px;font-weight:600;white-space:nowrap}
+.score{font-weight:800;font-size:15px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.b1{background:#e0f2fe;color:var(--deep)}
+.b2{background:#fff7e6;color:#b7791f}
+.b3{background:#fdecea;color:var(--bad)}
+.b0{background:#f1f5f9;color:var(--sub)}
+.verdict{margin-top:10px;padding:11px;border-radius:8px;font-size:13px;font-weight:600;line-height:1.6;background:var(--soft);color:var(--deep)}
+.kw{display:inline-block;background:var(--soft);color:var(--deep);border-radius:4px;padding:2px 7px;margin:2px;font-size:12px}
+.kw.hit{background:#d9f7e8;color:var(--ok);font-weight:600}
+.kw.gap{background:#fff7e6;color:#b7791f}
+.overlap{font-size:26px;font-weight:800;color:var(--accent)}
+.muted{font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.7}
+.del{background:none;color:var(--bad);font-size:15px;padding:2px 8px}
+.ed{background:none;color:var(--accent);font-size:13px;padding:2px 8px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cmp .side{background:#fbfeff;border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+.cmp .side h3{font-size:12.5px;color:var(--accent);margin-bottom:8px}
+.cmp .side h3.me{color:var(--ok)}
+.cmp .box{font-size:12.5px;line-height:1.65;word-break:break-word}
+.meta{font-size:11.5px;color:var(--sub);margin-top:6px}
+mark{background:#d9f7e8;border-radius:3px;padding:0 2px}
+.stat{display:inline-block;font-size:11.5px;color:var(--sub);margin:1px 6px 1px 0}
+.stat b{color:var(--deep)}
+.hit5{font-size:12px}
+.hit5 td,.hit5 th{padding:5px 8px}
+.st-ok{color:var(--ok);font-weight:700}
+.st-mid{color:#b7791f;font-weight:700}
+.st-no{color:var(--sub)}
+.subttl{font-size:12.5px;color:var(--deep);font-weight:700;margin:12px 0 5px}
+.empty{color:var(--sub);font-size:12.5px;padding:10px 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔍 AI 竞品挖掘器</h1>
+  <p class="desc">把<b>你和竞品的标题、五点、描述、图片</b>贴进来，按内容重合度判断谁是直接竞品：价格接近 20% + 体量位次 15% + 关键词重合 15% + 内容重合 50%（标题/五点/描述/图片内部按 20/20/10/15 加权，哪项没贴权重自动分摊），自动分成 <b>直接竞品 / 间接竞品 / 威胁款 / 不相关</b> 四档。只填价格关键词的老式录入也支持（自动回落到关键词重合计分）。算法在本地跑，不外发；数据自动存在浏览器里。</p>
+
+  <div class="card">
+    <h2>① 你的产品画像 + 你的 Listing 全文</h2>
+    <div class="row2">
+      <div><label>售价（USD）</label><input type="number" id="myPrice" value="25.99" step="0.01"></div>
+      <div><label>评分</label><input type="number" id="myRating" value="4.5" step="0.1"></div>
+      <div><label>评论数</label><input type="number" id="myRev" value="320" step="10"></div>
+      <div><label>BSR 排名</label><input type="number" id="myBsr" value="3000" step="100"></div>
+    </div>
+    <label>你的标题</label>
+    <textarea id="myTitle" placeholder="把你现在的完整标题贴进来">AERO Sport Wireless Earbuds, Bluetooth 5.3 Headphones with Deep Bass, 48H Battery, IPX7 Waterproof, Built-in Mic for Running Gym</textarea>
+    <div class="cmp">
+      <div><label>你的五点（一行一条）</label><textarea class="tall" id="myBullets">【48H Playtime】Up to 8 hours per charge, 48 hours total with the pocket-size charging case.
+【Deep Bass Drivers】10mm drivers tuned for punchy bass without drowning vocals.
+【IPX7 Waterproof】Sweat and rain proof, made for gym, running and outdoor training.
+【Bluetooth 5.3】Stable connection within 10m, auto-pairs when the case opens.
+【Featherlight Fit】Ergonomic ear tips in 3 sizes stay secure during workouts.</textarea></div>
+      <div><label>你的图片主题（一行一个，写清每张图在讲什么）</label><textarea class="tall" id="myImgs">主图-白底产品
+场景-跑步佩戴
+场景-健身房
+卖点-48小时续航
+卖点-IPX7防水
+规格-尺寸重量
+配件-全家福</textarea></div>
+    </div>
+    <label>你的描述 / A+ 文案（关键词为主，可选）</label>
+    <textarea id="myDesc" placeholder="把描述或 A+ 里的正文贴进来（可选）">AERO wireless earbuds are built for daily training. Deep bass, 48 hours of playtime and IPX7 waterproof protection keep the music going through every run and workout. Bluetooth 5.3 pairs instantly with phones and tablets.</textarea>
+    <label>你的核心关键词（逗号分隔，老式计分备用）</label>
+    <textarea id="myKw">wireless earbuds, bluetooth headphones, sport earphones, noise cancelling, ipx7 waterproof</textarea>
+  </div>
+
+  <div class="card">
+    <h2>② 候选竞品（基础数据 + 点 ✎ 贴它的 Listing 全文）</h2>
+    <div class="row2">
+      <div><label>ASIN / 名称</label><input id="cName" placeholder="如 B0XXXXXXX"></div>
+      <div><label>售价（USD）</label><input type="number" id="cPrice" value="24.99" step="0.01"></div>
+      <div><label>评分</label><input type="number" id="cRating" value="4.4" step="0.1"></div>
+      <div><label>评论数</label><input type="number" id="cRev" value="1500" step="10"></div>
+    </div>
+    <div class="row2">
+      <div><label>BSR</label><input type="number" id="cBsr" value="2000" step="100"></div>
+      <div style="grid-column:span 3"><label>竞品关键词（可选，没贴全文时用于计分）</label><input id="cKw" placeholder="从标题+五点里抄"></div>
+    </div>
+    <div style="margin-top:12px"><button onclick="addC()">＋ 添加候选竞品</button>
+    <button class="ghost" onclick="wipe()">🗑 清空全部</button></div>
+    <table id="tb"></table>
+    <div id="verdict" class="verdict" style="display:none"></div>
+    <p class="muted">判定口径：总分 ≥75 直接竞品；50–74 间接竞品；≥60 且评论数是你 5 倍以上标记为威胁款；&lt;50 不相关。标题/五点/描述/图片任一项没填的，权重自动分摊给已填项；全文一项都没贴、只给了关键词的老式竞品，用关键词重合兜底计分。</p>
+
+    <div id="editor" style="display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+      <h2 id="edName" style="font-size:13px"></h2>
+      <label>竞品标题</label>
+      <textarea id="cTitle" placeholder="把这个竞品的完整标题贴进来"></textarea>
+      <div class="cmp">
+        <div><label>竞品五点（一行一条）</label><textarea class="tall" id="cBullets" placeholder="把它的五点 bullet 一行一条贴进来"></textarea></div>
+        <div><label>竞品图片主题（一行一个）</label><textarea class="tall" id="cImgs" placeholder="一行写一张图在讲什么，如：主图-白底 / 场景-通勤 / 卖点-快充"></textarea></div>
+      </div>
+      <label>竞品描述 / A+ 文案（可选）</label>
+      <textarea id="cDesc" placeholder="可选"></textarea>
+      <p class="muted">改完自动保存到这个竞品。表格里点其它行的 ✎ 可切换正在编辑的竞品。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>③ 深度对比：你和某个竞品的标题 / 五点 / 描述 / 图片</h2>
+    <div style="display:flex;gap:12px;align-items:center">
+      <select id="deepSel" style="width:260px"></select>
+      <span class="stat" id="deepStat"></span>
+    </div>
+    <div id="deepOut" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>④ 关键词重合度对比（纯词表）</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div><label>你的关键词列表（逗号分隔）</label><textarea id="kwA">wireless earbuds, bluetooth headphones, sport earphones, noise cancelling, ipx7, running earbuds</textarea></div>
+      <div><label>某个竞品 / 类目的关键词列表</label><textarea id="kwB">bluetooth earbuds, wireless headphones, sport earphones, enc earbuds, ipx7 waterproof, gym headphones, running earbuds</textarea></div>
+    </div>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:24px">
+      <div><label>杰卡德重合度</label><div class="overlap" id="jac">--%</div></div>
+      <div style="flex:1"><label>共同词</label><div id="common"></div><label style="margin-top:8px">它有 · 你没有（选词机会）</label><div id="onlyB"></div></div>
+    </div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+/* ---------- 分词与归一 ---------- */
+const STOP=new Set(['the','and','for','with','your','you','our','this','that','from','are','was','has','have','will','can','use','using','used','made','make','its','it','in','on','of','to','a','an','is','be','by','or','as','at','not','no','more','all','new','only','best','perfect','great','ideal','suit','suitable','when','while','into','out','up','down','also','each','every','any','both','than','then','them','they','we','us','their','his','her','him','she','he','i','me','my','keep','keeps','get','gets','via','per','one','two','day','days','hours','hour']);
+function norm(w){if(/ies$/.test(w)&&w.length>4)return w.slice(0,-3)+'y';if(/(es|s)$/.test(w)&&w.length>3)return w.slice(0,-1);return w}
+function tokens(t){
+  const out=new Set();
+  if(!t)return out;
+  const low=t.toLowerCase();
+  (low.match(/[\u4e00-\u9fa5]+/g)||[]).forEach(run=>{
+    if(run.length===1){out.add(run);return}
+    for(let i=0;i<run.length-1;i++)out.add(run.slice(i,i+2));
+  });
+  (low.match(/[a-z0-9]+/g)||[]).forEach(w=>{if(w.length<2||STOP.has(w))return;out.add(norm(w))});
+  return out;
+}
+function ratio(mine,his){ // 我的词里，它也讲了的比例（任一侧为空 = 数据缺失，返回 null 让权重分摊）
+  if(!mine.size||!his.size)return null;
+  let hit=0;for(const t of mine)if(his.has(t))hit++;
+  return hit/mine.size;
+}
+function lines(t){return (t||'').split(/\n+/).map(s=>s.trim()).filter(Boolean)}
+function themeKeys(t){ // 图片主题：整行归一成一个 key
+  return new Set(lines(t).map(l=>l.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g,'')).filter(Boolean));
+}
+function themeRatio(mine,his){
+  if(!mine.size||!his.size)return null;
+  const H=[...his];let hit=0;
+  for(const m of mine)if(H.some(h=>h===m||(h.length>1&&m.length>1&&(h.includes(m)||m.includes(h)))))hit++;
+  return hit/mine.size;
+}
+function hl(text,shared){
+  return esc(text).replace(/[a-z0-9]+/gi,w=>{
+    if(w.length<2||STOP.has(w.toLowerCase()))return w;
+    return shared.has(norm(w.toLowerCase()))?'<mark>'+w+'</mark>':w;
+  });
+}
+function chips(arr,cls){return arr.length?arr.map(k=>'<span class="kw '+(cls||'')+'">'+esc(k)+'</span>').join(''):'<span style="color:var(--sub);font-size:12px">无</span>'}
+
+/* ---------- 状态 ---------- */
+let list=[],editIdx=-1,deepIdx=-1;
+const MYF=['myPrice','myRating','myRev','myBsr','myTitle','myBullets','myDesc','myImgs','myKw'];
+const KEY='cf-v2';
+function save(){
+  try{
+    const o={my:{},list,kwA:$('kwA').value,kwB:$('kwB').value};
+    MYF.forEach(f=>o.my[f]=$(f).value);
+    localStorage.setItem(KEY,JSON.stringify(o));
+  }catch(e){}
+}
+function load(){
+  try{
+    const o=JSON.parse(localStorage.getItem(KEY));if(!o)return false;
+    MYF.forEach(f=>{if(o.my&&o.my[f]!=null)$(f).value=o.my[f]});
+    if(Array.isArray(o.list))list=o.list;
+    if(o.kwA)$('kwA').value=o.kwA;if(o.kwB)$('kwB').value=o.kwB;
+    return true;
+  }catch(e){return false}
+}
+function my(){return{price:+$('myPrice').value||1,rev:+$('myRev').value||1,bsr:+$('myBsr').value||1,
+  kw:$('myKw').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean),
+  tT:tokens($('myTitle').value),bT:tokens($('myBullets').value),dT:tokens($('myDesc').value),iT:themeKeys($('myImgs').value)}}
+
+/* ---------- 打分 ---------- */
+function scoreC(c,m){
+  const priceSim=Math.max(0,1-Math.abs(c.price-m.price)/Math.max(m.price,c.price)/0.2)*0.20;
+  const posSim=Math.max(0,1-Math.abs(Math.log(c.bsr||1)-Math.log(m.bsr))/Math.log(10)*0.5)*0.15;
+  const cT=tokens(c.title),cB=tokens(c.bullets),cD=tokens(c.desc),cI=themeKeys(c.imgs);
+  const parts=[['t',0.20,ratio(m.tT,cT)],['b',0.20,ratio(m.bT,cB)],['d',0.10,ratio(m.dT,cD)],['i',0.15,themeRatio(m.iT,cI)]];
+  const bd={t:null,b:null,d:null,i:null};
+  const present=parts.filter(p=>p[2]!=null);
+  let content=null;
+  if(present.length){
+    content=present.reduce((a,p)=>a+p[1]*p[2],0)/present.reduce((a,p)=>a+p[1],0);
+    parts.forEach(p=>bd[p[0]]=p[2]);
+  }
+  let kwSim=0,inter=0;
+  if(m.kw.length&&c.kw.length){inter=m.kw.filter(k=>c.kw.some(x=>x.includes(k)||k.includes(x))).length;kwSim=inter/m.kw.length}
+  const s=content!=null
+    ?priceSim+posSim+content*0.50+kwSim*0.15
+    :priceSim+posSim+kwSim*0.65;
+  return {s:Math.round(s*100),bd,content,contentRaw:content,inter,priceSim,posSim,kwSim};
+}
+function judge(s,c,m){
+  let tag,cls;
+  if(s>=75){tag='直接竞品';cls='b1'}
+  else if(s>=50){tag='间接竞品';cls='b2'}
+  else{tag='不相关';cls='b0'}
+  if(s>=60&&c.rev>=m.rev*5){tag='⚠ 威胁款';cls='b3'}
+  return {tag,cls};
+}
+
+/* ---------- 表格 ---------- */
+function pct(v){return v==null?'—':Math.round(v*100)+'%'}
+function render(){
+  const m=my(),myRev=m.rev;
+  const rows=list.map((c,i)=>({c,r:scoreC(c,m)}));
+  let html='<tr><th>竞品</th><th>价格</th><th>评分/评论</th><th>BSR</th><th>标题</th><th>五点</th><th>描述</th><th>图片</th><th>内容合计</th><th>词命中</th><th>总分</th><th>判定</th><th></th></tr>';
+  rows.forEach(({c,r},i)=>{
+    const j=judge(r.s,c,m);
+    const full= r.content!=null;
+    html+='<tr><td><b>'+esc(c.name)+'</b></td><td>$'+c.price.toFixed(2)+'</td><td>'+c.rating+'★ / '+c.rev.toLocaleString()+'</td><td>'+c.bsr.toLocaleString()+'</td>'
+      +'<td>'+pct(r.bd.t)+'</td><td>'+pct(r.bd.b)+'</td><td>'+pct(r.bd.d)+'</td><td>'+pct(r.bd.i)+'</td>'
+      +'<td>'+(full?'<b style="color:var(--accent)">'+Math.round(r.contentRaw*100)+'%</b>':'<span style="color:var(--sub)">仅关键词</span>')+'</td>'
+      +'<td>'+r.inter+'/'+m.kw.length+'</td>'
+      +'<td class="score" style="color:'+(r.s>=75?'var(--deep)':r.s>=50?'#b7791f':'var(--sub)')+'">'+r.s+'</td>'
+      +'<td><span class="badge '+j.cls+'">'+j.tag+'</span></td>'
+      +'<td><button class="ed" onclick="openEdit('+i+')" title="贴它的标题五点描述图片">✎</button><button class="del" onclick="delC('+i+')">✕</button></td></tr>';
+  });
+  $('tb').innerHTML=html;
+  const v=$('verdict');
+  if(list.length){
+    v.style.display='block';
+    const direct=rows.filter(x=>scoreC(x.c,m).s>=75).length;
+    const threat=rows.filter(x=>{const r=scoreC(x.c,m);return r.s>=60&&x.c.rev>=myRev*5}).length;
+    const noFull=rows.filter(x=>scoreC(x.c,m).content==null).length;
+    v.innerHTML=direct+' 个直接竞品、'+threat+' 个威胁款。'+(threat?'威胁款评论体量远超你，别正面刚词，绕开打长尾；':'')
+      +'直接竞品里挑价格和评分都贴的 2–3 个，去 ③ 深度对比看它的五点和图片，抄结构不抄词。'
+      +(noFull?'<br><span style="font-weight:400;font-size:12px">还有 '+noFull+' 个竞品没贴 Listing 全文（只按关键词兜底计分），点它那一行的 ✎ 补上更准。</span>':'');
+  }else v.style.display='none';
+  renderDeepSel();
+  save();
+}
+
+/* ---------- 添加 / 删除 / 编辑 ---------- */
+function addC(){
+  list.push({name:$('cName').value||'未命名'+(list.length+1),
+    price:+$('cPrice').value||0,rating:+$('cRating').value||0,
+    rev:+$('cRev').value||0,bsr:+$('cBsr').value||0,
+    kw:$('cKw').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean),
+    title:'',bullets:'',desc:'',imgs:''});
+  $('cName').value='';$('cKw').value='';
+  render();openEdit(list.length-1);
+}
+function delC(i){
+  list.splice(i,1);
+  if(editIdx===i){editIdx=-1;$('editor').style.display='none'}
+  if(editIdx>i)editIdx--;
+  if(deepIdx===i)deepIdx=-1;else if(deepIdx>i)deepIdx--;
+  render();
+}
+function wipe(){
+  if(!confirm('清空全部竞品和你填的数据？'))return;
+  list=[];editIdx=-1;deepIdx=-1;$('editor').style.display='none';
+  try{localStorage.removeItem(KEY)}catch(e){}
+  render();
+}
+function openEdit(i){
+  editIdx=i;
+  const c=list[i];
+  $('editor').style.display='block';
+  $('edName').textContent='正在贴全文：'+c.name+'（第 '+(i+1)+' 个竞品）';
+  $('cTitle').value=c.title;$('cBullets').value=c.bullets;$('cDesc').value=c.desc;$('cImgs').value=c.imgs;
+}
+['cTitle','cBullets','cDesc','cImgs'].forEach(id=>$(id).addEventListener('input',()=>{
+  if(editIdx<0||!list[editIdx])return;
+  const c=list[editIdx];
+  c.title=$('cTitle').value;c.bullets=$('cBullets').value;c.desc=$('cDesc').value;c.imgs=$('cImgs').value;
+  render();
+}));
+
+/* ---------- 深度对比 ---------- */
+function renderDeepSel(){
+  const sel=$('deepSel');
+  const cur=deepIdx;
+  sel.innerHTML=list.length?list.map((c,i)=>'<option value="'+i+'"'+(i===cur?' selected':'')+'>'+esc(c.name)+'（总分 '+scoreC(c,my()).s+'）</option>').join(''):'<option value="-1">先在 ② 添加竞品</option>';
+  renderDeep();
+}
+function bulletToks(t){return lines(t).map(b=>({raw:b,tok:tokens(b)}))}
+function matchBullets(myBs,cBs){
+  // 我的每条卖点 → 它最像的一条
+  return myBs.map(mb=>{
+    let best=-1,bestR=0;
+    cBs.forEach((cb,j)=>{const r=ratio(mb.tok,cb.tok);if(r!=null&&r>bestR){bestR=r;best=j}});
+    return {mb,best,bestR};
+  });
+}
+function renderDeep(){
+  const out=$('deepOut');
+  deepIdx=+$('deepSel').value;
+  if(!list.length||deepIdx<0||!list[deepIdx]){out.innerHTML='<div class="empty">先在 ② 添加竞品并贴上它的标题 / 五点 / 图片。</div>';$('deepStat').textContent='';return}
+  const c=list[deepIdx],m=my();
+  const r=scoreC(c,m),j=judge(r.s,c,m);
+  $('deepStat').innerHTML='内容重合 <b>'+Math.round((r.contentRaw||r.kwSim)*100)+'%</b> · 总分 <b>'+r.s+'</b> · '+j.tag;
+  const mT=tokens($('myTitle').value),cT=tokens(c.title);
+  const sharedT=new Set([...mT].filter(t=>cT.has(t)));
+  const mineOnlyT=[...mT].filter(t=>!cT.has(t));
+  const hisOnlyT=[...cT].filter(t=>!mT.has(t));
+  // 五点匹配
+  const myBs=bulletToks($('myBullets').value),cBs=bulletToks(c.bullets);
+  const mm=matchBullets(myBs,cBs);
+  const usedByMe=new Set(mm.filter(x=>x.best>=0&&x.bestR>=0.25).map(x=>x.best));
+  const hisOnlyB=cBs.filter((cb,idx)=>!usedByMe.has(idx));
+  // 图片
+  const mI=[...themeKeys($('myImgs').value)],cI=[...themeKeys(c.imgs)];
+  const hitI=mI.filter(a=>cI.some(b=>b===a||(b.length>1&&a.length>1&&(b.includes(a)||a.includes(b)))));
+  const onlyI=cI.filter(b=>!mI.some(a=>a===b||(b.length>1&&b.length>1&&(a.includes(b)||b.includes(a)))));
+  // 描述
+  const mD=tokens($('myDesc').value),cD=tokens(c.desc);
+  const sharedD=[...mD].filter(t=>cD.has(t)).slice(0,18);
+
+  let h='';
+  /* 标题 */
+  h+='<div class="subttl">标题对比</div><div class="cmp">'
+    +'<div class="side"><h3 class="me">你（'+($('myTitle').value||'').length+' 字符）</h3><div class="box">'+hl($('myTitle').value||'（未填）',sharedT)+'</div></div>'
+    +'<div class="side"><h3>它（'+(c.title||'').length+' 字符）</h3><div class="box">'+hl(c.title||'（未贴）',sharedT)+'</div></div></div>'
+    +'<div class="meta">共同词 '+sharedT.size+' 个：'+chips([...sharedT],'hit')+'</div>'
+    +'<div class="meta">你讲了它没讲的词（你的差异点）：'+chips(mineOnlyT.slice(0,14))+'</div>'
+    +'<div class="meta">它讲了没进你标题的词（补词机会）：'+chips(hisOnlyT.slice(0,14),'gap')+'</div>';
+  /* 五点 */
+  h+='<div class="subttl">五点对比（你的每条卖点，它有没有讲）</div>';
+  if(myBs.length){
+    h+='<table class="hit5"><tr><th>你的卖点</th><th>它最像的一条</th><th>重合</th><th>状态</th></tr>';
+    mm.forEach(x=>{
+      const st=x.best<0?['st-no','它没贴五点']:x.bestR>=0.5?['st-ok','命中']:x.bestR>=0.25?['st-mid','部分']:[x.best>=0&&cBs[x.best]?'st-mid':'st-no',x.best>=0&&cBs[x.best]?'角度不同':'它没贴五点'];
+      h+='<tr><td style="max-width:340px">'+esc(x.mb.raw)+'</td><td style="max-width:340px">'+(x.best>=0&&cBs[x.best]?esc(cBs[x.best].raw):'—')+'</td><td>'+(x.best<0?'—':Math.round(x.bestR*100)+'%')+'</td><td class="'+st[0]+'">'+st[1]+'</td></tr>';
+    });
+    h+='</table>';
+  }else h+='<div class="empty">你没填五点（① 里贴上再看）。</div>';
+  if(hisOnlyB.length)h+='<div class="meta" style="font-weight:600;color:#b7791f">它讲了、你没讲的卖点（值得抄角度再差异化）：'+chips(hisOnlyB.map(b=>b.raw.replace(/^【[^】]*】/,'').slice(0,30)),'gap')+'</div>';
+  /* 描述 */
+  h+='<div class="subttl">描述对比</div><div class="meta">你的描述 '+($('myDesc').value||'').length+' 字符 / 它的 '+(c.desc||'').length+' 字符；共同关键词：'+chips(sharedD,'hit')+'</div>';
+  /* 图片 */
+  h+='<div class="subttl">图片对比</div><div class="meta">你 '+mI.length+' 个主题 / 它 '+cI.length+' 个主题。命中：'+chips(hitI,'hit')+'</div>'
+    +'<div class="meta" style="font-weight:600;color:#b7791f">它有、你没有的图（补图清单）：'+chips(onlyI,'gap')+'</div>';
+  /* 结论 */
+  h+='<div class="verdict" style="margin-top:12px">'+(r.content!=null?'内容重合度 '+Math.round(r.contentRaw*100)+'%（标题 '+pct(r.bd.t)+' · 五点 '+pct(r.bd.b)+' · 描述 '+pct(r.bd.d)+' · 图片 '+pct(r.bd.i)+'）':'该竞品没贴全文，按关键词重合 '+Math.round(r.kwSim*100)+'% 兜底')
+    +'，总分 '+r.s+'，判定：'+j.tag+'。'
+    +(r.s>=75?'内容高度重合，正面竞争——靠五点表里"角度不同"的卖点和补图清单做差异化，别比价。':r.s>=50?'部分重合，间接竞品——盯它有你没有的词和图，把空白补上就是你的增量。':'重合有限，参考它的图片结构和词表即可。')
+    +'</div>';
+  out.innerHTML=h;
+  save();
+}
+
+/* ---------- ④ 关键词杰卡德（保持原功能） ---------- */
+function jac(){
+  const A=new Set($('kwA').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean));
+  const B=new Set($('kwB').value.split(/[,，\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean));
+  const com=[...A].filter(x=>[...B].some(y=>y.includes(x)||x.includes(y)));
+  const onlyB=[...B].filter(x=>!com.some(c2=>x.includes(c2)||c2.includes(x)));
+  const uni=new Set([...A,...B]).size;
+  $('jac').textContent=uni?Math.round(com.length/uni*100)+'%':'--%';
+  $('common').innerHTML=chips(com,'hit');
+  $('onlyB').innerHTML=chips(onlyB);
+}
+
+/* ---------- 事件 ---------- */
+document.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',()=>{render()}));
+$('deepSel').addEventListener('change',renderDeep);
+
+/* ---------- 启动 ---------- */
+const had=load();
+if(!had){ // 首次：预填一个示例竞品，方便直接看效果
+  list.push({name:'示例竞品（替换成你的）',price:24.99,rating:4.4,rev:1500,bsr:2000,
+    kw:['bluetooth earbuds','wireless headphones','sport earphones','enc earbuds','gym headphones'],
+    title:'PULSE Bluetooth Wireless Earbuds, Sport Headphones with ENC Noise Cancelling Mic, 40H Playtime, Sweatproof, Touch Control for Gym Running',
+    bullets:'【40H Playtime】8 hours per charge and 40 total with the compact charging case.\n【ENC Noise Cancelling】Environmental noise cancelling keeps calls clear on busy streets.\n【Sweatproof Design】IPX5 rating resists sweat and light rain for daily workouts.\n【Touch Control】Play, pause and skip without reaching for your phone.\n【Fits Every Ear】4 sizes of ear tips and a secure-fit wing design.',
+    desc:'PULSE wireless sport earbuds with ENC noise cancelling, 40 hours of playtime and touch controls for gym and running.',
+    imgs:'主图-白底产品\n场景-跑步佩戴\n场景-通勤\n卖点-ENC通话降噪\n卖点-40小时续航\n规格-触摸操作\n配件-耳塞四尺寸'});
+}
+render();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 竞品分析 / AI 竞品挖掘器</span><a href="../guides/guide-competitor-finder.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#comp">打开完整工具台 ↗</a></div>
+</body>
+</html>
