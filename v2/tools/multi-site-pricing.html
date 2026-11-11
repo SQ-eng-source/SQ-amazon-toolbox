@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>多站点定价换算器</title>
+<style>:root{--bg:#f2fbfd;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#0891b2;--ok:#0a8f5b;--bad:#c0392b}*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}body{background:var(--bg);color:var(--ink);padding:32px;display:flex;justify-content:center}.wrap{width:960px}h1{font-size:22px;margin-bottom:4px}.desc{color:var(--sub);font-size:13px;margin-bottom:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:20px}.card h2{font-size:15px;margin-bottom:14px}label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px}input:focus{outline:none;border-color:var(--accent)}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--sub);font-weight:600;font-size:12px}td b{color:var(--accent);font-size:14px}.note{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.7}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>多站点定价换算器</h1>
+  <p class="desc">同一个产品铺欧洲/日本/英国，价格不是汇率一乘就完事——VAT、佣金、配送费都不一样。这张表帮你按"目标净利率"倒推各站点该卖多少。</p>
+
+  <div class="card">
+    <h2>① 基础数据</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px">
+      <div><label>产品成本+头程（USD/件）</label><input type="number" id="cogs" value="7.00" step="0.1"></div>
+      <div><label>目标净利率（%）</label><input type="number" id="target" value="18" step="1"></div>
+      <div><label>其他固定费（USD/件）</label><input type="number" id="other" value="0.30" step="0.05"></div>
+      <div><label>广告费占比（% of 售价）</label><input type="number" id="adspct" value="12" step="1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 各站点参数</h2>
+    <table>
+      <tr><th>站点</th><th>汇率（本地币→USD）</th><th>VAT/消费税（%）</th><th>平台佣金（%）</th><th>FBA配送费（本地币）</th></tr>
+      <tr><td>美国 US</td><td>1.00</td><td>0</td><td>15</td><td>5.60</td></tr>
+      <tr><td>英国 UK</td><td><input type="number" value="1.27" step="0.01"></td><td><input type="number" value="20" step="1"></td><td><input type="number" value="15" step="0.5"></td><td><input type="number" value="3.80" step="0.1"></td></tr>
+      <tr><td>德国 DE</td><td><input type="number" value="1.09" step="0.01"></td><td><input type="number" value="19" step="1"></td><td><input type="number" value="15" step="0.5"></td><td><input type="number" value="4.50" step="0.1"></td></tr>
+      <tr><td>日本 JP</td><td><input type="number" value="0.0067" step="0.0001"></td><td><input type="number" value="10" step="1"></td><td><input type="number" value="15" step="0.5"></td><td><input type="number" value="480" step="10"></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>③ 建议售价（达到目标净利率）</h2>
+    <table id="out"></table>
+    <div class="note">定价公式：售价 =（成本+其他固定费+FBA费折USD）÷（1 − VAT − 佣金% − 广告% − 目标净利率）。含税售价向上取整到心理价位（.99 结尾）。注意：VAT 从售价中扣除，所以欧洲站点价格看起来高是正常的。</div>
+  </div>
+</div>
+<script>
+function $(i){return document.getElementById(i)}
+function nice(x){return Math.ceil(x)+0.99}
+function calc(){
+  const cogs=+$('cogs').value||0,tg=(+$('target').value||0)/100,
+        other=+$('other').value||0,ads=(+$('adspct').value||0)/100;
+  const rows=[...document.querySelectorAll('.card:nth-of-type(2) table tr')].slice(1);
+  let html='<tr><th>站点</th><th>建议含税售价</th><th>折合 USD</th><th>预估净利/件</th><th>净利率</th></tr>';
+  rows.forEach(r=>{
+    const site=r.children[0].textContent;
+    const fx=+r.children[1].firstElementChild?.value||1;
+    const vat=(+r.children[2].firstElementChild?.value||0)/100;
+    const ref=(+r.children[3].firstElementChild?.value||0)/100;
+    const fee=(+r.children[4].firstElementChild?.value||0)*fx;
+    const usRow=site==='美国 US';
+    const fxu=usRow?1:fx, vatu=usRow?0:vat, refu=+r.children[3].firstElementChild?.value||15;
+    const feeu=usRow?5.60:fee;
+    const denom=1-vatu-refu/100-ads-tg;
+    const local=nice((cogs+other+feeu)/Math.max(denom,0.1)/fxu);
+    const usd=local*fxu;
+    const net=usd*(1-vatu)-refu/100*usd-feeu-cogs-other-ads*usd;
+    html+='<tr><td>'+site+'</td><td><b>'+local.toFixed(2)+'</b></td><td>$'+usd.toFixed(2)+'</td><td style="color:'+(net>0?'var(--ok)':'var(--bad)')+'">$'+net.toFixed(2)+'</td><td>'+(usd>0?(net/usd*100).toFixed(1)+'%':'--')+'</td></tr>';
+  });
+  $('out').innerHTML=html;
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+<style id="tb-bar-css">body{padding-top:34px !important}#tb-bar{position:fixed;top:0;left:0;right:0;height:30px;z-index:2147483000;display:flex;align-items:center;gap:8px;padding:0 12px;background:#e6fafc;border-bottom:1px solid #bfe7f2;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;color:#0e7490;line-height:1;box-sizing:border-box}#tb-bar b{font-weight:700}#tb-bar .cr{color:#6b93a3}#tb-bar a{margin-left:auto;color:#0891b2;text-decoration:none;border:1px solid #bfe7f2;background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;white-space:nowrap}#tb-bar a:hover{background:#f2fbfd;border-color:#22d3ee}@media print{#tb-bar{display:none}body{padding-top:0 !important}}</style><div id="tb-bar">🏝 <b>SQ-AMAZON-TOOLBOX</b><span class="cr">· 备货与算钱 / 多站点定价换算器</span><a href="../guides/guide-multi-site-pricing.html" target="_blank" title="看这个工具怎么用">📖 说明</a><a href="../index.html#supply">打开完整工具台 ↗</a></div>
+</body>
+</html>
