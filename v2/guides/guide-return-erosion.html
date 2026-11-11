@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>退货率利润侵蚀计算器 · 使用说明 · 使用说明</title>
+<style>
+:root{--bg:#f2fbfd;--card:#fff;--ink:#12333f;--sub:#6b93a3;--line:#d9f0f6;--deep:#0e7490;--accent:#0891b2;--turq:#22d3ee;--soft:#e0f2fe;--warnbg:#fdf6e3;--warnbd:#e8c98a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body{background:var(--bg);color:var(--ink);padding:26px 22px 60px}
+.wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 38px 42px}
+.top{max-width:820px;margin:0 auto 12px;display:flex;align-items:center;gap:10px}
+.top a{font-size:12px;color:var(--deep);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 12px}
+.top a:hover{background:var(--soft);border-color:var(--turq)}
+h1{font-size:24px;color:var(--deep);line-height:1.35;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--soft)}
+h2{font-size:18px;color:var(--deep);margin:30px 0 12px;padding-left:11px;border-left:4px solid var(--turq);line-height:1.4}
+h3{font-size:15px;color:var(--ink);margin:22px 0 9px}
+h4{font-size:13.5px;color:var(--deep);margin:16px 0 7px}
+p{font-size:14px;line-height:1.9;margin-bottom:12px;color:#1d3f4d}
+strong{color:var(--deep);font-weight:700}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;line-height:1.9;margin-bottom:5px;color:#1d3f4d}
+code{background:#e6fafc;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12.5px;color:var(--deep);font-family:Consolas,"Courier New",monospace}
+pre{background:#0f2f3a;border-radius:9px;padding:15px 18px;overflow-x:auto;margin:0 0 16px}
+pre code{background:none;border:none;color:#d8f3f9;font-size:12.5px;line-height:1.75;padding:0;white-space:pre}
+blockquote{background:var(--warnbg);border-left:3px solid var(--warnbd);border-radius:0 8px 8px 0;padding:12px 16px;margin:0 0 16px;font-size:13.5px;line-height:1.85;color:#7a5f18}
+blockquote strong{color:#8a6d1f}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+.tw{overflow-x:auto;margin:0 0 16px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--soft);color:var(--deep);font-weight:700;text-align:left;padding:9px 11px;border:1px solid var(--line);white-space:nowrap}
+td{padding:9px 11px;border:1px solid var(--line);line-height:1.7;vertical-align:top}
+tbody tr:nth-child(even){background:#fafdfe}
+a{color:var(--accent)}
+@media (max-width:640px){.wrap{padding:22px 18px 34px}h1{font-size:20px}h2{font-size:16px}p,li{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="../index.html" title="返回工具台首页">← 返回工具台</a><a href="index.html" title="所有工具的使用说明">全部说明</a></div>
+<div class="wrap">
+<h1>退货率利润侵蚀计算器 · 使用说明</h1>
+<h2>它是干嘛的</h2>
+<p>很多人以为退货就是"退回一单，少赚一单"。其实不是——退货要搭进去逆向运费、翻新损耗，卖不掉还得报废。</p>
+<p><strong>退货率每涨 1%，吃掉的钱可能比你想的多得多。</strong></p>
+<p>这个工具算两件事：退货每月吃掉多少钱，以及把退货率降下来能捞回多少。</p>
+<h2>三步用起来</h2>
+<ol><li>打开工具：<a href="../tools/return-erosion.html">退货率利润侵蚀计算器</a></li><li>填当前情况：</li></ol>
+<div class="tw"><table><thead><tr><th>字段</th><th>填什么</th></tr></thead><tbody><tr><td>月销量（件）</td><td>最近 30 天</td></tr><tr><td>当前退货率（%）</td><td>后台退货报表</td></tr><tr><td>售价（USD） / 单件总成本（USD）</td><td>同 ACoS 计算器的口径</td></tr><tr><td>退货后可二次销售比例（%）</td><td>服装类通常 60–80%，电子低一些</td></tr><tr><td>不可售件的残值回收（USD/件）</td><td>清货能卖多少，卖不掉填 0</td></tr><tr><td>模拟：如果退货率降到（%）</td><td>填一个目标值，做对比</td></tr></tbody></table></div>
+<ol><li>看右边结果。</li></ol>
+<h2>结果怎么看</h2>
+<div class="tw"><table><thead><tr><th>结果</th><th>含义</th></tr></thead><tbody><tr><td>每月退货件数</td><td>退货率 × 月销量</td></tr><tr><td>单件退货净损失</td><td>退一件实际亏多少</td></tr><tr><td><strong>当前退货造成的月损失</strong></td><td>一个月白干多少钱</td></tr><tr><td>退货侵蚀掉的净利率</td><td>退货吃掉了几个点的利润</td></tr><tr><td>模拟对比</td><td>退货率降到目标值，能多赚多少</td></tr></tbody></table></div>
+<p>单件退货净损失的大致算法：</p>
+<blockquote>未退货那部分的利润 −（能再卖的翻新损耗 + 卖不掉那部分的全损 − 残值）</blockquote>
+<h2>两个要注意的地方</h2>
+<ul><li><strong>退货原因是关键信息</strong>。工具只算钱，不告诉你为什么退。一定要看退货报表里的"退货原因"：尺码不对、描述不符、破损、与图片不一致——每种原因对应不同的改法。</li><li><strong>降退货率通常比降广告费更划算</strong>。改一张主图、补一句尺寸说明，成本几乎为零。</li></ul>
+<h2>常见问题</h2>
+<p><strong>Q：退货率填多少算高？</strong></p>
+<p>服装 15%–25% 是常态，3C 一般 3%–8%。超过类目均值就要查原因。</p>
+<p><strong>Q：二次销售比例怎么估？</strong></p>
+<p>看后台"可售/不可售"库存报表，用可售件数 ÷ 退货件数。</p>
+<hr>
+<p><strong>一句话</strong>：退货是隐形广告费，而且比广告费更贵——它还在扣你的评分。</p>
+</div>
+</body>
+</html>
