@@ -64,7 +64,7 @@ iframe{flex:1;border:none;width:100%}
     <a id="guide-entry" href="guides/index.html" target="_blank" title="全部工具的使用说明" style="margin-left:auto">📖 全部说明</a>
     <a id="raw" href="tools/hub-sop.html" target="_blank" style="margin-left:0" data-page-node-id="pUdTs96TwyI61CcpdbBa4t">单独打开 ↗</a>
   </header>
-  <iframe id="frame" src="tools/hub-sop.html" data-page-node-id="B5lCyw8DAvPFmSFSpkaxZS"></iframe>
+  <iframe id="frame" src="tools/hub-sop.html?v=20261117" data-page-node-id="B5lCyw8DAvPFmSFSpkaxZS"></iframe>
 </main>
 <script>
 const STRUCT=[
@@ -94,14 +94,14 @@ function go(id,name){
   const btn=document.querySelector('.nav-item[data-id="'+id+'"]');
   if(btn)btn.classList.add('active');
   setHead(name,'');
-  document.getElementById('frame').src='tools/hub-'+id+'.html';
+  document.getElementById('frame').src='tools/hub-'+id+'.html?v=20261117';
   document.getElementById('raw').href='tools/hub-'+id+'.html';
   document.getElementById('back').style.display='none';
   location.hash=id;
 }
 function openTool(fid,name){
   setHead(name,curHubName);
-  document.getElementById('frame').src='tools/'+fid+'.html';
+  document.getElementById('frame').src='tools/'+fid+'.html?v=20261117';
   document.getElementById('raw').href='tools/'+fid+'.html';
   document.getElementById('back').style.display='';
 }
